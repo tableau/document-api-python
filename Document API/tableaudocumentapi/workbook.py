@@ -115,10 +115,6 @@ class Workbook(object):
 
     @staticmethod
     def _is_valid_file(filename):
-        valid = 0
         fileExtension = os.path.splitext(filename)[-1].lower()
-        if fileExtension == ".twb":
-            valid = 1
-        elif fileExtension == ".tds":
-            valid = 1
-        return valid
+        return fileExtension in ('.twb', '.tds')
+
