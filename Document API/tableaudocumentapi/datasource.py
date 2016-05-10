@@ -6,6 +6,7 @@
 import xml.etree.ElementTree as ET
 from tableaudocumentapi import Connection
 
+
 class Datasource(object):
     """
     A class for writing datasources to Tableau files.
@@ -26,20 +27,20 @@ class Datasource(object):
         self._name = self._datasourceXML.get('name')
         self._version = self._datasourceXML.get('version')
         self._connection = Connection(self._datasourceXML.find('connection'))
-    
+
     @classmethod
     def from_file(cls, filename):
         "Initialize datasource from file (.tds)"
         dsxml = ET.parse(filename).getroot()
         return cls(dsxml)
-        
+
     ###########
     # name
     ###########
     @property
     def name(self):
         return self._name
-        
+
     ###########
     # version
     ###########
