@@ -1,4 +1,4 @@
-# tableausdk-python
+# tableau-sdk-python
 
 This repo contains Python source and example files for the Tableau SDK. Currently the repo contains only the Document API. We're just getting started and have plans to expand what you find here. Help us by submitting feedback, issues, and pull requests!
 
