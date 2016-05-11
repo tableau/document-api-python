@@ -78,12 +78,12 @@ class Workbook(object):
         # save the file
         self._workbookTree.write(self._filename)
 
-    def save_as(self, value):
+    def save_as(self, new_filename):
         """
         Save our file with the name provided.
 
         Args:
-            value:  New name for the workbook file. String.
+            new_filename:  New name for the workbook file. String.
 
         Returns:
             Nothing.
@@ -91,9 +91,9 @@ class Workbook(object):
         """
 
         # We have a valid type of input file
-        if self._is_valid_file(value):
+        if self._is_valid_file(new_filename):
             # save the file
-            self._workbookTree.write(value)
+            self._workbookTree.write(new_filename)
         else:
             print('Invalid file type. Must be .twb or .tds.')
             raise Exception()
