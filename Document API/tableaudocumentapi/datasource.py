@@ -24,7 +24,7 @@ class Datasource(object):
 
         """
         self._datasourceXML = dsxml
-        self._name = self._datasourceXML.get('name')
+        self._name = self._datasourceXML.get('name') or self._datasourceXML.get('formatted-name') # TDS files don't have a name attribute
         self._version = self._datasourceXML.get('version')
         self._connection = Connection(self._datasourceXML.find('connection'))
 
