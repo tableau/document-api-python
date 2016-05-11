@@ -1,6 +1,6 @@
 import unittest
-import tempfile
-
+import io
+import os
 import xml.etree.ElementTree as ET
 
 from tableaudocumentapi import Workbook, Datasource, Connection
@@ -61,9 +61,13 @@ class ConnectionModelTests(unittest.TestCase):
 class DatasourceModelTests(unittest.TestCase):
 
     def setUp(self):
-        self.tds_file = tempfile.NamedTemporaryFile(suffix='.tds')
+        self.tds_file = io.FileIO('test.tds', 'w')
         self.tds_file.write(TABLEAU_93_TDS.encode('utf8'))
         self.tds_file.seek(0)
+
+    def tearDown(self):
+        self.tds_file.close()
+        os.unlink(self.tds_file.name)
 
     def test_can_extract_datasource_from_file(self):
         ds = Datasource.from_file(self.tds_file.name)
@@ -78,9 +82,13 @@ class DatasourceModelTests(unittest.TestCase):
 class WorkbookModelTests(unittest.TestCase):
 
     def setUp(self):
-        self.workbook_file = tempfile.NamedTemporaryFile(suffix='.twb')
+        self.workbook_file = io.FileIO('test.twb', 'w')
         self.workbook_file.write(TABLEAU_93_WORKBOOK.encode('utf8'))
         self.workbook_file.seek(0)
+
+    def tearDown(self):
+        self.workbook_file.close()
+        os.unlink(self.workbook_file.name)
 
     def test_can_extract_datasource(self):
         wb = Workbook(self.workbook_file.name)
