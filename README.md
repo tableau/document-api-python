@@ -20,7 +20,9 @@ To use this SDK, you must have Python installed. You can use either 2.7x or 3.3x
 
 Download the `.zip` file that contains the SDK. Unzip the file and then run the following command:
 
-	pip install -e <directory containing setup.py>
+```python
+pip install -e <directory containing setup.py>
+```
 
 We plan on putting the package in PyPi to make installation easier. 
 
@@ -28,16 +30,17 @@ We plan on putting the package in PyPi to make installation easier.
 ###Basics
 The following example shows the basic syntax for using the Document API to update a workbook:
 
-	from tableaudocumentapi import Workbook
-	
-	sourceWB = Workbook('WorkbookToUpdate.twb')
-	
-	sourceWB.datasources[0].connection.server = "MY-NEW-SERVER"
-	sourceWB.datasources[0].connection.dbname = "NEW-DATABASE"
-	sourceWB.datasources[0].connection.username = "benl"
-	
-	sourceWB.save()
+```python
+from tableaudocumentapi import Workbook
 
+sourceWB = Workbook('WorkbookToUpdate.twb')
+
+sourceWB.datasources[0].connection.server = "MY-NEW-SERVER"
+sourceWB.datasources[0].connection.dbname = "NEW-DATABASE"
+sourceWB.datasources[0].connection.username = "benl"
+
+sourceWB.save()
+```
 
 **Notes**
 
