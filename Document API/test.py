@@ -21,7 +21,9 @@ TABLEAU_93_TDS = '''<?xml version='1.0' encoding='utf-8' ?>
   </connection>
 </datasource>'''
 
-TABLEAU_CONNECTION_XML = ET.fromstring('''<connection authentication='sspi' class='sqlserver' dbname='TestV1' odbc-native-protocol='yes' one-time-sql='' server='mssql2012.test.tsi.lan' username=''></connection>''')
+TABLEAU_CONNECTION_XML = ET.fromstring(
+    '''<connection authentication='sspi' class='sqlserver' dbname='TestV1' odbc-native-protocol='yes' one-time-sql='' server='mssql2012.test.tsi.lan' username=''></connection>''')
+
 
 class HelperMethodTests(unittest.TestCase):
 
@@ -35,37 +37,6 @@ class HelperMethodTests(unittest.TestCase):
         self.assertFalse(Workbook._is_valid_file('file1.tds2'))
         self.assertFalse(Workbook._is_valid_file('file2.twb3'))
 
-class WorkbookModelTests(unittest.TestCase):
-
-    def setUp(self):
-        self.workbook_file = tempfile.NamedTemporaryFile(suffix='.twb')
-        self.workbook_file.write(TABLEAU_93_WORKBOOK.encode('utf8'))
-        self.workbook_file.seek(0)
-
-    def test_can_extract_datasource(self):
-        wb = Workbook(self.workbook_file.name)
-        self.assertEqual(len(wb.datasources), 1)
-        self.assertIsInstance(wb.datasources[0], Datasource)
-        self.assertEqual(wb.datasources[0].name, 'sqlserver.17u3bqc16tjtxn14e2hxh19tyvpo')
-
-class DatasourceModelTests(unittest.TestCase):
-
-    def setUp(self):
-        self.tds_file = tempfile.NamedTemporaryFile(suffix='.tds')
-        self.tds_file.write(TABLEAU_93_TDS.encode('utf8'))
-        self.tds_file.seek(0)
-
-    def test_can_extract_datasource_from_file(self):
-        ds = Datasource.from_file(self.tds_file.name)
-        self.assertEqual(ds.name, 'sqlserver.17u3bqc16tjtxn14e2hxh19tyvpo')
-        self.assertEqual(ds.version, '9.3')
-
-    def test_can_extract_connection(self):
-        ds = Datasource.from_file(self.tds_file.name)
-        self.assertIsInstance(ds.connection, Connection)
-        self.assertEqual(ds.connection.dbname, 'TestV1')
-        self.assertEqual(ds.connection.server, 'mssql2012.test.tsi.lan')
-        self.assertEqual(ds.connection.username, '')
 
 class ConnectionModelTests(unittest.TestCase):
 
@@ -85,6 +56,47 @@ class ConnectionModelTests(unittest.TestCase):
         self.assertEqual(conn.dbname, 'BubblesInMyDrink')
         self.assertEqual(conn.username, '')
         self.assertEqual(conn.server, 'mssql2014.test.tsi.lan')
+
+
+class DatasourceModelTests(unittest.TestCase):
+
+    def setUp(self):
+        self.tds_file = tempfile.NamedTemporaryFile(suffix='.tds')
+        self.tds_file.write(TABLEAU_93_TDS.encode('utf8'))
+        self.tds_file.seek(0)
+
+    def test_can_extract_datasource_from_file(self):
+        ds = Datasource.from_file(self.tds_file.name)
+        self.assertEqual(ds.name, 'sqlserver.17u3bqc16tjtxn14e2hxh19tyvpo')
+        self.assertEqual(ds.version, '9.3')
+
+    def test_can_extract_connection(self):
+        ds = Datasource.from_file(self.tds_file.name)
+        self.assertIsInstance(ds.connection, Connection)
+
+
+class WorkbookModelTests(unittest.TestCase):
+
+    def setUp(self):
+        self.workbook_file = tempfile.NamedTemporaryFile(suffix='.twb')
+        self.workbook_file.write(TABLEAU_93_WORKBOOK.encode('utf8'))
+        self.workbook_file.seek(0)
+
+    def test_can_extract_datasource(self):
+        wb = Workbook(self.workbook_file.name)
+        self.assertEqual(len(wb.datasources), 1)
+        self.assertIsInstance(wb.datasources[0], Datasource)
+        self.assertEqual(wb.datasources[0].name,
+                         'sqlserver.17u3bqc16tjtxn14e2hxh19tyvpo')
+
+    def test_can_update_datasource_connection_and_save(self):
+        original_wb = Workbook(self.workbook_file.name)
+        original_wb.datasources[0].connection.dbname = 'newdb.test.tsi.lan'
+        original_wb.save()
+
+        new_wb = Workbook(self.workbook_file.name)
+        self.assertEqual(new_wb.datasources[0].connection.dbname, 'newdb.test.tsi.lan')
+
 
 if __name__ == '__main__':
     unittest.main()
