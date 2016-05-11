@@ -4,7 +4,7 @@ This repo contains Python source and example files for the Tableau SDK. Currentl
 
 Document API
 ---------------
-The Document API provides a supported way to programmatically make updates to Tableau workbook (`.twb`) and data source (`.tds`) files. If you've been making changes to these file types by directly updating the XML--that is, by XML hacking--this SDK is for you :)
+The Document API provides a supported way to programmatically make updates to Tableau workbook (`.twb`) and datasource (`.tds`) files. If you've been making changes to these file types by directly updating the XML--that is, by XML hacking--this SDK is for you :)
 
 Currently only the following operations are supported:
 
