@@ -18,12 +18,14 @@ class Datasource(object):
     # Public API.
     #
     ###########################################################################
-    def __init__(self, dsxml):
+    def __init__(self, dsxml, filename=None):
         """
         Constructor.  Default is to create datasource from xml.
 
         """
+        self._filename = filename
         self._datasourceXML = dsxml
+        self._datasourceTree = ET.ElementTree(self._datasourceXML)
         self._name = self._datasourceXML.get('name') or self._datasourceXML.get('formatted-name') # TDS files don't have a name attribute
         self._version = self._datasourceXML.get('version')
         self._connection = Connection(self._datasourceXML.find('connection'))
@@ -32,7 +34,36 @@ class Datasource(object):
     def from_file(cls, filename):
         "Initialize datasource from file (.tds)"
         dsxml = ET.parse(filename).getroot()
-        return cls(dsxml)
+        return cls(dsxml, filename)
+
+    def save(self):
+        """
+        Call finalization code and save file.
+
+        Args:
+            None.
+
+        Returns:
+            Nothing.
+
+        """
+
+        # save the file
+        self._datasourceTree.write(self._filename)
+
+    def save_as(self, new_filename):
+        """
+        Save our file with the name provided.
+
+        Args:
+            new_filename:  New name for the workbook file. String.
+
+        Returns:
+            Nothing.
+
+        """
+        self._datasourceTree.write(new_filename)
+
 
     ###########
     # name
