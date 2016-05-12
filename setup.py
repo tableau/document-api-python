@@ -9,7 +9,7 @@ setup(
     summary='A Python module for working with Tableau files.',
     author='Tableau Software',
     author_email='github@tableau.com',
-    url='https://github.com/tableau/tableausdk-python',
+    url='https://github.com/tableau/document-api-python',
     py_modules=['tableaudocumentapi'],
     license='MIT',
     description='A Python module for working with Tableau files.'
