@@ -78,6 +78,14 @@ class DatasourceModelTests(unittest.TestCase):
         ds = Datasource.from_file(self.tds_file.name)
         self.assertIsInstance(ds.connection, Connection)
 
+    def test_can_save_tds(self):
+        original_tds = Datasource.from_file(self.tds_file.name)
+        original_tds.connection.dbname = 'newdb.test.tsi.lan'
+        original_tds.save()
+
+        new_tds = Datasource.from_file(self.tds_file.name)
+        self.assertEqual(new_tds.connection.dbname, 'newdb.test.tsi.lan')
+
 
 class WorkbookModelTests(unittest.TestCase):
 

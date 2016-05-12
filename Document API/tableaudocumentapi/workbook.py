@@ -90,13 +90,8 @@ class Workbook(object):
 
         """
 
-        # We have a valid type of input file
-        if self._is_valid_file(new_filename):
-            # save the file
-            self._workbookTree.write(new_filename)
-        else:
-            print('Invalid file type. Must be .twb or .tds.')
-            raise Exception()
+        self._workbookTree.write(new_filename)
+
 
     ###########################################################################
     #
