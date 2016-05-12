@@ -1,6 +1,6 @@
-# tableau-sdk-python
+# document-api-python
 
-This repo contains Python source and example files for the Tableau SDK. Currently the repo contains only the Document API. We're just getting started and have plans to expand what you find here. Help us by submitting feedback, issues, and pull requests!
+This repo contains Python source and example files for the Tableau Document API. We're just getting started and have plans to expand what you find here. Help us by submitting feedback, issues, and pull requests!
 
 Document API
 ---------------
@@ -54,4 +54,4 @@ sourceWB.save()
 
 ###Examples
 
-The downloadable package contains an example named `replicateWorkbook.py` (in the folder `\Document API\Examples\Replicate Workbook`). This example reads an existing workbook and reads a .csv file that contains a list of servers, database names, and users. For each new user in the .csv file, the code copies the original workbook, updates the `server`, `dbname`, and `username` properties, and saves the workbook under a new name.  
+The downloadable package contains an example named `replicateWorkbook.py` (in the folder `\Examples\Replicate Workbook`). This example reads an existing workbook and reads a .csv file that contains a list of servers, database names, and users. For each new user in the .csv file, the code copies the original workbook, updates the `server`, `dbname`, and `username` properties, and saves the workbook under a new name.  
