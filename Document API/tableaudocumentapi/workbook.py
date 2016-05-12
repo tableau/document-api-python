@@ -7,6 +7,7 @@ import os
 import xml.etree.ElementTree as ET
 from tableaudocumentapi import Datasource
 
+
 class Workbook(object):
     """
     A class for writing Tableau workbook files.
@@ -29,13 +30,14 @@ class Workbook(object):
             self._filename = filename
             self._workbookTree = ET.parse(filename)
             self._workbookRoot = self._workbookTree.getroot()
-            
+
             # prepare our datasource objects
-            self._datasources = self._prepare_datasources(self._workbookRoot)  #self.workbookRoot.find('datasources')
+            self._datasources = self._prepare_datasources(
+                self._workbookRoot)  # self.workbookRoot.find('datasources')
         else:
             print('Invalid file type. Must be .twb or .tds.')
             raise Exception()
-            
+
     @classmethod
     def from_file(cls, filename):
         "Initialize datasource from file (.tds)"
@@ -46,14 +48,14 @@ class Workbook(object):
         else:
             print('Invalid file type. Must be .twb or .tds.')
             raise Exception()
-            
+
     ###########
     # datasources
     ###########
     @property
     def datasources(self):
         return self._datasources
-    
+
     ###########
     # filename
     ###########
@@ -72,26 +74,26 @@ class Workbook(object):
             Nothing.
 
         """
-        
+
         # save the file
         self._workbookTree.write(self._filename)
-        
-    def save_as(self, value):
+
+    def save_as(self, new_filename):
         """
         Save our file with the name provided.
 
         Args:
-            value:  New name for the workbook file. String.
+            new_filename:  New name for the workbook file. String.
 
         Returns:
             Nothing.
 
         """
-        
+
         # We have a valid type of input file
-        if self._is_valid_file(value):
+        if self._is_valid_file(new_filename):
             # save the file
-            self._workbookTree.write(value)
+            self._workbookTree.write(new_filename)
         else:
             print('Invalid file type. Must be .twb or .tds.')
             raise Exception()
@@ -103,21 +105,16 @@ class Workbook(object):
     ###########################################################################
     def _prepare_datasources(self, xmlRoot):
         datasources = []
-        
+
         # loop through our datasources and append
         for datasource in xmlRoot.find('datasources'):
             ds = Datasource(datasource)
             datasources.append(ds)
-        
+
         return datasources
-        
-    def _is_valid_file(self, filename):
-        valid = 0
+
+    @staticmethod
+    def _is_valid_file(filename):
         fileExtension = os.path.splitext(filename)[-1].lower()
-        
-        if fileExtension == ".twb":
-            valid = 1
-        elif fileExtension == ".tds":
-            valid = 1
-            
-        return valid
+        return fileExtension in ('.twb', '.tds')
+

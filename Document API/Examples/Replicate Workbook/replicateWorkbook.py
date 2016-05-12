@@ -1,5 +1,4 @@
 import csv              # so we can work with our database list (in a CSV file)
-import copy             # to make copies
 
 ############################################################
 # Step 1)  Use Workbook object from the Document API
@@ -16,13 +15,11 @@ sourceWB = Workbook('Sample - Superstore.twb')
 #          create new .twb's with their settings
 ############################################################
 with open('databases.csv') as csvfile:
-    next(csvfile)               # Skip the first line which is our CSV header row
-    databases = csv.reader(csvfile, delimiter=',', quotechar='"')
+    databases = csv.DictReader(csvfile, delimiter=',', quotechar='"')
     for row in databases:
-        newWB = copy.copy(sourceWB)
-        
         # Set our unique values for this database
-        newWB.datasources[0].connection.server = row[1]         # Server
-        newWB.datasources[0].connection.dbname = row[2]         # Database
-        newWB.datasources[0].connection.username = row[3]       # User
-        newWB.save_as(row[0] + ' - Superstore' + '.twb')        # Save our newly created .twb with the new file name
+        sourceWB.datasources[0].connection.server = row['Server']
+        sourceWB.datasources[0].connection.dbname = row['Database']
+        sourceWB.datasources[0].connection.username = row['User']
+        # Save our newly created .twb with the new file name
+        sourceWB.save_as(row['DBFriendlyName'] + ' - Superstore' + '.twb')
