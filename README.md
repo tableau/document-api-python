@@ -20,7 +20,7 @@ To use this SDK, you must have Python installed. You can use either 2.7x or 3.3x
 
 Download the `.zip` file that contains the SDK. Unzip the file and then run the following command:
 
-```python
+```text
 pip install -e <directory containing setup.py>
 ```
 
