@@ -39,6 +39,13 @@ class HelperMethodTests(unittest.TestCase):
         self.assertFalse(Workbook._is_valid_file('file1.tds2'))
         self.assertFalse(Workbook._is_valid_file('file2.twb3'))
 
+class ConnectionParserTests(unittest.TestCase):
+
+    def test_can_extract_legacy_connection(self):
+        pass
+
+    def test_can_extract_federated_connections(self):
+        pass
 
 class ConnectionModelTests(unittest.TestCase):
 
@@ -128,6 +135,7 @@ class WorkbookModelTests(unittest.TestCase):
         self.assertEqual(new_wb.datasources[0].connection[0].dbname, 'newdb.test.tsi.lan')
 
         temp.close()
+        os.unlink(temp.name)
 
     def test_can_extract_datasourceV10(self):
         temp = io.FileIO('v10test.twb', 'w')
