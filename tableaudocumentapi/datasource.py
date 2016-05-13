@@ -12,18 +12,18 @@ class ConnectionParser(object):
         self._dsxml = datasource_xml
         self._dsversion = version
 
+    def _extract_federated_connections(self):
+        return list(map(Connection,self._dsxml.findall('.//named-connections/named-connection/*')))
+
+    def _extract_legacy_connection(self):
+        return Connection(self._dsxml.find('connection'))
+
     def get_connections(self):
         if float(self._dsversion) < 10:
             connections = self._extract_legacy_connection()
         else:
             connections = self._extract_federated_connections()
         return connections
-
-    def _extract_federated_connections(self):
-        return list(map(Connection,self._dsxml.findall('.//named-connections/named-connection/*')))
-
-    def _extract_legacy_connection(self):
-        return Connection(self._dsxml.find('connection'))
 
 
 class Datasource(object):
