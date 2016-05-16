@@ -92,7 +92,6 @@ class Workbook(object):
 
         self._workbookTree.write(new_filename)
 
-
     ###########################################################################
     #
     # Private API.
@@ -112,4 +111,3 @@ class Workbook(object):
     def _is_valid_file(filename):
         fileExtension = os.path.splitext(filename)[-1].lower()
         return fileExtension in ('.twb', '.tds')
-
