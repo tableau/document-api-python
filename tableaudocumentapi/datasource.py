@@ -102,7 +102,7 @@ class Datasource(object):
         return self._version
 
     ###########
-    # connection
+    # connections
     ###########
     @property
     def connections(self):
