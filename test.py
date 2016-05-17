@@ -34,9 +34,10 @@ class ConnectionParserTests(unittest.TestCase):
 
     def test_can_extract_legacy_connection(self):
         parser = ConnectionParser(ET.fromstring(TABLEAU_93_TDS), '9.2')
-        connection = parser.get_connections()
-        self.assertIsInstance(connection, Connection)
-        self.assertEqual(connection.dbname, 'TestV1')
+        connections = parser.get_connections()
+        self.assertIsInstance(connections, list)
+        self.assertIsInstance(connections[0], Connection)
+        self.assertEqual(connections[0].dbname, 'TestV1')
 
 
     def test_can_extract_federated_connections(self):
@@ -85,15 +86,16 @@ class DatasourceModelTests(unittest.TestCase):
 
     def test_can_extract_connection(self):
         ds = Datasource.from_file(self.tds_file.name)
-        self.assertIsInstance(ds.connection, Connection)
+        self.assertIsInstance(ds.connections[0], Connection)
+        self.assertIsInstance(ds.connections, list)
 
     def test_can_save_tds(self):
         original_tds = Datasource.from_file(self.tds_file.name)
-        original_tds.connection.dbname = 'newdb.test.tsi.lan'
+        original_tds.connections[0].dbname = 'newdb.test.tsi.lan'
         original_tds.save()
 
         new_tds = Datasource.from_file(self.tds_file.name)
-        self.assertEqual(new_tds.connection.dbname, 'newdb.test.tsi.lan')
+        self.assertEqual(new_tds.connections[0].dbname, 'newdb.test.tsi.lan')
 
 
 class WorkbookModelTests(unittest.TestCase):
@@ -116,11 +118,11 @@ class WorkbookModelTests(unittest.TestCase):
 
     def test_can_update_datasource_connection_and_save(self):
         original_wb = Workbook(self.workbook_file.name)
-        original_wb.datasources[0].connection.dbname = 'newdb.test.tsi.lan'
+        original_wb.datasources[0].connections[0].dbname = 'newdb.test.tsi.lan'
         original_wb.save()
 
         new_wb = Workbook(self.workbook_file.name)
-        self.assertEqual(new_wb.datasources[0].connection.dbname, 'newdb.test.tsi.lan')
+        self.assertEqual(new_wb.datasources[0].connections[0].dbname, 'newdb.test.tsi.lan')
 
 
 class WorkbookModelV10Tests(unittest.TestCase):
@@ -137,20 +139,20 @@ class WorkbookModelV10Tests(unittest.TestCase):
     def test_can_extract_datasourceV10(self):
         wb = Workbook(self.workbook_file.name)
         self.assertEqual(len(wb.datasources), 1)
-        self.assertEqual(len(wb.datasources[0].connection), 2)
-        self.assertIsInstance(wb.datasources[0].connection, list)
+        self.assertEqual(len(wb.datasources[0].connections), 2)
+        self.assertIsInstance(wb.datasources[0].connections, list)
         self.assertIsInstance(wb.datasources[0], Datasource)
         self.assertEqual(wb.datasources[0].name,
                          'federated.1s4nxn20cywkdv13ql0yk0g1mpdx')
 
     def test_can_update_datasource_connection_and_saveV10(self):
         original_wb = Workbook(self.workbook_file.name)
-        original_wb.datasources[0].connection[0].dbname = 'newdb.test.tsi.lan'
+        original_wb.datasources[0].connections[0].dbname = 'newdb.test.tsi.lan'
 
         original_wb.save()
 
         new_wb = Workbook(self.workbook_file.name)
-        self.assertEqual(new_wb.datasources[0].connection[0].dbname, 'newdb.test.tsi.lan')
+        self.assertEqual(new_wb.datasources[0].connections[0].dbname, 'newdb.test.tsi.lan')
 
 if __name__ == '__main__':
     unittest.main()

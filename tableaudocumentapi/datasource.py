@@ -6,6 +6,7 @@
 import xml.etree.ElementTree as ET
 from tableaudocumentapi import Connection
 
+
 class ConnectionParser(object):
 
     def __init__(self, datasource_xml, version):
@@ -13,10 +14,10 @@ class ConnectionParser(object):
         self._dsversion = version
 
     def _extract_federated_connections(self):
-        return list(map(Connection,self._dsxml.findall('.//named-connections/named-connection/*')))
+        return list(map(Connection, self._dsxml.findall('.//named-connections/named-connection/*')))
 
     def _extract_legacy_connection(self):
-        return Connection(self._dsxml.find('connection'))
+        return list(map(Connection, self._dsxml.findall('connection')))
 
     def get_connections(self):
         if float(self._dsversion) < 10:
@@ -45,10 +46,12 @@ class Datasource(object):
         self._filename = filename
         self._datasourceXML = dsxml
         self._datasourceTree = ET.ElementTree(self._datasourceXML)
-        self._name = self._datasourceXML.get('name') or self._datasourceXML.get('formatted-name') # TDS files don't have a name attribute
+        self._name = self._datasourceXML.get('name') or self._datasourceXML.get(
+            'formatted-name')  # TDS files don't have a name attribute
         self._version = self._datasourceXML.get('version')
-        self._connection_parser = ConnectionParser(self._datasourceXML, version=self._version)
-        self._connection = self._connection_parser.get_connections()
+        self._connection_parser = ConnectionParser(
+            self._datasourceXML, version=self._version)
+        self._connections = self._connection_parser.get_connections()
 
     @classmethod
     def from_file(cls, filename):
@@ -84,7 +87,6 @@ class Datasource(object):
         """
         self._datasourceTree.write(new_filename)
 
-
     ###########
     # name
     ###########
@@ -100,8 +102,8 @@ class Datasource(object):
         return self._version
 
     ###########
-    # connection
+    # connections
     ###########
     @property
-    def connection(self):
-        return self._connection
+    def connections(self):
+        return self._connections
