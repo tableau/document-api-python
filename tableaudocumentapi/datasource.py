@@ -59,6 +59,29 @@ class Datasource(object):
         dsxml = ET.parse(filename).getroot()
         return cls(dsxml, filename)
 
+    def get_connections_by_server_name(self, server_name):
+        matches = []
+        if server_name:
+            for connection in self._connections:
+                if str(server_name) == connection.server:
+                    matches.append(connection)
+
+        return matches
+
+    def get_connections_by_attributes(self, attribs):
+        matches = []
+
+        valid_attributes = ('server', 'username', 'dbclass', 'dbname')
+
+        assert all(attr in valid_attributes for attr in attribs.keys())
+
+        for conn in self._connections:
+            for key in attribs.keys():
+                if getattr(conn, key).lower() == attribs[key].lower():
+                        matches.append(conn)
+
+        return matches
+
     def save(self):
         """
         Call finalization code and save file.
