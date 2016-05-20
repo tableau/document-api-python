@@ -26,6 +26,11 @@ class Connection(object):
         self._dbname = connxml.get('dbname')
         self._server = connxml.get('server')
         self._username = connxml.get('username')
+        self._authentication = connxml.get('authentication')
+        self._class = connxml.get('class')
+
+    def __repr__(self):
+        return "'<Connection->{}::{}>'".format(self._dbname, self._server)
 
     ###########
     # dbname
@@ -92,3 +97,33 @@ class Connection(object):
         """
         self._username = value
         self._connectionXML.set('username', value)
+
+    ###########
+    # authentication
+    ###########
+    @property
+    def authentication(self):
+        return self._authentication
+
+    ###########
+    # authentication
+    ###########
+    @authentication.setter
+    def authentication(self, value):
+        self._authentication = value
+        self._connectionXML.set('authentication', value)
+
+    ###########
+    # dbclass
+    ###########
+    @property
+    def dbclass(self):
+        return self._class
+
+    ###########
+    # dbclass
+    ###########
+    @dbclass.setter
+    def dbclass(self, value):
+        self._class = value
+        self._connectionXML.set('class', value)
