@@ -10,12 +10,13 @@ TABLEAU_93_WORKBOOK = '''<?xml version='1.0' encoding='utf-8' ?><workbook source
 
 TABLEAU_93_TDS = '''<?xml version='1.0' encoding='utf-8' ?><datasource formatted-name='sqlserver.17u3bqc16tjtxn14e2hxh19tyvpo' inline='true' source-platform='mac' version='9.3' xmlns:user='http://www.tableausoftware.com/xml/user'><connection authentication='sspi' class='sqlserver' dbname='TestV1' odbc-native-protocol='yes' one-time-sql='' server='mssql2012.test.tsi.lan' username=''></connection></datasource>'''
 
-TABLEAU_10_TDS = '''<?xml version='1.0' encoding='utf-8' ?><datasources><datasource caption='xy+ (Multiple Connections)' inline='true' name='federated.1s4nxn20cywkdv13ql0yk0g1mpdx' version='10.0'><connection class='federated'><named-connections><named-connection caption='mysql55.test.tsi.lan' name='mysql.1ewmkrw0mtgsev1dnurma1blii4x'><connection class='mysql' dbname='testv1' odbc-native-protocol='yes' port='3306' server='mysql55.test.tsi.lan' source-charset='' username='test' /></named-connection><named-connection caption='mssql2012.test.tsi.lan' name='sqlserver.1erdwp01uqynlb14ul78p0haai2r'><connection authentication='sqlserver' class='sqlserver' dbname='TestV1' odbc-native-protocol='yes' one-time-sql='' server='mssql2012.test.tsi.lan' username='test' /></named-connection></named-connections></connection></datasource></datasources>'''
+TABLEAU_10_TDS = '''<?xml version='1.0' encoding='utf-8' ?><datasource caption='xy+ (Multiple Connections)' inline='true' name='federated.1s4nxn20cywkdv13ql0yk0g1mpdx' version='10.0'><connection class='federated'><named-connections><named-connection caption='mysql55.test.tsi.lan' name='mysql.1ewmkrw0mtgsev1dnurma1blii4x'><connection class='mysql' dbname='testv1' odbc-native-protocol='yes' port='3306' server='mysql55.test.tsi.lan' source-charset='' username='test' /></named-connection><named-connection caption='mssql2012.test.tsi.lan' name='sqlserver.1erdwp01uqynlb14ul78p0haai2r'><connection authentication='sqlserver' class='sqlserver' dbname='TestV1' odbc-native-protocol='yes' one-time-sql='' server='mssql2012.test.tsi.lan' username='test' /></named-connection></named-connections></connection></datasource>'''
 
 TABLEAU_10_WORKBOOK = '''<?xml version='1.0' encoding='utf-8' ?><workbook source-build='0.0.0 (0000.16.0510.1300)' source-platform='mac' version='10.0' xmlns:user='http://www.tableausoftware.com/xml/user'><datasources><datasource caption='xy+ (Multiple Connections)' inline='true' name='federated.1s4nxn20cywkdv13ql0yk0g1mpdx' version='10.0'><connection class='federated'><named-connections><named-connection caption='mysql55.test.tsi.lan' name='mysql.1ewmkrw0mtgsev1dnurma1blii4x'><connection class='mysql' dbname='testv1' odbc-native-protocol='yes' port='3306' server='mysql55.test.tsi.lan' source-charset='' username='test' /></named-connection><named-connection caption='mssql2012.test.tsi.lan' name='sqlserver.1erdwp01uqynlb14ul78p0haai2r'><connection authentication='sqlserver' class='sqlserver' dbname='TestV1' odbc-native-protocol='yes' one-time-sql='' server='mssql2012.test.tsi.lan' username='test' /></named-connection></named-connections></connection></datasource></datasources></workbook>'''
 
 TABLEAU_CONNECTION_XML = ET.fromstring(
     '''<connection authentication='sspi' class='sqlserver' dbname='TestV1' odbc-native-protocol='yes' one-time-sql='' server='mssql2012.test.tsi.lan' username=''></connection>''')
+
 
 class HelperMethodTests(unittest.TestCase):
 
@@ -39,7 +40,6 @@ class ConnectionParserTests(unittest.TestCase):
         self.assertIsInstance(connections[0], Connection)
         self.assertEqual(connections[0].dbname, 'TestV1')
 
-
     def test_can_extract_federated_connections(self):
         parser = ConnectionParser(ET.fromstring(TABLEAU_10_TDS), '10.0')
         connections = parser.get_connections()
@@ -58,13 +58,16 @@ class ConnectionModelTests(unittest.TestCase):
         self.assertEqual(conn.dbname, 'TestV1')
         self.assertEqual(conn.username, '')
         self.assertEqual(conn.server, 'mssql2012.test.tsi.lan')
+        self.assertEqual(conn.dbclass, 'sqlserver')
+        self.assertEqual(conn.authentication, 'sspi')
 
     def test_can_write_attributes_to_connection(self):
         conn = Connection(self.connection)
         conn.dbname = 'BubblesInMyDrink'
         conn.server = 'mssql2014.test.tsi.lan'
+        conn.username = 'bob'
         self.assertEqual(conn.dbname, 'BubblesInMyDrink')
-        self.assertEqual(conn.username, '')
+        self.assertEqual(conn.username, 'bob')
         self.assertEqual(conn.server, 'mssql2014.test.tsi.lan')
 
 
@@ -98,6 +101,77 @@ class DatasourceModelTests(unittest.TestCase):
         self.assertEqual(new_tds.connections[0].dbname, 'newdb.test.tsi.lan')
 
 
+class DatasourceModelV10Tests(unittest.TestCase):
+
+    def setUp(self):
+        self.tds_file = io.FileIO('test10.tds', 'w')
+        self.tds_file.write(TABLEAU_10_TDS.encode('utf8'))
+        self.tds_file.seek(0)
+
+    def tearDown(self):
+        self.tds_file.close()
+        os.unlink(self.tds_file.name)
+
+    def test_can_extract_datasource_from_file(self):
+        ds = Datasource.from_file(self.tds_file.name)
+        self.assertEqual(ds.name, 'federated.1s4nxn20cywkdv13ql0yk0g1mpdx')
+        self.assertEqual(ds.version, '10.0')
+
+    def test_can_extract_connection(self):
+        ds = Datasource.from_file(self.tds_file.name)
+        self.assertIsInstance(ds.connections[0], Connection)
+        self.assertIsInstance(ds.connections, list)
+
+    def test_can_save_tds(self):
+        original_tds = Datasource.from_file(self.tds_file.name)
+        original_tds.connections[0].dbname = 'newdb.test.tsi.lan'
+        original_tds.save()
+
+        new_tds = Datasource.from_file(self.tds_file.name)
+        self.assertEqual(new_tds.connections[0].dbname, 'newdb.test.tsi.lan')
+
+    def test_find_matching_connections(self):
+        ds = Datasource.from_file(self.tds_file.name)
+        self.assertEqual(ds.get_connections_by_server_name(''), [])
+        self.assertEqual(
+            len(ds.get_connections_by_server_name('mssql2012.test.tsi.lan')), 1)
+
+        my_connections = ds.get_connections_by_server_name(
+            'mssql2012.test.tsi.lan')
+        self.assertEqual(my_connections[0].server, 'mssql2012.test.tsi.lan')
+
+    def test_find_all_matching_connections_by_dbname(self):
+        ds = Datasource.from_file(self.tds_file.name)
+
+        my_connections = ds.get_connections_by_attributes({"dbname": "testv1"})
+        self.assertEqual(len(my_connections), 2)
+        self.assertEqual(my_connections[0].dbname.lower(), 'testv1')
+        self.assertEqual(my_connections[1].dbname.lower(), 'testv1')
+
+    def test_find_matching_connections_with_multiple_attributes(self):
+        ds = Datasource.from_file(self.tds_file.name)
+
+        my_connections = sorted(ds.get_connections_by_attributes(
+            {"dbclass": "mysql", "server": "mssql2012.test.tsi.lan"}),
+            key=lambda x: x.server)
+        self.assertEqual(len(my_connections), 2)
+        self.assertEqual(my_connections[0].server, 'mssql2012.test.tsi.lan')
+        self.assertEqual(my_connections[1].dbclass, 'mysql')
+
+    def test_raise_error_with_invalid_connection_attribute(self):
+        ds = Datasource.from_file(self.tds_file.name)
+
+        with self.assertRaises(RuntimeError):
+            my_connections = ds.get_connections_by_attributes(
+                {"fruit": "apple"})
+
+    def test_raise_error_with_no_connection_attribute(self):
+        ds = Datasource.from_file(self.tds_file.name)
+
+        with self.assertRaises(RuntimeError):
+            my_connections = ds.get_connections_by_attributes({})
+
+
 class WorkbookModelTests(unittest.TestCase):
 
     def setUp(self):
@@ -122,7 +196,8 @@ class WorkbookModelTests(unittest.TestCase):
         original_wb.save()
 
         new_wb = Workbook(self.workbook_file.name)
-        self.assertEqual(new_wb.datasources[0].connections[0].dbname, 'newdb.test.tsi.lan')
+        self.assertEqual(new_wb.datasources[0].connections[
+                         0].dbname, 'newdb.test.tsi.lan')
 
 
 class WorkbookModelV10Tests(unittest.TestCase):
@@ -152,7 +227,8 @@ class WorkbookModelV10Tests(unittest.TestCase):
         original_wb.save()
 
         new_wb = Workbook(self.workbook_file.name)
-        self.assertEqual(new_wb.datasources[0].connections[0].dbname, 'newdb.test.tsi.lan')
+        self.assertEqual(new_wb.datasources[0].connections[
+                         0].dbname, 'newdb.test.tsi.lan')
 
 if __name__ == '__main__':
     unittest.main()
