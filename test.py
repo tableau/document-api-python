@@ -17,6 +17,7 @@ TABLEAU_10_WORKBOOK = '''<?xml version='1.0' encoding='utf-8' ?><workbook source
 TABLEAU_CONNECTION_XML = ET.fromstring(
     '''<connection authentication='sspi' class='sqlserver' dbname='TestV1' odbc-native-protocol='yes' one-time-sql='' server='mssql2012.test.tsi.lan' username=''></connection>''')
 
+
 class HelperMethodTests(unittest.TestCase):
 
     def test_is_valid_file_with_valid_inputs(self):
@@ -38,7 +39,6 @@ class ConnectionParserTests(unittest.TestCase):
         self.assertIsInstance(connections, list)
         self.assertIsInstance(connections[0], Connection)
         self.assertEqual(connections[0].dbname, 'TestV1')
-
 
     def test_can_extract_federated_connections(self):
         parser = ConnectionParser(ET.fromstring(TABLEAU_10_TDS), '10.0')
@@ -97,6 +97,17 @@ class DatasourceModelTests(unittest.TestCase):
         new_tds = Datasource.from_file(self.tds_file.name)
         self.assertEqual(new_tds.connections[0].dbname, 'newdb.test.tsi.lan')
 
+    def test_save_has_xml_declaration(self):
+        original_tds = Datasource.from_file(self.tds_file.name)
+        original_tds.connections[0].dbname = 'newdb.test.tsi.lan'
+
+        original_tds.save()
+
+        with open(self.tds_file.name) as f:
+            first_line = f.readline().strip()  # first line should be xml tag
+            self.assertEqual(
+                first_line, "<?xml version='1.0' encoding='utf-8'?>")
+
 
 class WorkbookModelTests(unittest.TestCase):
 
@@ -122,7 +133,8 @@ class WorkbookModelTests(unittest.TestCase):
         original_wb.save()
 
         new_wb = Workbook(self.workbook_file.name)
-        self.assertEqual(new_wb.datasources[0].connections[0].dbname, 'newdb.test.tsi.lan')
+        self.assertEqual(new_wb.datasources[0].connections[
+                         0].dbname, 'newdb.test.tsi.lan')
 
 
 class WorkbookModelV10Tests(unittest.TestCase):
@@ -152,7 +164,19 @@ class WorkbookModelV10Tests(unittest.TestCase):
         original_wb.save()
 
         new_wb = Workbook(self.workbook_file.name)
-        self.assertEqual(new_wb.datasources[0].connections[0].dbname, 'newdb.test.tsi.lan')
+        self.assertEqual(new_wb.datasources[0].connections[
+                         0].dbname, 'newdb.test.tsi.lan')
+
+    def test_save_has_xml_declaration(self):
+        original_wb = Workbook(self.workbook_file.name)
+        original_wb.datasources[0].connections[0].dbname = 'newdb.test.tsi.lan'
+
+        original_wb.save()
+
+        with open(self.workbook_file.name) as f:
+            first_line = f.readline().strip()  # first line should be xml tag
+            self.assertEqual(
+                first_line, "<?xml version='1.0' encoding='utf-8'?>")
 
 if __name__ == '__main__':
     unittest.main()

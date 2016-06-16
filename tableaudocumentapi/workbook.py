@@ -76,7 +76,7 @@ class Workbook(object):
         """
 
         # save the file
-        self._workbookTree.write(self._filename)
+        self._workbookTree.write(self._filename, encoding="utf-8", xml_declaration=True)
 
     def save_as(self, new_filename):
         """
@@ -90,7 +90,7 @@ class Workbook(object):
 
         """
 
-        self._workbookTree.write(new_filename)
+        self._workbookTree.write(new_filename, encoding="utf-8", xml_declaration=True)
 
     ###########################################################################
     #

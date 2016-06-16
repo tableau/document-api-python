@@ -72,7 +72,7 @@ class Datasource(object):
         """
 
         # save the file
-        self._datasourceTree.write(self._filename)
+        self._datasourceTree.write(self._filename, encoding="utf-8", xml_declaration=True)
 
     def save_as(self, new_filename):
         """
@@ -85,7 +85,7 @@ class Datasource(object):
             Nothing.
 
         """
-        self._datasourceTree.write(new_filename)
+        self._datasourceTree.write(new_filename, encoding="utf-8", xml_declaration=True)
 
     ###########
     # name
