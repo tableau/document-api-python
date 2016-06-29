@@ -5,18 +5,19 @@ import xml.etree.ElementTree as ET
 
 from tableaudocumentapi import Workbook, Datasource, Connection, ConnectionParser
 
+TEST_DIR = os.path.dirname(__file__)
 
-TABLEAU_93_TWB = 'test/assets/TABLEAU_93_TWB.twb'
+TABLEAU_93_TWB = os.path.join(TEST_DIR, 'assets', 'TABLEAU_93_TWB.twb')
 
-TABLEAU_93_TDS = 'test/assets/TABLEAU_93_TDS.tds'
+TABLEAU_93_TDS = os.path.join(TEST_DIR, 'assets', 'TABLEAU_93_TDS.tds')
 
-TABLEAU_10_TDS = 'test/assets/TABLEAU_10_TDS.tds'
+TABLEAU_10_TDS = os.path.join(TEST_DIR, 'assets', 'TABLEAU_10_TDS.tds')
 
-TABLEAU_10_TWB = 'test/assets/TABLEAU_10_TWB.twb'
+TABLEAU_10_TWB = os.path.join(TEST_DIR, 'assets', 'TABLEAU_10_TWB.twb')
 
-TABLEAU_CONNECTION_XML = ET.parse('test/assets/CONNECTION.xml').getroot()
+TABLEAU_CONNECTION_XML = ET.parse(os.path.join(TEST_DIR, 'assets', 'CONNECTION.xml')).getroot()
 
-TABLEAU_10_TWBX = 'test/assets/TABLEAU_10_TWBX.twbx'
+TABLEAU_10_TWBX = os.path.join(TEST_DIR, 'assets', 'TABLEAU_10_TWBX.twbx')
 
 
 class HelperMethodTests(unittest.TestCase):
