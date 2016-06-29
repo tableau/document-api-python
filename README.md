@@ -20,6 +20,14 @@ We don't yet support creating files from scratch. In addition, support for `.twb
 ###Getting Started
 To use this SDK, you must have Python installed. You can use either 2.7.X or 3.3 and later.
 
+#### Installing the latest stable version (preferred)
+
+```text
+pip install tableaudocumentapi
+```
+
+#### Installing From Source
+
 Download the `.zip` file that contains the SDK. Unzip the file and then run the following command:
 
 ```text

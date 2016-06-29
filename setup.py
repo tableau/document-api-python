@@ -9,7 +9,7 @@ setup(
     author='Tableau Software',
     author_email='github@tableau.com',
     url='https://github.com/tableau/document-api-python',
-    py_modules=['tableaudocumentapi'],
+    packages=['tableaudocumentapi'],
     license='MIT',
     description='A Python module for working with Tableau files.',
     test_suite='test'
