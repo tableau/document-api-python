@@ -115,7 +115,8 @@ class Workbook(object):
         if zipfile.is_zipfile(self._filename):
             self._save_into_twbx(self._filename)
         else:
-            self._workbookTree.write(self._filename)
+            self._workbookTree.write(
+                self._filename, encoding="utf-8", xml_declaration=True)
 
     def save_as(self, new_filename):
         """
@@ -128,10 +129,12 @@ class Workbook(object):
             Nothing.
 
         """
+
         if zipfile.is_zipfile(self._filename):
             self._save_into_twbx(new_filename)
         else:
-            self._workbookTree.write(new_filename)
+            self._workbookTree.write(
+                new_filename, encoding="utf-8", xml_declaration=True)
 
     ###########################################################################
     #
@@ -164,7 +167,8 @@ class Workbook(object):
                 twb_file = find_twb_in_zip(zf)
                 zf.extractall(temp_path)
             # Write the new version of the twb to the temp directory
-            self._workbookTree.write(os.path.join(temp_path, twb_file))
+            self._workbookTree.write(os.path.join(
+                temp_path, twb_file), encoding="utf-8", xml_declaration=True)
 
             # Write the new twbx with the contents of the temp folder
             with zipfile.ZipFile(filename, "w", compression=zipfile.ZIP_DEFLATED) as new_twbx:

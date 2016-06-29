@@ -1,0 +1,21 @@
+language: python
+python:
+  - "2.7"
+  - "3.3"
+  - "3.4"
+  - "3.5"
+  - "pypy"
+# command to install dependencies
+install:
+  - "pip install -e ."
+  - "pip install pep8"
+# command to run tests
+script:
+  # Tests
+  - python test.py
+  # pep8
+  - pep8 --ignore=E501 .
+  # Examples
+  - (cd "Examples/Replicate Workbook" && python replicateWorkbook.py)
+  - (cd "Examples/List TDS Info" && python listTDSInfo.py)
+
