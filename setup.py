@@ -6,11 +6,10 @@ except ImportError:
 setup(
     name='tableaudocumentapi',
     version='0.0.1',
-    summary='A Python module for working with Tableau files.',
     author='Tableau Software',
     author_email='github@tableau.com',
     url='https://github.com/tableau/document-api-python',
-    py_modules=['tableaudocumentapi'],
+    packages=['tableaudocumentapi'],
     license='MIT',
     description='A Python module for working with Tableau files.'
 )
