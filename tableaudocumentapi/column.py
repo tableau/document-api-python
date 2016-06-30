@@ -1,17 +1,17 @@
 import functools
 
 _ATTRIBUTES = [
-    'name',
-    'caption',
-    'datatype',
-    'role',
-    'type',
-    'alias',
-    'calculation',
+    'name',         # Name of the field as specified in the file, usually surrounded by [ ]
+    'caption',      # Name of the field as displayed in Tableau unless an aliases is defined
+    'datatype',     # Type of the field within Tableau (string, integer, etc)
+    'role',         # Dimension or Measure
+    'type',         # three possible values: quantitative, ordinal, or nominal
+    'alias',        # Name of the field as displayed in Tableau if the default name isn't wanted
+    'calculation',  # If this field is a calculated field, this will be the formula
 ]
 
 _METADATA_ATTRIBUTES = [
-    'aggregation',
+    'aggregation',  # The type of aggregation on the field (e.g Sum, Avg)
 ]
 
 
