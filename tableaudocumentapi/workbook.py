@@ -8,7 +8,7 @@ import zipfile
 
 import xml.etree.ElementTree as ET
 
-from tableaudocumentapi import Datasource, containerfile
+from tableaudocumentapi import Datasource, xfile
 
 ###########################################################################
 #
@@ -37,7 +37,7 @@ class Workbook(object):
 
         # Determine if this is a twb or twbx and get the xml root
         if zipfile.is_zipfile(self._filename):
-            self._workbookTree = containerfile.get_xml_from_archive(
+            self._workbookTree = xfile.get_xml_from_archive(
                 self._filename)
         else:
             self._workbookTree = ET.parse(self._filename)
@@ -74,7 +74,7 @@ class Workbook(object):
         """
 
         # save the file
-        containerfile._save_file(self._filename, self._workbookTree)
+        xfile._save_file(self._filename, self._workbookTree)
 
     def save_as(self, new_filename):
         """
@@ -87,7 +87,7 @@ class Workbook(object):
             Nothing.
 
         """
-        containerfile._save_file(
+        xfile._save_file(
             self._filename, self._workbookTree, new_filename)
 
     ###########################################################################
