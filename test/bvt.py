@@ -1,23 +1,23 @@
-import unittest
-import io
 import os
+import unittest
+
 import xml.etree.ElementTree as ET
 
 from tableaudocumentapi import Workbook, Datasource, Connection, ConnectionParser
 
-# Disable the 120 line limit because of the embedded XML on these lines
-# TODO: Move the XML into external files and load them when needed
+TEST_DIR = os.path.dirname(__file__)
 
-TABLEAU_93_WORKBOOK = '''<?xml version='1.0' encoding='utf-8' ?><workbook source-build='9.3.1 (9300.16.0510.0100)' source-platform='mac' version='9.3' xmlns:user='http://www.tableausoftware.com/xml/user'><datasources><datasource caption='xy (TestV1)' inline='true' name='sqlserver.17u3bqc16tjtxn14e2hxh19tyvpo' version='9.3'><connection authentication='sspi' class='sqlserver' dbname='TestV1' odbc-native-protocol='yes' one-time-sql='' server='mssql2012.test.tsi.lan' username=''></connection></datasource></datasources></workbook>'''  # noqa
+TABLEAU_93_TWB = os.path.join(TEST_DIR, 'assets', 'TABLEAU_93_TWB.twb')
 
-TABLEAU_93_TDS = '''<?xml version='1.0' encoding='utf-8' ?><datasource formatted-name='sqlserver.17u3bqc16tjtxn14e2hxh19tyvpo' inline='true' source-platform='mac' version='9.3' xmlns:user='http://www.tableausoftware.com/xml/user'><connection authentication='sspi' class='sqlserver' dbname='TestV1' odbc-native-protocol='yes' one-time-sql='' server='mssql2012.test.tsi.lan' username=''></connection></datasource>'''  # noqa
+TABLEAU_93_TDS = os.path.join(TEST_DIR, 'assets', 'TABLEAU_93_TDS.tds')
 
-TABLEAU_10_TDS = '''<?xml version='1.0' encoding='utf-8' ?><datasource caption='xy+ (Multiple Connections)' inline='true' name='federated.1s4nxn20cywkdv13ql0yk0g1mpdx' version='10.0'><connection class='federated'><named-connections><named-connection caption='mysql55.test.tsi.lan' name='mysql.1ewmkrw0mtgsev1dnurma1blii4x'><connection class='mysql' dbname='testv1' odbc-native-protocol='yes' port='3306' server='mysql55.test.tsi.lan' source-charset='' username='test' /></named-connection><named-connection caption='mssql2012.test.tsi.lan' name='sqlserver.1erdwp01uqynlb14ul78p0haai2r'><connection authentication='sqlserver' class='sqlserver' dbname='TestV1' odbc-native-protocol='yes' one-time-sql='' server='mssql2012.test.tsi.lan' username='test' /></named-connection></named-connections></connection></datasource>'''  # noqa
+TABLEAU_10_TDS = os.path.join(TEST_DIR, 'assets', 'TABLEAU_10_TDS.tds')
 
-TABLEAU_10_WORKBOOK = '''<?xml version='1.0' encoding='utf-8' ?><workbook source-build='0.0.0 (0000.16.0510.1300)' source-platform='mac' version='10.0' xmlns:user='http://www.tableausoftware.com/xml/user'><datasources><datasource caption='xy+ (Multiple Connections)' inline='true' name='federated.1s4nxn20cywkdv13ql0yk0g1mpdx' version='10.0'><connection class='federated'><named-connections><named-connection caption='mysql55.test.tsi.lan' name='mysql.1ewmkrw0mtgsev1dnurma1blii4x'><connection class='mysql' dbname='testv1' odbc-native-protocol='yes' port='3306' server='mysql55.test.tsi.lan' source-charset='' username='test' /></named-connection><named-connection caption='mssql2012.test.tsi.lan' name='sqlserver.1erdwp01uqynlb14ul78p0haai2r'><connection authentication='sqlserver' class='sqlserver' dbname='TestV1' odbc-native-protocol='yes' one-time-sql='' server='mssql2012.test.tsi.lan' username='test' /></named-connection></named-connections></connection></datasource></datasources></workbook>'''  # noqa
+TABLEAU_10_TWB = os.path.join(TEST_DIR, 'assets', 'TABLEAU_10_TWB.twb')
 
-TABLEAU_CONNECTION_XML = ET.fromstring(
-    '''<connection authentication='sspi' class='sqlserver' dbname='TestV1' odbc-native-protocol='yes' one-time-sql='' server='mssql2012.test.tsi.lan' username=''></connection>''')  # noqa
+TABLEAU_CONNECTION_XML = ET.parse(os.path.join(TEST_DIR, 'assets', 'CONNECTION.xml')).getroot()
+
+TABLEAU_10_TWBX = os.path.join(TEST_DIR, 'assets', 'TABLEAU_10_TWBX.twbx')
 
 
 class HelperMethodTests(unittest.TestCase):
@@ -36,14 +36,14 @@ class HelperMethodTests(unittest.TestCase):
 class ConnectionParserTests(unittest.TestCase):
 
     def test_can_extract_legacy_connection(self):
-        parser = ConnectionParser(ET.fromstring(TABLEAU_93_TDS), '9.2')
+        parser = ConnectionParser(ET.parse(TABLEAU_93_TDS), '9.2')
         connections = parser.get_connections()
         self.assertIsInstance(connections, list)
         self.assertIsInstance(connections[0], Connection)
         self.assertEqual(connections[0].dbname, 'TestV1')
 
     def test_can_extract_federated_connections(self):
-        parser = ConnectionParser(ET.fromstring(TABLEAU_10_TDS), '10.0')
+        parser = ConnectionParser(ET.parse(TABLEAU_10_TDS), '10.0')
         connections = parser.get_connections()
         self.assertIsInstance(connections, list)
         self.assertIsInstance(connections[0], Connection)
@@ -76,9 +76,9 @@ class ConnectionModelTests(unittest.TestCase):
 class DatasourceModelTests(unittest.TestCase):
 
     def setUp(self):
-        self.tds_file = io.FileIO('test.tds', 'w')
-        self.tds_file.write(TABLEAU_93_TDS.encode('utf8'))
-        self.tds_file.seek(0)
+        with open(TABLEAU_93_TDS, 'rb') as in_file, open('test.tds', 'wb') as out_file:
+            out_file.write(in_file.read())
+            self.tds_file = out_file
 
     def tearDown(self):
         self.tds_file.close()
@@ -117,9 +117,9 @@ class DatasourceModelTests(unittest.TestCase):
 class DatasourceModelV10Tests(unittest.TestCase):
 
     def setUp(self):
-        self.tds_file = io.FileIO('test10.tds', 'w')
-        self.tds_file.write(TABLEAU_10_TDS.encode('utf8'))
-        self.tds_file.seek(0)
+        with open(TABLEAU_10_TDS, 'rb') as in_file, open('test.twb', 'wb') as out_file:
+            out_file.write(in_file.read())
+            self.tds_file = out_file
 
     def tearDown(self):
         self.tds_file.close()
@@ -147,9 +147,9 @@ class DatasourceModelV10Tests(unittest.TestCase):
 class WorkbookModelTests(unittest.TestCase):
 
     def setUp(self):
-        self.workbook_file = io.FileIO('test.twb', 'w')
-        self.workbook_file.write(TABLEAU_93_WORKBOOK.encode('utf8'))
-        self.workbook_file.seek(0)
+        with open(TABLEAU_93_TWB, 'rb') as in_file, open('test.twb', 'wb') as out_file:
+            out_file.write(in_file.read())
+            self.workbook_file = out_file
 
     def tearDown(self):
         self.workbook_file.close()
@@ -175,9 +175,9 @@ class WorkbookModelTests(unittest.TestCase):
 class WorkbookModelV10Tests(unittest.TestCase):
 
     def setUp(self):
-        self.workbook_file = io.FileIO('testv10.twb', 'w')
-        self.workbook_file.write(TABLEAU_10_WORKBOOK.encode('utf8'))
-        self.workbook_file.seek(0)
+        with open(TABLEAU_10_TWB, 'rb') as in_file, open('test.twb', 'wb') as out_file:
+            out_file.write(in_file.read())
+            self.workbook_file = out_file
 
     def tearDown(self):
         self.workbook_file.close()
@@ -212,6 +212,44 @@ class WorkbookModelV10Tests(unittest.TestCase):
             first_line = f.readline().strip()  # first line should be xml tag
             self.assertEqual(
                 first_line, "<?xml version='1.0' encoding='utf-8'?>")
+
+
+class WorkbookModelV10TWBXTests(unittest.TestCase):
+
+    def setUp(self):
+        with open(TABLEAU_10_TWBX, 'rb') as in_file, open('test.twbx', 'wb') as out_file:
+            out_file.write(in_file.read())
+            self.workbook_file = out_file
+
+    def tearDown(self):
+        self.workbook_file.close()
+        os.unlink(self.workbook_file.name)
+
+    def test_can_open_twbx(self):
+        wb = Workbook(self.workbook_file.name)
+        self.assertTrue(wb.datasources)
+        self.assertTrue(wb.datasources[0].connections)
+
+    def test_can_open_twbx_and_save_changes(self):
+        original_wb = Workbook(self.workbook_file.name)
+        original_wb.datasources[0].connections[0].server = 'newdb.test.tsi.lan'
+        original_wb.save()
+
+        new_wb = Workbook(self.workbook_file.name)
+        self.assertEqual(new_wb.datasources[0].connections[
+                         0].server, 'newdb.test.tsi.lan')
+
+    def test_can_open_twbx_and_save_as_changes(self):
+        new_twbx_filename = self.workbook_file.name + "_TEST_SAVE_AS"
+        original_wb = Workbook(self.workbook_file.name)
+        original_wb.datasources[0].connections[0].server = 'newdb.test.tsi.lan'
+        original_wb.save_as(new_twbx_filename)
+
+        new_wb = Workbook(new_twbx_filename)
+        self.assertEqual(new_wb.datasources[0].connections[
+                         0].server, 'newdb.test.tsi.lan')
+
+        os.unlink(new_twbx_filename)
 
 if __name__ == '__main__':
     unittest.main()
