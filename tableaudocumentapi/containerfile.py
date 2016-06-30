@@ -16,19 +16,21 @@ def temporary_directory(*args, **kwargs):
         shutil.rmtree(d)
 
 
-def find_file_in_zip(zip, ext):
+def find_file_in_zip(zip):
     for filename in zip.namelist():
-        if os.path.splitext(filename)[-1].lower() == ext[:-1]:
+        try:
+            ET.parse(zip.open(filename)).getroot().tag in (
+                'workbook', 'datasource')
             return filename
+        except ET.ParseError:
+            # That's not an XML file by gosh
+            pass
 
 
 def get_xml_from_archive(filename):
-    file_type = os.path.splitext(filename)[-1].lower()
-    with temporary_directory() as temp:
-        with zipfile.ZipFile(filename) as zf:
-            zf.extractall(temp)
-            xml_file = find_file_in_zip(zf, file_type)
-            xml_tree = ET.parse(os.path.join(temp, xml_file))
+    with zipfile.ZipFile(filename) as zf:
+        xml_file = zf.open(find_file_in_zip(zf))
+        xml_tree = ET.parse(xml_file)
 
     return xml_tree
 
@@ -54,9 +56,8 @@ def save_into_archive(xml_tree, filename, new_filename=None):
 
     # Extract to temp directory
     with temporary_directory() as temp_path:
-        file_type = os.path.splitext(filename)[-1].lower()
         with zipfile.ZipFile(filename) as zf:
-            xml_file = find_file_in_zip(zf, file_type)
+            xml_file = find_file_in_zip(zf)
             zf.extractall(temp_path)
         # Write the new version of the file to the temp directory
         xml_tree.write(os.path.join(
@@ -72,6 +73,3 @@ def _save_file(container_file, xml_tree, new_filename=None):
         save_into_archive(xml_tree, container_file, new_filename)
     else:
         xml_tree.write(container_file, encoding="utf-8", xml_declaration=True)
-
-
-
