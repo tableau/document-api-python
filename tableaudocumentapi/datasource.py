@@ -3,10 +3,10 @@
 # Datasource - A class for writing datasources to Tableau files
 #
 ###############################################################################
-import os
+import collections
+import xml.etree.ElementTree as ET
 import zipfile
 
-import xml.etree.ElementTree as ET
 from tableaudocumentapi import Connection, xfile
 from tableaudocumentapi import Column
 
@@ -138,4 +138,4 @@ class Datasource(object):
     def _get_all_columns(self):
         column_objects = (_mapping_from_xml(self._datasourceTree, xml)
                           for xml in self._datasourceTree.findall('.//column'))
-        return {k: v for k, v in column_objects}
+        return collections.OrderedDict([(k, v) for k, v in column_objects])
