@@ -173,7 +173,7 @@ class DatasourceModelV10TDSXTests(unittest.TestCase):
                          0].server, 'newdb.test.tsi.lan')
 
     def test_can_open_tdsx_and_save_as_changes(self):
-        new_tdsx_filename = self.tdsx_file.name + "_TEST_SAVE_AS"
+        new_tdsx_filename = 'newtdsx.tdsx'
         original_wb = Datasource.from_file(self.tdsx_file.name)
         original_wb.connections[0].server = 'newdb.test.tsi.lan'
         original_wb.save_as(new_tdsx_filename)
@@ -181,7 +181,6 @@ class DatasourceModelV10TDSXTests(unittest.TestCase):
         new_wb = Datasource.from_file(new_tdsx_filename)
         self.assertEqual(new_wb.connections[
                          0].server, 'newdb.test.tsi.lan')
-
         os.unlink(new_tdsx_filename)
 
 
@@ -281,7 +280,7 @@ class WorkbookModelV10TWBXTests(unittest.TestCase):
                          0].server, 'newdb.test.tsi.lan')
 
     def test_can_open_twbx_and_save_as_changes(self):
-        new_twbx_filename = self.workbook_file.name + "_TEST_SAVE_AS"
+        new_twbx_filename = 'newtwbx.twbx'
         original_wb = Workbook(self.workbook_file.name)
         original_wb.datasources[0].connections[0].server = 'newdb.test.tsi.lan'
         original_wb.save_as(new_twbx_filename)
