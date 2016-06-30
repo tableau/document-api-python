@@ -12,7 +12,6 @@ _ATTRIBUTES = [
 
 _METADATA_ATTRIBUTES = [
     'aggregation',
-    'foo',
 ]
 
 
