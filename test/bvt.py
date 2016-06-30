@@ -15,22 +15,12 @@ TABLEAU_10_TDS = os.path.join(TEST_DIR, 'assets', 'TABLEAU_10_TDS.tds')
 
 TABLEAU_10_TWB = os.path.join(TEST_DIR, 'assets', 'TABLEAU_10_TWB.twb')
 
-TABLEAU_CONNECTION_XML = ET.parse(os.path.join(TEST_DIR, 'assets', 'CONNECTION.xml')).getroot()
+TABLEAU_CONNECTION_XML = ET.parse(os.path.join(
+    TEST_DIR, 'assets', 'CONNECTION.xml')).getroot()
 
 TABLEAU_10_TWBX = os.path.join(TEST_DIR, 'assets', 'TABLEAU_10_TWBX.twbx')
 
-
-class HelperMethodTests(unittest.TestCase):
-
-    def test_is_valid_file_with_valid_inputs(self):
-        self.assertTrue(Workbook._is_valid_file('file1.tds'))
-        self.assertTrue(Workbook._is_valid_file('file2.twb'))
-        self.assertTrue(Workbook._is_valid_file('tds.twb'))
-
-    def test_is_valid_file_with_invalid_inputs(self):
-        self.assertFalse(Workbook._is_valid_file(''))
-        self.assertFalse(Workbook._is_valid_file('file1.tds2'))
-        self.assertFalse(Workbook._is_valid_file('file2.twb3'))
+TABLEAU_10_TDSX = os.path.join(TEST_DIR, 'assets', 'TABLEAU_10_TDSX.tdsx')
 
 
 class ConnectionParserTests(unittest.TestCase):
@@ -144,6 +134,43 @@ class DatasourceModelV10Tests(unittest.TestCase):
         self.assertEqual(new_tds.connections[0].dbname, 'newdb.test.tsi.lan')
 
 
+class DatasourceModelV10TDSXTests(unittest.TestCase):
+
+    def setUp(self):
+        with open(TABLEAU_10_TDSX, 'rb') as in_file, open('test.tdsx', 'wb') as out_file:
+            out_file.write(in_file.read())
+            self.tdsx_file = out_file
+
+    def tearDown(self):
+        self.tdsx_file.close()
+        os.unlink(self.tdsx_file.name)
+
+    def test_can_open_tdsx(self):
+        ds = Datasource.from_file(self.tdsx_file.name)
+        self.assertTrue(ds.connections)
+        self.assertTrue(ds.name)
+
+    def test_can_open_tdsx_and_save_changes(self):
+        original_tdsx = Datasource.from_file(self.tdsx_file.name)
+        original_tdsx.connections[0].server = 'newdb.test.tsi.lan'
+        original_tdsx.save()
+
+        new_tdsx = Datasource.from_file(self.tdsx_file.name)
+        self.assertEqual(new_tdsx.connections[
+                         0].server, 'newdb.test.tsi.lan')
+
+    def test_can_open_tdsx_and_save_as_changes(self):
+        new_tdsx_filename = 'newtdsx.tdsx'
+        original_wb = Datasource.from_file(self.tdsx_file.name)
+        original_wb.connections[0].server = 'newdb.test.tsi.lan'
+        original_wb.save_as(new_tdsx_filename)
+
+        new_wb = Datasource.from_file(new_tdsx_filename)
+        self.assertEqual(new_wb.connections[
+                         0].server, 'newdb.test.tsi.lan')
+        os.unlink(new_tdsx_filename)
+
+
 class WorkbookModelTests(unittest.TestCase):
 
     def setUp(self):
@@ -240,7 +267,7 @@ class WorkbookModelV10TWBXTests(unittest.TestCase):
                          0].server, 'newdb.test.tsi.lan')
 
     def test_can_open_twbx_and_save_as_changes(self):
-        new_twbx_filename = self.workbook_file.name + "_TEST_SAVE_AS"
+        new_twbx_filename = 'newtwbx.twbx'
         original_wb = Workbook(self.workbook_file.name)
         original_wb.datasources[0].connections[0].server = 'newdb.test.tsi.lan'
         original_wb.save_as(new_twbx_filename)

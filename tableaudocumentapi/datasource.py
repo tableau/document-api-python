@@ -3,8 +3,11 @@
 # Datasource - A class for writing datasources to Tableau files
 #
 ###############################################################################
+import os
+import zipfile
+
 import xml.etree.ElementTree as ET
-from tableaudocumentapi import Connection
+from tableaudocumentapi import Connection, xfile
 
 
 class ConnectionParser(object):
@@ -56,7 +59,11 @@ class Datasource(object):
     @classmethod
     def from_file(cls, filename):
         "Initialize datasource from file (.tds)"
-        dsxml = ET.parse(filename).getroot()
+
+        if zipfile.is_zipfile(filename):
+            dsxml = xfile.get_xml_from_archive(filename).getroot()
+        else:
+            dsxml = ET.parse(filename).getroot()
         return cls(dsxml, filename)
 
     def save(self):
@@ -72,7 +79,8 @@ class Datasource(object):
         """
 
         # save the file
-        self._datasourceTree.write(self._filename, encoding="utf-8", xml_declaration=True)
+
+        xfile._save_file(self._filename, self._datasourceTree)
 
     def save_as(self, new_filename):
         """
@@ -85,7 +93,7 @@ class Datasource(object):
             Nothing.
 
         """
-        self._datasourceTree.write(new_filename, encoding="utf-8", xml_declaration=True)
+        xfile._save_file(self._filename, self._datasourceTree, new_filename)
 
     ###########
     # name
