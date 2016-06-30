@@ -22,7 +22,7 @@ def _find_metadata_record(record, attrib):
     return element.text
 
 
-class Column(object):
+class Field(object):
     def __init__(self, xmldata):
         for attrib in _ATTRIBUTES:
             self._apply_attribute(xmldata, attrib, lambda x: xmldata.attrib.get(x, None))
