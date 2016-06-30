@@ -8,10 +8,19 @@ import zipfile
 
 import xml.etree.ElementTree as ET
 from tableaudocumentapi import Connection, xfile
+from tableaudocumentapi import Column
+
+
+def _mapping_from_xml(root_xml, column_xml):
+    retval = Column.from_xml(column_xml)
+    xpath = ".//metadata-record[@class='column'][local-name='{}']".format(retval.name)
+    metadata_record = root_xml.find(xpath)
+    if metadata_record is not None:
+        retval.apply_metadata(metadata_record)
+    return retval.name, retval
 
 
 class ConnectionParser(object):
-
     def __init__(self, datasource_xml, version):
         self._dsxml = datasource_xml
         self._dsversion = version
@@ -55,6 +64,7 @@ class Datasource(object):
         self._connection_parser = ConnectionParser(
             self._datasourceXML, version=self._version)
         self._connections = self._connection_parser.get_connections()
+        self._columns = None
 
     @classmethod
     def from_file(cls, filename):
@@ -115,3 +125,17 @@ class Datasource(object):
     @property
     def connections(self):
         return self._connections
+
+    ###########
+    # fields
+    ###########
+    @property
+    def columns(self):
+        if not self._columns:
+            self._columns = self._get_all_columns()
+        return self._columns
+
+    def _get_all_columns(self):
+        column_objects = (_mapping_from_xml(self._datasourceTree, xml)
+                          for xml in self._datasourceTree.findall('.//column'))
+        return {k: v for k, v in column_objects}
