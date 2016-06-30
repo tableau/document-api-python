@@ -8,7 +8,7 @@ import zipfile
 
 import xml.etree.ElementTree as ET
 
-from tableaudocumentapi import Datasource, archivefile
+from tableaudocumentapi import Datasource, containerfile
 
 ###########################################################################
 #
@@ -37,7 +37,7 @@ class Workbook(object):
 
         # Determine if this is a twb or twbx and get the xml root
         if zipfile.is_zipfile(self._filename):
-            self._workbookTree = archivefile.get_xml_from_archive(
+            self._workbookTree = containerfile.get_xml_from_archive(
                 self._filename)
         else:
             self._workbookTree = ET.parse(self._filename)
@@ -74,13 +74,7 @@ class Workbook(object):
         """
 
         # save the file
-
-        if zipfile.is_zipfile(self._filename):
-            archivefile.save_into_archive(
-                self._workbookTree, filename=self._filename)
-        else:
-            self._workbookTree.write(
-                self._filename, encoding="utf-8", xml_declaration=True)
+        containerfile._save_file(self._filename, self._workbookTree)
 
     def save_as(self, new_filename):
         """
@@ -93,13 +87,8 @@ class Workbook(object):
             Nothing.
 
         """
-
-        if zipfile.is_zipfile(self._filename):
-            archivefile.save_into_archive(
-                self._workbookTree, self._filename, new_filename)
-        else:
-            self._workbookTree.write(
-                new_filename, encoding="utf-8", xml_declaration=True)
+        containerfile._save_file(
+            self._filename, self._workbookTree, new_filename)
 
     ###########################################################################
     #
@@ -115,8 +104,3 @@ class Workbook(object):
             datasources.append(ds)
 
         return datasources
-
-    @staticmethod
-    def _is_valid_file(filename):
-        fileExtension = os.path.splitext(filename)[-1].lower()
-        return fileExtension in ('.twb', '.tds')

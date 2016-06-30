@@ -7,7 +7,7 @@ import os
 import zipfile
 
 import xml.etree.ElementTree as ET
-from tableaudocumentapi import Connection, archivefile
+from tableaudocumentapi import Connection, containerfile
 
 
 class ConnectionParser(object):
@@ -61,7 +61,7 @@ class Datasource(object):
         "Initialize datasource from file (.tds)"
 
         if zipfile.is_zipfile(filename):
-            dsxml = archivefile.get_xml_from_archive(filename).getroot()
+            dsxml = containerfile.get_xml_from_archive(filename).getroot()
         else:
             dsxml = ET.parse(filename).getroot()
         return cls(dsxml, filename)
@@ -80,11 +80,7 @@ class Datasource(object):
 
         # save the file
 
-        if zipfile.is_zipfile(self._filename):
-            archivefile.save_into_archive(self._datasourceTree, self._filename)
-        else:
-            self._datasourceTree.write(
-                self._filename, encoding="utf-8", xml_declaration=True)
+        containerfile._save_file(self._filename, self._datasourceTree)
 
     def save_as(self, new_filename):
         """
@@ -97,12 +93,7 @@ class Datasource(object):
             Nothing.
 
         """
-        if zipfile.is_zipfile(self._filename):
-            archivefile.save_into_archive(
-                self._datasourceTree, self._filename, new_filename)
-        else:
-            self._datasourceTree.write(
-                new_filename, encoding="utf-8", xml_declaration=True)
+        containerfile._save_file(self._filename, self._datasourceTree, new_filename)
 
     ###########
     # name

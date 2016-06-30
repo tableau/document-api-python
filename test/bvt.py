@@ -23,19 +23,6 @@ TABLEAU_10_TWBX = os.path.join(TEST_DIR, 'assets', 'TABLEAU_10_TWBX.twbx')
 TABLEAU_10_TDSX = os.path.join(TEST_DIR, 'assets', 'TABLEAU_10_TDSX.tdsx')
 
 
-class HelperMethodTests(unittest.TestCase):
-
-    def test_is_valid_file_with_valid_inputs(self):
-        self.assertTrue(Workbook._is_valid_file('file1.tds'))
-        self.assertTrue(Workbook._is_valid_file('file2.twb'))
-        self.assertTrue(Workbook._is_valid_file('tds.twb'))
-
-    def test_is_valid_file_with_invalid_inputs(self):
-        self.assertFalse(Workbook._is_valid_file(''))
-        self.assertFalse(Workbook._is_valid_file('file1.tds2'))
-        self.assertFalse(Workbook._is_valid_file('file2.twb3'))
-
-
 class ConnectionParserTests(unittest.TestCase):
 
     def test_can_extract_legacy_connection(self):

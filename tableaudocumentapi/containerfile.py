@@ -45,7 +45,7 @@ def build_archive_file(archive_contents, zip):
 
 def save_into_archive(xml_tree, filename, new_filename=None):
     # Saving a archive means extracting the contents into a temp folder,
-    # saving the changes over the twb in that folder, and then
+    # saving the changes over the twb/tds in that folder, and then
     # packaging it back up into a specifically formatted zip with the correct
     # relative file paths
 
@@ -56,12 +56,22 @@ def save_into_archive(xml_tree, filename, new_filename=None):
     with temporary_directory() as temp_path:
         file_type = os.path.splitext(filename)[-1].lower()
         with zipfile.ZipFile(filename) as zf:
-            twb_file = find_file_in_zip(zf, file_type)
+            xml_file = find_file_in_zip(zf, file_type)
             zf.extractall(temp_path)
-        # Write the new version of the twb to the temp directory
+        # Write the new version of the file to the temp directory
         xml_tree.write(os.path.join(
-            temp_path, twb_file), encoding="utf-8", xml_declaration=True)
+            temp_path, xml_file), encoding="utf-8", xml_declaration=True)
 
         # Write the new archive with the contents of the temp folder
         with zipfile.ZipFile(new_filename, "w", compression=zipfile.ZIP_DEFLATED) as new_archive:
             build_archive_file(temp_path, new_archive)
+
+
+def _save_file(container_file, xml_tree, new_filename=None):
+    if zipfile.is_zipfile(container_file):
+        save_into_archive(xml_tree, container_file, new_filename)
+    else:
+        xml_tree.write(container_file, encoding="utf-8", xml_declaration=True)
+
+
+
