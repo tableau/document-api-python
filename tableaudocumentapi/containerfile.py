@@ -29,8 +29,8 @@ def find_file_in_zip(zip):
 
 def get_xml_from_archive(filename):
     with zipfile.ZipFile(filename) as zf:
-        xml_file = zf.open(find_file_in_zip(zf))
-        xml_tree = ET.parse(xml_file)
+        with zf.open(find_file_in_zip(zf)) as xml_file:
+            xml_tree = ET.parse(xml_file)
 
     return xml_tree
 
