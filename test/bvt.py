@@ -15,9 +15,12 @@ TABLEAU_10_TDS = os.path.join(TEST_DIR, 'assets', 'TABLEAU_10_TDS.tds')
 
 TABLEAU_10_TWB = os.path.join(TEST_DIR, 'assets', 'TABLEAU_10_TWB.twb')
 
-TABLEAU_CONNECTION_XML = ET.parse(os.path.join(TEST_DIR, 'assets', 'CONNECTION.xml')).getroot()
+TABLEAU_CONNECTION_XML = ET.parse(os.path.join(
+    TEST_DIR, 'assets', 'CONNECTION.xml')).getroot()
 
 TABLEAU_10_TWBX = os.path.join(TEST_DIR, 'assets', 'TABLEAU_10_TWBX.twbx')
+
+TABLEAU_10_TDSX = os.path.join(TEST_DIR, 'assets', 'TABLEAU_10_TDSX.tdsx')
 
 
 class HelperMethodTests(unittest.TestCase):
@@ -142,6 +145,44 @@ class DatasourceModelV10Tests(unittest.TestCase):
 
         new_tds = Datasource.from_file(self.tds_file.name)
         self.assertEqual(new_tds.connections[0].dbname, 'newdb.test.tsi.lan')
+
+
+class DatasourceModelV10TDSXTests(unittest.TestCase):
+
+    def setUp(self):
+        with open(TABLEAU_10_TDSX, 'rb') as in_file, open('test.tdsx', 'wb') as out_file:
+            out_file.write(in_file.read())
+            self.tdsx_file = out_file
+
+    def tearDown(self):
+        self.tdsx_file.close()
+        os.unlink(self.tdsx_file.name)
+
+    def test_can_open_tdsx(self):
+        ds = Datasource.from_file(self.tdsx_file.name)
+        self.assertTrue(ds.connections)
+        self.assertTrue(ds.name)
+
+    def test_can_open_tdsx_and_save_changes(self):
+        original_tdsx = Datasource.from_file(self.tdsx_file.name)
+        original_tdsx.connections[0].server = 'newdb.test.tsi.lan'
+        original_tdsx.save()
+
+        new_tdsx = Datasource.from_file(self.tdsx_file.name)
+        self.assertEqual(new_tdsx.connections[
+                         0].server, 'newdb.test.tsi.lan')
+
+    def test_can_open_tdsx_and_save_as_changes(self):
+        new_tdsx_filename = self.tdsx_file.name + "_TEST_SAVE_AS"
+        original_wb = Datasource.from_file(self.tdsx_file.name)
+        original_wb.connections[0].server = 'newdb.test.tsi.lan'
+        original_wb.save_as(new_tdsx_filename)
+
+        new_wb = Datasource.from_file(new_tdsx_filename)
+        self.assertEqual(new_wb.connections[
+                         0].server, 'newdb.test.tsi.lan')
+
+        os.unlink(new_tdsx_filename)
 
 
 class WorkbookModelTests(unittest.TestCase):
