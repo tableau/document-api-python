@@ -21,6 +21,23 @@
         </attributes>
       </metadata-record>
       <metadata-record class='column'>
+        <remote-name>Today's Date</remote-name>
+        <remote-type>130</remote-type>
+        <local-name>[Today&apos;s Date]</local-name>
+        <parent-name>[xy]</parent-name>
+        <remote-alias>a</remote-alias>
+        <ordinal>1</ordinal>
+        <local-type>string</local-type>
+        <aggregation>Count</aggregation>
+        <width>255</width>
+        <contains-null>true</contains-null>
+        <attributes>
+          <attribute datatype='string' name='DebugRemoteType'>&quot;SQL_WVARCHAR&quot;</attribute>
+          <attribute datatype='string' name='DebugWireType'>&quot;SQL_C_WCHAR&quot;</attribute>
+          <attribute datatype='string' name='TypeIsVarchar'>&quot;true&quot;</attribute>
+        </attributes>
+      </metadata-record>
+      <metadata-record class='column'>
         <remote-name>x</remote-name>
         <remote-type>3</remote-type>
         <local-name>[x]</local-name>
@@ -59,6 +76,7 @@
     <calculation class='tableau' formula='1' />
   </column>
   <column caption='A' datatype='string' name='[a]' role='dimension' type='nominal' />
+  <column caption='Today&apos;s Date' datatype='string' name='[Today&apos;s Date]' role='dimension' type='nominal' />
   <column caption='X' datatype='integer' name='[x]' role='measure' type='quantitative' />
   <column caption='Y' datatype='integer' name='[y]' role='measure' type='quantitative' />
   <layout dim-ordering='alphabetic' dim-percentage='0.5' measure-ordering='alphabetic' measure-percentage='0.5' show-structure='true' />

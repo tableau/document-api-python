@@ -24,3 +24,6 @@ class DataSourceFields(unittest.TestCase):
 
     def test_datasource_uses_metadata_record(self):
         self.assertEqual('Sum', self.ds.fields['[x]'].aggregation)
+
+    def test_datasource_column_name_contains_apostrophy(self):
+        self.assertIsNotNone(self.ds.fields.get("[Today's Date]", None))

@@ -5,6 +5,7 @@
 ###############################################################################
 import collections
 import xml.etree.ElementTree as ET
+import xml.sax.saxutils as sax
 import zipfile
 
 from tableaudocumentapi import Connection, xfile
@@ -13,7 +14,10 @@ from tableaudocumentapi import Field
 
 def _mapping_from_xml(root_xml, column_xml):
     retval = Field.from_xml(column_xml)
-    xpath = ".//metadata-record[@class='column'][local-name='{}']".format(retval.name)
+    local_name = retval.name
+    if "'" in local_name:
+        local_name = sax.escape(local_name, {"'": "&apos;"})
+    xpath = ".//metadata-record[@class='column'][local-name='{}']".format(local_name)
     metadata_record = root_xml.find(xpath)
     if metadata_record is not None:
         retval.apply_metadata(metadata_record)
