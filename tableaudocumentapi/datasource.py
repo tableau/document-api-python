@@ -3,15 +3,29 @@
 # Datasource - A class for writing datasources to Tableau files
 #
 ###############################################################################
-import os
+import collections
+import xml.etree.ElementTree as ET
+import xml.sax.saxutils as sax
 import zipfile
 
-import xml.etree.ElementTree as ET
 from tableaudocumentapi import Connection, xfile
+from tableaudocumentapi import Field
+from tableaudocumentapi.multilookup_dict import MultiLookupDict
+
+
+def _mapping_from_xml(root_xml, column_xml):
+    retval = Field.from_xml(column_xml)
+    local_name = retval.id
+    if "'" in local_name:
+        local_name = sax.escape(local_name, {"'": "&apos;"})
+    xpath = ".//metadata-record[@class='column'][local-name='{}']".format(local_name)
+    metadata_record = root_xml.find(xpath)
+    if metadata_record is not None:
+        retval.apply_metadata(metadata_record)
+    return retval.id, retval
 
 
 class ConnectionParser(object):
-
     def __init__(self, datasource_xml, version):
         self._dsxml = datasource_xml
         self._dsversion = version
@@ -55,6 +69,7 @@ class Datasource(object):
         self._connection_parser = ConnectionParser(
             self._datasourceXML, version=self._version)
         self._connections = self._connection_parser.get_connections()
+        self._fields = None
 
     @classmethod
     def from_file(cls, filename):
@@ -115,3 +130,17 @@ class Datasource(object):
     @property
     def connections(self):
         return self._connections
+
+    ###########
+    # fields
+    ###########
+    @property
+    def fields(self):
+        if not self._fields:
+            self._fields = self._get_all_fields()
+        return self._fields
+
+    def _get_all_fields(self):
+        column_objects = (_mapping_from_xml(self._datasourceTree, xml)
+                          for xml in self._datasourceTree.findall('.//column'))
+        return MultiLookupDict({k: v for k, v in column_objects})
