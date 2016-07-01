@@ -15,14 +15,14 @@ from tableaudocumentapi.multilookup_dict import MultiLookupDict
 
 def _mapping_from_xml(root_xml, column_xml):
     retval = Field.from_xml(column_xml)
-    local_name = retval.name
+    local_name = retval.id
     if "'" in local_name:
         local_name = sax.escape(local_name, {"'": "&apos;"})
     xpath = ".//metadata-record[@class='column'][local-name='{}']".format(local_name)
     metadata_record = root_xml.find(xpath)
     if metadata_record is not None:
         retval.apply_metadata(metadata_record)
-    return retval.name, retval
+    return retval.id, retval
 
 
 class ConnectionParser(object):
