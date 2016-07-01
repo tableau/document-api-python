@@ -10,6 +10,7 @@ import zipfile
 
 from tableaudocumentapi import Connection, xfile
 from tableaudocumentapi import Field
+from tableaudocumentapi.multilookup_dict import MultiLookupDict
 
 
 def _mapping_from_xml(root_xml, column_xml):
@@ -142,4 +143,4 @@ class Datasource(object):
     def _get_all_fields(self):
         column_objects = (_mapping_from_xml(self._datasourceTree, xml)
                           for xml in self._datasourceTree.findall('.//column'))
-        return collections.OrderedDict([(k, v) for k, v in column_objects])
+        return MultiLookupDict({k: v for k, v in column_objects})
