@@ -27,3 +27,7 @@ the limitations that you are running into, and provide us with a use case to kno
 
 For all other things, please submit a PR that includes the fix, documentation, or new code that you are trying to contribute.  More information on
 creating a PR can be found in the [github documentation](https://help.github.com/articles/creating-a-pull-request/)
+
+If the feature is complex or has multiple solutions that could be equally appropriate approaches, it would be helpful to file an issue to discuss the
+design trade-offs of each solution before implementing, to allow us to collective arrive at the best solution, which most likely exists in the middle
+somewhere.
