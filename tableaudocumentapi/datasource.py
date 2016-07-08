@@ -10,7 +10,7 @@ import zipfile
 
 from tableaudocumentapi import Connection, xfile
 from tableaudocumentapi import Field
-from tableaudocumentapi.multilookup_dict import MultiLookupDict
+from tableaudocumentapi.multilookup_dict import MultiLookupDict, PredicatedDictionary
 
 
 def _mapping_from_xml(root_xml, column_xml):
@@ -55,7 +55,7 @@ class Datasource(object):
     # Public API.
     #
     ###########################################################################
-    def __init__(self, dsxml, filename=None):
+    def __init__(self, dsxml, filename=None, workbook_xml_root=None):
         """
         Constructor.  Default is to create datasource from xml.
 
@@ -70,6 +70,9 @@ class Datasource(object):
             self._datasourceXML, version=self._version)
         self._connections = self._connection_parser.get_connections()
         self._fields = None
+        self._usedFields = None
+        if workbook_xml_root is not None:
+            self._prepare_from_workbook(workbook_xml_root)
 
     @classmethod
     def from_file(cls, filename):
@@ -140,7 +143,22 @@ class Datasource(object):
             self._fields = self._get_all_fields()
         return self._fields
 
+    @property
+    def usedFields(self):
+        if not self._usedFields:
+            raise RuntimeError('usedFields not initialized properly, most likely not loaded from a workbook')
+        return self._usedFields
+
     def _get_all_fields(self):
         column_objects = (_mapping_from_xml(self._datasourceTree, xml)
                           for xml in self._datasourceTree.findall('.//column'))
         return MultiLookupDict({k: v for k, v in column_objects})
+
+    def _prepare_from_workbook(self, workbook_xml):
+        self._fields = self._get_all_fields()
+        for element in workbook_xml.findall(".//datasource-dependencies[@datasource='{}']/column".format(self.name)):
+            column_name = element.attrib.get('name', None)
+            column = self._fields.get(column_name, None)
+            if column is not None:
+                column.set_in_use()
+        self._usedFields = PredicatedDictionary(lambda x: x.in_use, self._fields)

@@ -33,9 +33,18 @@ class Field(object):
         for attrib in _METADATA_ATTRIBUTES:
             setattr(self, '_{}'.format(attrib), None)
 
+        self._in_use = False
+
+    ########################################
+    # Special Case methods for construction fields from various sources
+    # not intended for client use
+    ########################################
     def apply_metadata(self, metadata_record):
         for attrib in _METADATA_ATTRIBUTES:
             self._apply_attribute(metadata_record, attrib, functools.partial(_find_metadata_record, metadata_record))
+
+    def set_in_use(self):
+        self._in_use = True
 
     @classmethod
     def from_xml(cls, xmldata):
@@ -120,6 +129,10 @@ class Field(object):
     def default_aggregation(self):
         """ The default type of aggregation on the field (e.g Sum, Avg)"""
         return self._aggregation
+
+    @property
+    def in_use(self):
+        return self._in_use
 
     ######################################
     # Special Case handling methods for reading the values from the XML

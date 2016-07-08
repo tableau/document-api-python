@@ -1,0 +1,164 @@
+<?xml version='1.0' encoding='utf-8' ?>
+
+<!-- build 9300.16.0603.2240                                -->
+<workbook source-build='9.3.3 (9300.16.0603.2240)' source-platform='mac' version='9.3' xmlns:user='http://www.tableausoftware.com/xml/user'>
+  <preferences>
+    <preference name='ui.encoding.shelf.height' value='24' />
+    <preference name='ui.shelf.height' value='26' />
+  </preferences>
+  <datasources>
+    <datasource inline='true' name='datasource_test' version='9.3'>
+      <connection authentication='username-password' class='postgres' dbname='TestV1' odbc-native-protocol='yes' port='5432' server='postgres91.test.tsi.lan' username='test'>
+        <relation name='xy' table='[public].[xy]' type='table' />
+        <metadata-records>
+          <metadata-record class='column'>
+            <remote-name>a</remote-name>
+            <remote-type>130</remote-type>
+            <local-name>[a]</local-name>
+            <parent-name>[xy]</parent-name>
+            <remote-alias>a</remote-alias>
+            <ordinal>1</ordinal>
+            <local-type>string</local-type>
+            <aggregation>Count</aggregation>
+            <width>255</width>
+            <contains-null>true</contains-null>
+            <attributes>
+              <attribute datatype='string' name='DebugRemoteType'>&quot;SQL_WVARCHAR&quot;</attribute>
+              <attribute datatype='string' name='DebugWireType'>&quot;SQL_C_WCHAR&quot;</attribute>
+              <attribute datatype='string' name='TypeIsVarchar'>&quot;true&quot;</attribute>
+            </attributes>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>x</remote-name>
+            <remote-type>3</remote-type>
+            <local-name>[x]</local-name>
+            <parent-name>[xy]</parent-name>
+            <remote-alias>x</remote-alias>
+            <ordinal>2</ordinal>
+            <local-type>integer</local-type>
+            <aggregation>Sum</aggregation>
+            <precision>10</precision>
+            <contains-null>true</contains-null>
+            <attributes>
+              <attribute datatype='string' name='DebugRemoteType'>&quot;SQL_INTEGER&quot;</attribute>
+              <attribute datatype='string' name='DebugWireType'>&quot;SQL_C_SLONG&quot;</attribute>
+            </attributes>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>y</remote-name>
+            <remote-type>3</remote-type>
+            <local-name>[y]</local-name>
+            <parent-name>[xy]</parent-name>
+            <remote-alias>y</remote-alias>
+            <ordinal>3</ordinal>
+            <local-type>integer</local-type>
+            <aggregation>Sum</aggregation>
+            <precision>10</precision>
+            <contains-null>true</contains-null>
+            <attributes>
+              <attribute datatype='string' name='DebugRemoteType'>&quot;SQL_INTEGER&quot;</attribute>
+              <attribute datatype='string' name='DebugWireType'>&quot;SQL_C_SLONG&quot;</attribute>
+            </attributes>
+          </metadata-record>
+        </metadata-records>
+      </connection>
+      <aliases enabled='yes' />
+      <column datatype='integer' name='[Number of Records]' role='measure' type='quantitative' user:auto-column='numrec'>
+        <calculation class='tableau' formula='1' />
+      </column>
+      <column caption='A' datatype='string' name='[a]' role='dimension' type='nominal' />
+      <column caption='X' datatype='integer' name='[x]' role='measure' type='quantitative' />
+      <column caption='Y' datatype='integer' name='[y]' role='measure' type='quantitative' />
+      <layout dim-ordering='alphabetic' dim-percentage='0.49' measure-ordering='alphabetic' measure-percentage='0.51' show-structure='true' />
+      <semantic-values>
+        <semantic-value key='[Country].[Name]' value='&quot;United States&quot;' />
+      </semantic-values>
+    </datasource>
+  </datasources>
+  <worksheets>
+    <worksheet name='Sheet 1'>
+      <table>
+        <view>
+          <datasources>
+            <datasource name='datasource_test' />
+          </datasources>
+          <datasource-dependencies datasource='datasource_test'>
+            <column caption='A' datatype='string' name='[a]' role='dimension' type='nominal' />
+            <column-instance column='[a]' derivation='None' name='[none:a:nk]' pivot='key' type='nominal' />
+          </datasource-dependencies>
+          <aggregation value='true' />
+        </view>
+        <style />
+        <panes>
+          <pane>
+            <view>
+              <breakdown value='auto' />
+            </view>
+            <mark class='Automatic' />
+          </pane>
+        </panes>
+        <rows>[datasource_test].[none:a:nk]</rows>
+        <cols />
+      </table>
+    </worksheet>
+  </worksheets>
+  <windows source-height='28'>
+    <window class='worksheet' maximized='true' name='Sheet 1'>
+      <cards>
+        <edge name='left'>
+          <strip size='160'>
+            <card type='pages' />
+            <card type='filters' />
+            <card type='marks' />
+          </strip>
+        </edge>
+        <edge name='top'>
+          <strip size='2147483647'>
+            <card type='columns' />
+          </strip>
+          <strip size='2147483647'>
+            <card type='rows' />
+          </strip>
+        </edge>
+      </cards>
+    </window>
+  </windows>
+  <thumbnails>
+    <thumbnail height='104' name='Sheet 1' width='144'>
+      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
+      oYDE5N9/WIM3tlPK/wAAAABJRU5ErkJggg==
+    </thumbnail>
+  </thumbnails>
+</workbook>

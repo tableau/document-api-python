@@ -64,3 +64,24 @@ class MultiLookupDict(dict):
             key = self._indexes['caption'][key]
 
         return dict.__getitem__(self, key)
+
+
+class PredicatedDictionary(object):
+    def __init__(self, predicate, dictionary):
+        self.predicate = predicate
+        self.dictionary = dictionary
+
+    def __getitem__(self, key):
+        if self.predicate(self.dictionary[key]):
+            return self.dictionary[key]
+        else:
+            raise KeyError(key)
+
+    def __setitem__(self, key, value):
+        self.dictionary[key] = value
+
+    def get(self, key, default_value=None):
+        try:
+            return self[key]
+        except KeyError:
+            return default_value

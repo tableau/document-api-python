@@ -100,7 +100,7 @@ class Workbook(object):
 
         # loop through our datasources and append
         for datasource in xmlRoot.find('datasources'):
-            ds = Datasource(datasource)
+            ds = Datasource(datasource, workbook_xml_root=xmlRoot)
             datasources.append(ds)
 
         return datasources

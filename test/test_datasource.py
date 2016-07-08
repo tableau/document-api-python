@@ -2,15 +2,24 @@ import unittest
 import os.path
 
 from tableaudocumentapi import Datasource
+from tableaudocumentapi import Workbook
 
-TEST_TDS_FILE = os.path.join(
+TEST_ASSET_DIR = os.path.join(
     os.path.dirname(__file__),
-    'assets',
+    'assets'
+)
+TEST_TDS_FILE = os.path.join(
+    TEST_ASSET_DIR,
     'datasource_test.tds'
 )
 
+TEST_TWB_FILE = os.path.join(
+    TEST_ASSET_DIR,
+    'datasource_test.twb'
+)
 
-class DataSourceFields(unittest.TestCase):
+
+class DataSourceFieldsTDS(unittest.TestCase):
     def setUp(self):
         self.ds = Datasource.from_file(TEST_TDS_FILE)
 
@@ -42,3 +51,18 @@ class DataSourceFields(unittest.TestCase):
 
     def test_datasource_field_is_ordinal(self):
         self.assertTrue(self.ds.fields['[x]'].is_ordinal)
+
+
+class DataSourceFieldsTWB(unittest.TestCase):
+    def setUp(self):
+        self.wb = Workbook(TEST_TWB_FILE)
+        self.ds = self.wb.datasources[0]  # Assume the first datasource in the file
+
+    def test_datasource_fields_loaded_in_workbook(self):
+        self.assertIsNotNone(self.ds.fields)
+        self.assertIsNotNone(self.ds.fields.get('[Number of Records]', None))
+
+    def test_datasource_fields_in_use(self):
+        self.assertIsNotNone(self.ds.usedFields)
+        self.assertIsNone(self.ds.usedFields.get('[Number of Records]', None))
+        self.assertIsNone(self.ds.usedFields.get('[a]', None))
