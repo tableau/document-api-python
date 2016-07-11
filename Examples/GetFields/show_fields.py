@@ -14,10 +14,8 @@ sourceTDS = Datasource.from_file('World.tds')
 print('----------------------------------------------------------')
 print('--- {} total fields in this datasource'.format(len(sourceTDS.fields)))
 print('----------------------------------------------------------')
-count = 0
-for field_key, field in sourceTDS.fields.items():
-    count += 1
-    print('{:>4}: {} is a {}'.format(count, field.name, field.datatype))
+for count, field in enumerate(sourceTDS.fields.values()):
+    print('{:>4}: {} is a {}'.format(count+1, field.name, field.datatype))
     blank_line = False
     if field.calculation:
         print('      the formula is {}'.format(field.calculation))
