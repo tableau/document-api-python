@@ -4,7 +4,7 @@
 from tableaudocumentapi import Datasource
 
 ############################################################
-# Step 2)  Open the .tds we want to replicate
+# Step 2)  Open the .tds we want to inspect
 ############################################################
 sourceTDS = Datasource.from_file('World.tds')
 
