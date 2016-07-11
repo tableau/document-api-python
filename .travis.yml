@@ -18,4 +18,5 @@ script:
   # Examples
   - (cd "Examples/Replicate Workbook" && python replicateWorkbook.py)
   - (cd "Examples/List TDS Info" && python listTDSInfo.py)
+  - (cd "Examples/GetFields" && python show_fields.py)
 
