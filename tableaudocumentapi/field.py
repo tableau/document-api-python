@@ -92,14 +92,23 @@ class Field(object):
 
     @property
     def is_quantitative(self):
+        """ A dependent value, usually a measure of something
+
+        e.g. Profit, Gross Sales """
         return self._type == 'quantitative'
 
     @property
     def is_ordinal(self):
+        """ Is this field a categorical field that has a specific order
+
+        e.g. How do you feel? 1 - awful, 2 - ok, 3 - fantastic """
         return self._type == 'ordinal'
 
     @property
     def is_nominal(self):
+        """ Is this field a categorical field that does not have a specific order
+
+        e.g. What color is your hair? """
         return self._type == 'nominal'
 
     @property
