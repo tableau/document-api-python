@@ -1,3 +1,6 @@
+import weakref
+
+
 def _resolve_value(key, value):
     try:
         retval = value.get(key, None)
@@ -21,8 +24,8 @@ class MultiLookupDict(dict):
             args = {}
         super(MultiLookupDict, self).__init__(args)
         self._indexes = {
-            'alias': {},
-            'caption': {}
+            'alias': weakref.WeakValueDictionary(),
+            'caption': weakref.WeakValueDictionary()
         }
         self._populate_indexes()
 
