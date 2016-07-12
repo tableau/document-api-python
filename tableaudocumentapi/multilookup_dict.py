@@ -2,10 +2,13 @@ import weakref
 
 
 def _resolve_value(key, value):
+    retval = None
     try:
-        retval = value.get(key, None)
+        if hasattr(value, 'get'):
+            retval = value.get(key, None)
+
         if retval is None:
-            retval = value.getattr(key, None)
+            retval = getattr(value, key, None)
     except AttributeError:
         retval = None
     return retval
@@ -42,6 +45,14 @@ class MultiLookupDict(dict):
             self._indexes['caption'][caption] = key
 
         dict.__setitem__(self, key, value)
+
+    def get(self, key, default_value=AttributeError):
+        try:
+            return self[key]
+        except AttributeError:
+            if default_value != AttributeError:
+                return default_value
+            raise
 
     def __getitem__(self, key):
         if key in self._indexes['alias']:
