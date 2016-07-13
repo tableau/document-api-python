@@ -45,3 +45,19 @@ class MLDTests(unittest.TestCase):
     def test_mutlilookupdict_can_still_find_id_even_with_caption(self):
         actual = self.mld['[bar]']
         self.assertEqual(2, actual['value'])
+
+    def test_multilookupdict_gives_key_error_on_invalid_key(self):
+        try:
+            self.mld.get('foobar')
+            self.fail('should have thrown key error')
+        except KeyError as ex:
+            self.assertEqual(ex.message, 'foobar')
+
+    def test_multilookupdict_get_returns_default_value(self):
+        default_value = ('default', 'return', 'value')
+        actual = self.mld.get('foobar', default_value)
+        self.assertEqual(actual, default_value)
+
+    def test_multilookupdict_get_returns_value(self):
+        actual = self.mld.get('baz')
+        self.assertEqual(1, actual['value'])

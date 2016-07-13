@@ -1,6 +1,9 @@
 import weakref
 
 
+_no_default_value = object()
+
+
 def _resolve_value(key, value):
     retval = None
     try:
@@ -46,11 +49,11 @@ class MultiLookupDict(dict):
 
         dict.__setitem__(self, key, value)
 
-    def get(self, key, default_value=AttributeError):
+    def get(self, key, default_value=_no_default_value):
         try:
             return self[key]
-        except AttributeError:
-            if default_value != AttributeError:
+        except KeyError:
+            if default_value != _no_default_value:
                 return default_value
             raise
 
