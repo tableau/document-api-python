@@ -53,7 +53,7 @@ class MultiLookupDict(dict):
         try:
             return self[key]
         except KeyError:
-            if default_value != _no_default_value:
+            if default_value is not _no_default_value:
                 return default_value
             raise
 

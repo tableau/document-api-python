@@ -51,7 +51,7 @@ class MLDTests(unittest.TestCase):
             self.mld.get('foobar')
             self.fail('should have thrown key error')
         except KeyError as ex:
-            self.assertEqual(ex.message, 'foobar')
+            self.assertEqual(str(ex), "'foobar'")
 
     def test_multilookupdict_get_returns_default_value(self):
         default_value = ('default', 'return', 'value')
