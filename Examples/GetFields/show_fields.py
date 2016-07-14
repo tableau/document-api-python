@@ -20,8 +20,8 @@ for count, field in enumerate(sourceTDS.fields.values()):
     if field.calculation:
         print('      the formula is {}'.format(field.calculation))
         blank_line = True
-    if field.aggregation:
-        print('      the default aggregation is {}'.format(field.aggregation))
+    if field.default_aggregation:
+        print('      the default aggregation is {}'.format(field.default_aggregation))
         blank_line = True
 
     if blank_line:

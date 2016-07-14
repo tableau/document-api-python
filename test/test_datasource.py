@@ -1,6 +1,5 @@
 import unittest
 import os.path
-import functools
 
 from tableaudocumentapi import Datasource
 
@@ -23,7 +22,23 @@ class DataSourceFields(unittest.TestCase):
         self.assertEqual('1', self.ds.fields['[Number of Records]'].calculation)
 
     def test_datasource_uses_metadata_record(self):
-        self.assertEqual('Sum', self.ds.fields['[x]'].aggregation)
+        self.assertEqual('Sum', self.ds.fields['[x]'].default_aggregation)
 
     def test_datasource_column_name_contains_apostrophy(self):
         self.assertIsNotNone(self.ds.fields.get("[Today's Date]", None))
+
+    def test_datasource_field_can_get_caption(self):
+        self.assertEqual(self.ds.fields['[a]'].caption, 'A')
+        self.assertEqual(getattr(self.ds.fields['[a]'], 'caption', None), 'A')
+
+    def test_datasource_field_caption_can_be_used_to_query(self):
+        self.assertIsNotNone(self.ds.fields.get('A', None))
+
+    def test_datasource_field_is_nominal(self):
+        self.assertTrue(self.ds.fields['[a]'].is_nominal)
+
+    def test_datasource_field_is_quantitative(self):
+        self.assertTrue(self.ds.fields['[y]'].is_quantitative)
+
+    def test_datasource_field_is_ordinal(self):
+        self.assertTrue(self.ds.fields['[x]'].is_ordinal)

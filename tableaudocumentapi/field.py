@@ -41,12 +41,6 @@ class Field(object):
     def from_xml(cls, xmldata):
         return cls(xmldata)
 
-    def __getattr__(self, item):
-        private_name = '_{}'.format(item)
-        if item in _ATTRIBUTES or item in _METADATA_ATTRIBUTES:
-            return getattr(self, private_name)
-        raise AttributeError(item)
-
     def _apply_attribute(self, xmldata, attrib, default_func):
         if hasattr(self, '_read_{}'.format(attrib)):
             value = getattr(self, '_read_{}'.format(attrib))(xmldata)
@@ -70,6 +64,62 @@ class Field(object):
             return caption
 
         return self.id
+
+    @property
+    def id(self):
+        """ Name of the field as specified in the file, usually surrounded by [ ] """
+        return self._id
+
+    @property
+    def caption(self):
+        """ Name of the field as displayed in Tableau unless an aliases is defined """
+        return self._caption
+
+    @property
+    def alias(self):
+        """ Name of the field as displayed in Tableau if the default name isn't wanted """
+        return self._alias
+
+    @property
+    def datatype(self):
+        """ Type of the field within Tableau (string, integer, etc) """
+        return self._datatype
+
+    @property
+    def role(self):
+        """ Dimension or Measure """
+        return self._role
+
+    @property
+    def is_quantitative(self):
+        """ A dependent value, usually a measure of something
+
+        e.g. Profit, Gross Sales """
+        return self._type == 'quantitative'
+
+    @property
+    def is_ordinal(self):
+        """ Is this field a categorical field that has a specific order
+
+        e.g. How do you feel? 1 - awful, 2 - ok, 3 - fantastic """
+        return self._type == 'ordinal'
+
+    @property
+    def is_nominal(self):
+        """ Is this field a categorical field that does not have a specific order
+
+        e.g. What color is your hair? """
+        return self._type == 'nominal'
+
+    @property
+    def calculation(self):
+        """ If this field is a calculated field, this will be the formula """
+        return self._calculation
+
+    @property
+    def default_aggregation(self):
+        """ The default type of aggregation on the field (e.g Sum, Avg)"""
+        return self._aggregation
 
     ######################################
     # Special Case handling methods for reading the values from the XML

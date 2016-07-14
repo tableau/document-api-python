@@ -77,7 +77,7 @@
   </column>
   <column caption='A' datatype='string' name='[a]' role='dimension' type='nominal' />
   <column caption='Today&apos;s Date' datatype='string' name='[Today&apos;s Date]' role='dimension' type='nominal' />
-  <column caption='X' datatype='integer' name='[x]' role='measure' type='quantitative' />
+  <column caption='X' datatype='integer' name='[x]' role='measure' type='ordinal' />
   <column caption='Y' datatype='integer' name='[y]' role='measure' type='quantitative' />
   <layout dim-ordering='alphabetic' dim-percentage='0.5' measure-ordering='alphabetic' measure-percentage='0.5' show-structure='true' />
   <semantic-values>
