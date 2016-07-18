@@ -5,6 +5,7 @@
 ###############################################################################
 import os
 import zipfile
+import weakref
 
 import xml.etree.ElementTree as ET
 
@@ -47,12 +48,25 @@ class Workbook(object):
         self._datasources = self._prepare_datasources(
             self._workbookRoot)  # self.workbookRoot.find('datasources')
 
+        self._datasource_index = self._prepare_datasource_index(self._datasources)
+
+        self._worksheets = self._prepare_worksheets(
+            self._workbookRoot, self._datasource_index
+        )
+
     ###########
     # datasources
     ###########
     @property
     def datasources(self):
         return self._datasources
+
+    ###########
+    # worksheets
+    ###########
+    @property
+    def worksheets(self):
+        return self._worksheets
 
     ###########
     # filename
@@ -95,12 +109,45 @@ class Workbook(object):
     # Private API.
     #
     ###########################################################################
-    def _prepare_datasources(self, xmlRoot):
+    @staticmethod
+    def _prepare_datasource_index(datasources):
+        retval = weakref.WeakValueDictionary()
+        for datasource in datasources:
+            retval[datasource.name] = datasource
+
+        return retval
+
+    @staticmethod
+    def _prepare_datasources(xml_root):
         datasources = []
 
         # loop through our datasources and append
-        for datasource in xmlRoot.find('datasources'):
-            ds = Datasource(datasource, workbook_xml_root=xmlRoot)
+        for datasource in xml_root.find('datasources'):
+            ds = Datasource(datasource, workbook_xml_root=xml_root)
             datasources.append(ds)
 
         return datasources
+
+    @staticmethod
+    def _prepare_worksheets(xml_root, ds_index):
+        worksheets = []
+        worksheets_element = xml_root.find('.//worksheets')
+        if worksheets_element is None:
+            return worksheets
+
+        for worksheet_element in worksheets_element:
+            worksheet_name = worksheet_element.attrib['name']
+            worksheets.append(worksheet_name)  # TODO: A real worksheet object, for now, only name
+
+            dependencies = worksheet_element.findall('.//datasource-dependencies')
+            if dependencies is None:
+                continue
+
+            for dependency in dependencies:
+                datasource_name = dependency.attrib['datasource']
+                datasource = ds_index[datasource_name]
+                for column in dependency.findall('.//column'):
+                    column_name = column.attrib['name']
+                    datasource.fields[column_name].add_used_in(worksheet_name)
+
+        return worksheets

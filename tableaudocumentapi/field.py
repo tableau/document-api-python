@@ -33,7 +33,7 @@ class Field(object):
         for attrib in _METADATA_ATTRIBUTES:
             setattr(self, '_{}'.format(attrib), None)
 
-        self._in_use = False
+        self._worksheets = set()
 
     ########################################
     # Special Case methods for construction fields from various sources
@@ -43,8 +43,8 @@ class Field(object):
         for attrib in _METADATA_ATTRIBUTES:
             self._apply_attribute(metadata_record, attrib, functools.partial(_find_metadata_record, metadata_record))
 
-    def set_in_use(self):
-        self._in_use = True
+    def add_used_in(self, name):
+        self._worksheets.add(name)
 
     @classmethod
     def from_xml(cls, xmldata):
@@ -131,8 +131,8 @@ class Field(object):
         return self._aggregation
 
     @property
-    def in_use(self):
-        return self._in_use
+    def worksheets(self):
+        return list(self._worksheets)
 
     ######################################
     # Special Case handling methods for reading the values from the XML

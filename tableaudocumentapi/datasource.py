@@ -10,7 +10,12 @@ import zipfile
 
 from tableaudocumentapi import Connection, xfile
 from tableaudocumentapi import Field
-from tableaudocumentapi.multilookup_dict import MultiLookupDict, PredicatedDictionary
+from tableaudocumentapi.multilookup_dict import MultiLookupDict
+
+
+class FieldDictionary(MultiLookupDict):
+    def found_in(self, name):
+        return [x for x in self.values() if name in x.worksheets]
 
 
 def _mapping_from_xml(root_xml, column_xml):
@@ -71,12 +76,12 @@ class Datasource(object):
         self._connections = self._connection_parser.get_connections()
         self._fields = None
         self._usedFields = None
-        if workbook_xml_root is not None:
-            self._prepare_from_workbook(workbook_xml_root)
+        # if workbook_xml_root is not None:
+        #     self._prepare_from_worksheet(workbook_xml_root)
 
     @classmethod
     def from_file(cls, filename):
-        "Initialize datasource from file (.tds)"
+        """Initialize datasource from file (.tds)"""
 
         if zipfile.is_zipfile(filename):
             dsxml = xfile.get_xml_from_archive(filename).getroot()
@@ -143,22 +148,15 @@ class Datasource(object):
             self._fields = self._get_all_fields()
         return self._fields
 
-    @property
-    def usedFields(self):
-        if not self._usedFields:
-            raise RuntimeError('usedFields not initialized properly, most likely not loaded from a workbook')
-        return self._usedFields
-
     def _get_all_fields(self):
         column_objects = (_mapping_from_xml(self._datasourceTree, xml)
                           for xml in self._datasourceTree.findall('.//column'))
-        return MultiLookupDict({k: v for k, v in column_objects})
+        return FieldDictionary({k: v for k, v in column_objects})
 
-    def _prepare_from_workbook(self, workbook_xml):
-        self._fields = self._get_all_fields()
-        for element in workbook_xml.findall(".//datasource-dependencies[@datasource='{}']/column".format(self.name)):
-            column_name = element.attrib.get('name', None)
-            column = self._fields.get(column_name, None)
-            if column is not None:
-                column.set_in_use()
-        self._usedFields = PredicatedDictionary(lambda x: x.in_use, self._fields)
+    # def _prepare_from_worksheet(self, worksheet_xml):
+    #     self._fields = self._get_all_fields()
+    #     for element in worksheet_xml.findall(".//datasource-dependencies[@datasource='{}']/column".format(self.name)):
+    #         column_name = element.attrib.get('name', None)
+    #         column = self._fields.get(column_name, None)
+    #         if column is not None:
+    #             column.set_in_use()

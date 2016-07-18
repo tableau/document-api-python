@@ -62,7 +62,15 @@ class DataSourceFieldsTWB(unittest.TestCase):
         self.assertIsNotNone(self.ds.fields)
         self.assertIsNotNone(self.ds.fields.get('[Number of Records]', None))
 
-    def test_datasource_fields_in_use(self):
-        self.assertIsNotNone(self.ds.usedFields)
-        self.assertIsNone(self.ds.usedFields.get('[Number of Records]', None))
-        self.assertIsNone(self.ds.usedFields.get('[a]', None))
+
+class DataSourceFieldsFoundIn(unittest.TestCase):
+    def setUp(self):
+        self.wb = Workbook(TEST_TWB_FILE)
+        self.ds = self.wb.datasources[0]  # Assume the first datasource in the file
+
+    def test_datasource_fields_found_in_returns_fields(self):
+        actual_values = self.ds.fields.found_in('Sheet 1')
+        self.assertIsNotNone(actual_values)
+        self.assertNotEqual(0, len(actual_values))
+        self.assertIn('A', (x.name for x in actual_values))
+        self.assertNotIn('B', (x.name for x in actual_values))
