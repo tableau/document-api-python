@@ -69,7 +69,7 @@
       <column caption='A' datatype='string' name='[a]' role='dimension' type='nominal' />
       <column caption='X' datatype='integer' name='[x]' role='measure' type='quantitative' />
       <column caption='Y' datatype='integer' name='[y]' role='measure' type='quantitative' />
-      <layout dim-ordering='alphabetic' dim-percentage='0.49' measure-ordering='alphabetic' measure-percentage='0.51' show-structure='true' />
+      <layout dim-ordering='alphabetic' dim-percentage='0.48' measure-ordering='alphabetic' measure-percentage='0.52' show-structure='true' />
       <semantic-values>
         <semantic-value key='[Country].[Name]' value='&quot;United States&quot;' />
       </semantic-values>
@@ -101,9 +101,55 @@
         <cols />
       </table>
     </worksheet>
+    <worksheet name='Sheet 2'>
+      <table>
+        <view>
+          <datasources>
+            <datasource name='datasource_test' />
+          </datasources>
+          <datasource-dependencies datasource='datasource_test'>
+            <column caption='A' datatype='string' name='[a]' role='dimension' type='nominal' />
+            <column-instance column='[a]' derivation='None' name='[none:a:nk]' pivot='key' type='nominal' />
+            <column-instance column='[x]' derivation='Sum' name='[sum:x:qk]' pivot='key' type='quantitative' />
+            <column caption='X' datatype='integer' name='[x]' role='measure' type='quantitative' />
+          </datasource-dependencies>
+          <aggregation value='true' />
+        </view>
+        <style />
+        <panes>
+          <pane>
+            <view>
+              <breakdown value='auto' />
+            </view>
+            <mark class='Automatic' />
+          </pane>
+        </panes>
+        <rows>[datasource_test].[none:a:nk]</rows>
+        <cols>[datasource_test].[sum:x:qk]</cols>
+      </table>
+    </worksheet>
   </worksheets>
   <windows source-height='28'>
-    <window class='worksheet' maximized='true' name='Sheet 1'>
+    <window class='worksheet' name='Sheet 1'>
+      <cards>
+        <edge name='left'>
+          <strip size='160'>
+            <card type='pages' />
+            <card type='filters' />
+            <card type='marks' />
+          </strip>
+        </edge>
+        <edge name='top'>
+          <strip size='2147483647'>
+            <card type='columns' />
+          </strip>
+          <strip size='2147483647'>
+            <card type='rows' />
+          </strip>
+        </edge>
+      </cards>
+    </window>
+    <window class='worksheet' maximized='true' name='Sheet 2'>
       <cards>
         <edge name='left'>
           <strip size='160'>
@@ -159,6 +205,36 @@
       md9NTM+U1nH/DLxHX9/QdA0nM2W2LPMb+8U7cJweSkp/xZ/OvEDB3kJ2FvwOfc1wdps1y/x+
       +r6t7Gj9Bz95qZYDb4AbvZzswmT0Uxmz2Wxb5hcYCQUZGgWPR+lcjZb5nUREpOZDz0eaEy1h
       oYDE5N9/WIM3tlPK/wAAAABJRU5ErkJggg==
+    </thumbnail>
+    <thumbnail height='123' name='Sheet 2' width='192'>
+      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
     </thumbnail>
   </thumbnails>
 </workbook>

@@ -3,7 +3,6 @@
 # Datasource - A class for writing datasources to Tableau files
 #
 ###############################################################################
-import collections
 import xml.etree.ElementTree as ET
 import xml.sax.saxutils as sax
 import zipfile
@@ -12,10 +11,31 @@ from tableaudocumentapi import Connection, xfile
 from tableaudocumentapi import Field
 from tableaudocumentapi.multilookup_dict import MultiLookupDict
 
+########
+# This is needed in order to determine if something is a string or not.  It is necessary because
+# of differences between python2 (basestring) and python3 (str).  If python2 support is every
+# dropped, remove this and change the basestring references below to str
+try:
+    basestring
+except NameError:
+    basestring = str
+########
+
+
+def _is_used_by_worksheet(names, field):
+    return any((True for y in names if y in field.worksheets))
+
 
 class FieldDictionary(MultiLookupDict):
     def found_in(self, name):
-        return [x for x in self.values() if name in x.worksheets]
+        # If we pass in a string, no need to get complicated, just check to see if name is in
+        # the field's list of worksheets
+        if isinstance(name, basestring):
+            return [x for x in self.values() if name in x.worksheets]
+
+        # if we pass in a list, we need to check to see if any of the names in the list are in
+        # the field's list of worksheets
+        return [x for x in self.values() if _is_used_by_worksheet(name, x)]
 
 
 def _mapping_from_xml(root_xml, column_xml):
