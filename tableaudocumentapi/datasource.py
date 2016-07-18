@@ -80,7 +80,7 @@ class Datasource(object):
     # Public API.
     #
     ###########################################################################
-    def __init__(self, dsxml, filename=None, workbook_xml_root=None):
+    def __init__(self, dsxml, filename=None):
         """
         Constructor.  Default is to create datasource from xml.
 
@@ -172,11 +172,3 @@ class Datasource(object):
         column_objects = (_mapping_from_xml(self._datasourceTree, xml)
                           for xml in self._datasourceTree.findall('.//column'))
         return FieldDictionary({k: v for k, v in column_objects})
-
-    # def _prepare_from_worksheet(self, worksheet_xml):
-    #     self._fields = self._get_all_fields()
-    #     for element in worksheet_xml.findall(".//datasource-dependencies[@datasource='{}']/column".format(self.name)):
-    #         column_name = element.attrib.get('name', None)
-    #         column = self._fields.get(column_name, None)
-    #         if column is not None:
-    #             column.set_in_use()
