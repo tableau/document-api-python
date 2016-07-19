@@ -49,17 +49,17 @@ class FieldDictionary(MultiLookupDict):
 
 
 def _column_object_from_column_xml(root_xml, column_xml):
-    retval = Field.from_column_xml(column_xml)
-    local_name = retval.id
+    field_object = Field.from_column_xml(column_xml)
+    local_name = field_object.id
     metadata_record = _get_metadata_xml_for_field(root_xml, local_name)
     if metadata_record is not None:
-        retval.apply_metadata(metadata_record)
-    return _ColumnObjectReturnTuple(retval.id, retval)
+        field_object.apply_metadata(metadata_record)
+    return _ColumnObjectReturnTuple(field_object.id, field_object)
 
 
 def _column_object_from_metadata_xml(metadata_xml):
-    retval = Field.from_metadata_xml(metadata_xml)
-    return _ColumnObjectReturnTuple(retval.id, retval)
+    field_object = Field.from_metadata_xml(metadata_xml)
+    return _ColumnObjectReturnTuple(field_object.id, field_object)
 
 
 class ConnectionParser(object):
