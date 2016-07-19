@@ -33,7 +33,7 @@ def _get_metadata_xml_for_field(root_xml, field_name):
 
 
 def _is_used_by_worksheet(names, field):
-    return any((True for y in names if y in field.worksheets))
+    return any((y for y in names if y in field.worksheets))
 
 
 class FieldDictionary(MultiLookupDict):
