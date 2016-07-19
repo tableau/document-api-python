@@ -22,6 +22,13 @@ except NameError:
 ########
 
 
+def _get_metadata_xml_for_field(root_xml, field_name):
+    if "'" in field_name:
+        field_name = sax.escape(field_name, {"'": "&apos;"})
+    xpath = ".//metadata-record[@class='column'][local-name='{}']".format(field_name)
+    return root_xml.find(xpath)
+
+
 def _is_used_by_worksheet(names, field):
     return any((True for y in names if y in field.worksheets))
 
@@ -38,15 +45,17 @@ class FieldDictionary(MultiLookupDict):
         return [x for x in self.values() if _is_used_by_worksheet(name, x)]
 
 
-def _mapping_from_xml(root_xml, column_xml):
-    retval = Field.from_xml(column_xml)
+def _column_object_from_column_xml(root_xml, column_xml):
+    retval = Field.from_column_xml(column_xml)
     local_name = retval.id
-    if "'" in local_name:
-        local_name = sax.escape(local_name, {"'": "&apos;"})
-    xpath = ".//metadata-record[@class='column'][local-name='{}']".format(local_name)
-    metadata_record = root_xml.find(xpath)
+    metadata_record = _get_metadata_xml_for_field(root_xml, local_name)
     if metadata_record is not None:
         retval.apply_metadata(metadata_record)
+    return retval.id, retval
+
+
+def _column_object_from_metadata_xml(metadata_xml):
+    retval = Field.from_metadata_xml(metadata_xml)
     return retval.id, retval
 
 
@@ -169,6 +178,16 @@ class Datasource(object):
         return self._fields
 
     def _get_all_fields(self):
-        column_objects = (_mapping_from_xml(self._datasourceTree, xml)
-                          for xml in self._datasourceTree.findall('.//column'))
+        column_objects = [_column_object_from_column_xml(self._datasourceTree, xml)
+                          for xml in self._datasourceTree.findall('.//column')]
+        existing_fields = [x[0] for x in column_objects]
+        metadata_fields = (x.text
+                           for x in self._datasourceTree.findall(".//metadata-record[@class='column']/local-name"))
+
+        missing_fields = (x for x in metadata_fields if x not in existing_fields)
+        column_objects.extend((
+            _column_object_from_metadata_xml(_get_metadata_xml_for_field(self._datasourceTree, field_name))
+            for field_name in missing_fields
+        ))
+
         return FieldDictionary({k: v for k, v in column_objects})

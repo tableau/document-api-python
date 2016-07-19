@@ -14,6 +14,12 @@ _METADATA_ATTRIBUTES = [
     'aggregation',  # The type of aggregation on the field (e.g Sum, Avg)
 ]
 
+_METADATA_TO_FIELD_MAP = [
+    ('local-name', 'id'),
+    ('local-type', 'datatype'),
+    ('remote-alias', 'alias')
+]
+
 
 def _find_metadata_record(record, attrib):
     element = record.find('.//{}'.format(attrib))
@@ -25,15 +31,35 @@ def _find_metadata_record(record, attrib):
 class Field(object):
     """ Represents a field in a datasource """
 
-    def __init__(self, xmldata):
+    def __init__(self, column_xml=None, metadata_xml=None):
+
+        # Initialize all the possible attributes
+        for attrib in _ATTRIBUTES:
+            setattr(self, '_{}'.format(attrib), None)
+        for attrib in _METADATA_ATTRIBUTES:
+            setattr(self, '_{}'.format(attrib), None)
+        self._worksheets = set()
+
+        if column_xml is not None:
+            self._initialize_from_column_xml(column_xml)
+            if metadata_xml is not None:
+                self.apply_metadata(metadata_xml)
+
+        elif metadata_xml is not None:
+            self._initialize_from_metadata_xml(metadata_xml)
+
+        else:
+            raise AttributeError('column_xml or metadata_xml needed to initialize field')
+
+    def _initialize_from_column_xml(self, xmldata):
         for attrib in _ATTRIBUTES:
             self._apply_attribute(xmldata, attrib, lambda x: xmldata.attrib.get(x, None))
 
-        # All metadata attributes begin at None
-        for attrib in _METADATA_ATTRIBUTES:
-            setattr(self, '_{}'.format(attrib), None)
-
-        self._worksheets = set()
+    def _initialize_from_metadata_xml(self, xmldata):
+        for metadata_name, field_name in _METADATA_TO_FIELD_MAP:
+            self._apply_attribute(xmldata, field_name, lambda x: xmldata.find('.//{}'.format(metadata_name)).text,
+                                  read_name=metadata_name)
+        self.apply_metadata(xmldata)
 
     ########################################
     # Special Case methods for construction fields from various sources
@@ -47,12 +73,18 @@ class Field(object):
         self._worksheets.add(name)
 
     @classmethod
-    def from_xml(cls, xmldata):
-        return cls(xmldata)
+    def from_column_xml(cls, xmldata):
+        return cls(column_xml=xmldata)
 
-    def _apply_attribute(self, xmldata, attrib, default_func):
-        if hasattr(self, '_read_{}'.format(attrib)):
-            value = getattr(self, '_read_{}'.format(attrib))(xmldata)
+    @classmethod
+    def from_metadata_xml(cls, xmldata):
+        return cls(metadata_xml=xmldata)
+
+    def _apply_attribute(self, xmldata, attrib, default_func, read_name=None):
+        if read_name is None:
+            read_name = attrib
+        if hasattr(self, '_read_{}'.format(read_name)):
+            value = getattr(self, '_read_{}'.format(read_name))(xmldata)
         else:
             value = default_func(attrib)
 
