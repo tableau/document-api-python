@@ -11,12 +11,6 @@ import xml.etree.ElementTree as ET
 
 from tableaudocumentapi import Datasource, xfile
 
-###########################################################################
-#
-# Utility Functions
-#
-###########################################################################
-
 
 class Workbook(object):
     """
@@ -34,6 +28,7 @@ class Workbook(object):
         Constructor.
 
         """
+
         self._filename = filename
 
         # Determine if this is a twb or twbx and get the xml root
@@ -122,7 +117,11 @@ class Workbook(object):
         datasources = []
 
         # loop through our datasources and append
-        for datasource in xml_root.find('datasources'):
+        datasource_elements = xml_root.find('datasources')
+        if datasource_elements is None:
+            return []
+
+        for datasource in datasource_elements:
             ds = Datasource(datasource)
             datasources.append(ds)
 
@@ -140,8 +139,6 @@ class Workbook(object):
             worksheets.append(worksheet_name)  # TODO: A real worksheet object, for now, only name
 
             dependencies = worksheet_element.findall('.//datasource-dependencies')
-            if dependencies is None:
-                continue
 
             for dependency in dependencies:
                 datasource_name = dependency.attrib['datasource']
