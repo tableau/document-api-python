@@ -1,8 +1,7 @@
 import unittest
 import os.path
 
-from tableaudocumentapi import Datasource
-from tableaudocumentapi import Workbook
+from tableaudocumentapi import Datasource, Workbook
 
 TEST_ASSET_DIR = os.path.join(
     os.path.dirname(__file__),
