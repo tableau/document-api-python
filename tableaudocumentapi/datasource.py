@@ -3,6 +3,7 @@
 # Datasource - A class for writing datasources to Tableau files
 #
 ###############################################################################
+import collections
 import xml.etree.ElementTree as ET
 import xml.sax.saxutils as sax
 import zipfile
@@ -20,6 +21,8 @@ try:
 except NameError:
     basestring = str
 ########
+
+_ColumnObjectReturnTuple = collections.namedtuple('_ColumnObjectReturnTupleType', ['id', 'object'])
 
 
 def _get_metadata_xml_for_field(root_xml, field_name):
@@ -51,12 +54,12 @@ def _column_object_from_column_xml(root_xml, column_xml):
     metadata_record = _get_metadata_xml_for_field(root_xml, local_name)
     if metadata_record is not None:
         retval.apply_metadata(metadata_record)
-    return retval.id, retval
+    return _ColumnObjectReturnTuple(retval.id, retval)
 
 
 def _column_object_from_metadata_xml(metadata_xml):
     retval = Field.from_metadata_xml(metadata_xml)
-    return retval.id, retval
+    return _ColumnObjectReturnTuple(retval.id, retval)
 
 
 class ConnectionParser(object):
@@ -180,7 +183,7 @@ class Datasource(object):
     def _get_all_fields(self):
         column_objects = [_column_object_from_column_xml(self._datasourceTree, xml)
                           for xml in self._datasourceTree.findall('.//column')]
-        existing_fields = [x[0] for x in column_objects]
+        existing_fields = [x.id for x in column_objects]
         metadata_fields = (x.text
                            for x in self._datasourceTree.findall(".//metadata-record[@class='column']/local-name"))
 
