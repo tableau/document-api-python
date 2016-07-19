@@ -107,9 +107,6 @@ class Datasource(object):
             self._datasourceXML, version=self._version)
         self._connections = self._connection_parser.get_connections()
         self._fields = None
-        self._usedFields = None
-        # if workbook_xml_root is not None:
-        #     self._prepare_from_worksheet(workbook_xml_root)
 
     @classmethod
     def from_file(cls, filename):
