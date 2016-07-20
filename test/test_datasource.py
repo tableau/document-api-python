@@ -68,19 +68,19 @@ class DataSourceFieldsFoundIn(unittest.TestCase):
         self.ds = self.wb.datasources[0]  # Assume the first datasource in the file
 
     def test_datasource_fields_found_in_returns_fields(self):
-        actual_values = self.ds.fields.found_in('Sheet 1')
+        actual_values = self.ds.fields.used_by_sheet('Sheet 1')
         self.assertIsNotNone(actual_values)
         self.assertEqual(1, len(actual_values))
         self.assertIn('A', (x.name for x in actual_values))
 
     def test_datasource_fields_found_in_does_not_return_fields_not_used_in_worksheet(self):
-        actual_values = self.ds.fields.found_in('Sheet 1')
+        actual_values = self.ds.fields.used_by_sheet('Sheet 1')
         self.assertIsNotNone(actual_values)
         self.assertEqual(1, len(actual_values))
         self.assertNotIn('X', (x.name for x in actual_values))
 
     def test_datasource_fields_found_in_returns_multiple_fields(self):
-        actual_values = self.ds.fields.found_in('Sheet 2')
+        actual_values = self.ds.fields.used_by_sheet('Sheet 2')
         self.assertIsNotNone(actual_values)
         self.assertEqual(2, len(actual_values))
         self.assertIn('A', (x.name for x in actual_values))
@@ -88,7 +88,7 @@ class DataSourceFieldsFoundIn(unittest.TestCase):
         self.assertNotIn('Y', (x.name for x in actual_values))
 
     def test_datasource_fields_found_in_accepts_lists(self):
-        actual_values = self.ds.fields.found_in(['Sheet 1', 'Sheet 2'])
+        actual_values = self.ds.fields.used_by_sheet(['Sheet 1', 'Sheet 2'])
         self.assertIsNotNone(actual_values)
         self.assertEqual(2, len(actual_values))
         self.assertIn('A', (x.name for x in actual_values))

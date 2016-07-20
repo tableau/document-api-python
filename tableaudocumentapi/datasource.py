@@ -37,7 +37,7 @@ def _is_used_by_worksheet(names, field):
 
 
 class FieldDictionary(MultiLookupDict):
-    def found_in(self, name):
+    def used_by_sheet(self, name):
         # If we pass in a string, no need to get complicated, just check to see if name is in
         # the field's list of worksheets
         if isinstance(name, basestring):
