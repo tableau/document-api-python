@@ -12,17 +12,54 @@ from tableaudocumentapi import Connection, xfile
 from tableaudocumentapi import Field
 from tableaudocumentapi.multilookup_dict import MultiLookupDict
 
+########
+# This is needed in order to determine if something is a string or not.  It is necessary because
+# of differences between python2 (basestring) and python3 (str).  If python2 support is every
+# dropped, remove this and change the basestring references below to str
+try:
+    basestring
+except NameError:
+    basestring = str
+########
 
-def _mapping_from_xml(root_xml, column_xml):
-    retval = Field.from_xml(column_xml)
-    local_name = retval.id
-    if "'" in local_name:
-        local_name = sax.escape(local_name, {"'": "&apos;"})
-    xpath = ".//metadata-record[@class='column'][local-name='{}']".format(local_name)
-    metadata_record = root_xml.find(xpath)
+_ColumnObjectReturnTuple = collections.namedtuple('_ColumnObjectReturnTupleType', ['id', 'object'])
+
+
+def _get_metadata_xml_for_field(root_xml, field_name):
+    if "'" in field_name:
+        field_name = sax.escape(field_name, {"'": "&apos;"})
+    xpath = ".//metadata-record[@class='column'][local-name='{}']".format(field_name)
+    return root_xml.find(xpath)
+
+
+def _is_used_by_worksheet(names, field):
+    return any((y for y in names if y in field.worksheets))
+
+
+class FieldDictionary(MultiLookupDict):
+    def used_by_sheet(self, name):
+        # If we pass in a string, no need to get complicated, just check to see if name is in
+        # the field's list of worksheets
+        if isinstance(name, basestring):
+            return [x for x in self.values() if name in x.worksheets]
+
+        # if we pass in a list, we need to check to see if any of the names in the list are in
+        # the field's list of worksheets
+        return [x for x in self.values() if _is_used_by_worksheet(name, x)]
+
+
+def _column_object_from_column_xml(root_xml, column_xml):
+    field_object = Field.from_column_xml(column_xml)
+    local_name = field_object.id
+    metadata_record = _get_metadata_xml_for_field(root_xml, local_name)
     if metadata_record is not None:
-        retval.apply_metadata(metadata_record)
-    return retval.id, retval
+        field_object.apply_metadata(metadata_record)
+    return _ColumnObjectReturnTuple(field_object.id, field_object)
+
+
+def _column_object_from_metadata_xml(metadata_xml):
+    field_object = Field.from_metadata_xml(metadata_xml)
+    return _ColumnObjectReturnTuple(field_object.id, field_object)
 
 
 class ConnectionParser(object):
@@ -73,7 +110,7 @@ class Datasource(object):
 
     @classmethod
     def from_file(cls, filename):
-        "Initialize datasource from file (.tds)"
+        """Initialize datasource from file (.tds)"""
 
         if zipfile.is_zipfile(filename):
             dsxml = xfile.get_xml_from_archive(filename).getroot()
@@ -141,6 +178,16 @@ class Datasource(object):
         return self._fields
 
     def _get_all_fields(self):
-        column_objects = (_mapping_from_xml(self._datasourceTree, xml)
-                          for xml in self._datasourceTree.findall('.//column'))
-        return MultiLookupDict({k: v for k, v in column_objects})
+        column_objects = [_column_object_from_column_xml(self._datasourceTree, xml)
+                          for xml in self._datasourceTree.findall('.//column')]
+        existing_fields = [x.id for x in column_objects]
+        metadata_fields = (x.text
+                           for x in self._datasourceTree.findall(".//metadata-record[@class='column']/local-name"))
+
+        missing_fields = (x for x in metadata_fields if x not in existing_fields)
+        column_objects.extend((
+            _column_object_from_metadata_xml(_get_metadata_xml_for_field(self._datasourceTree, field_name))
+            for field_name in missing_fields
+        ))
+
+        return FieldDictionary({k: v for k, v in column_objects})

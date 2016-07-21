@@ -22,6 +22,8 @@ TABLEAU_10_TWBX = os.path.join(TEST_DIR, 'assets', 'TABLEAU_10_TWBX.twbx')
 
 TABLEAU_10_TDSX = os.path.join(TEST_DIR, 'assets', 'TABLEAU_10_TDSX.tdsx')
 
+EMPTY_WORKBOOK = os.path.join(TEST_DIR, 'assets', 'empty_workbook.twb')
+
 
 class ConnectionParserTests(unittest.TestCase):
 
@@ -277,6 +279,13 @@ class WorkbookModelV10TWBXTests(unittest.TestCase):
                          0].server, 'newdb.test.tsi.lan')
 
         os.unlink(new_twbx_filename)
+
+
+class EmptyWorkbookWillLoad(unittest.TestCase):
+    def test_no_exceptions_thrown(self):
+        wb = Workbook(EMPTY_WORKBOOK)
+        self.assertIsNotNone(wb)
+
 
 if __name__ == '__main__':
     unittest.main()

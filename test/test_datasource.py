@@ -1,16 +1,24 @@
 import unittest
 import os.path
 
-from tableaudocumentapi import Datasource
+from tableaudocumentapi import Datasource, Workbook
 
-TEST_TDS_FILE = os.path.join(
+TEST_ASSET_DIR = os.path.join(
     os.path.dirname(__file__),
-    'assets',
+    'assets'
+)
+TEST_TDS_FILE = os.path.join(
+    TEST_ASSET_DIR,
     'datasource_test.tds'
 )
 
+TEST_TWB_FILE = os.path.join(
+    TEST_ASSET_DIR,
+    'datasource_test.twb'
+)
 
-class DataSourceFields(unittest.TestCase):
+
+class DataSourceFieldsTDS(unittest.TestCase):
     def setUp(self):
         self.ds = Datasource.from_file(TEST_TDS_FILE)
 
@@ -42,3 +50,47 @@ class DataSourceFields(unittest.TestCase):
 
     def test_datasource_field_is_ordinal(self):
         self.assertTrue(self.ds.fields['[x]'].is_ordinal)
+
+
+class DataSourceFieldsTWB(unittest.TestCase):
+    def setUp(self):
+        self.wb = Workbook(TEST_TWB_FILE)
+        self.ds = self.wb.datasources[0]  # Assume the first datasource in the file
+
+    def test_datasource_fields_loaded_in_workbook(self):
+        self.assertIsNotNone(self.ds.fields)
+        self.assertIsNotNone(self.ds.fields.get('[Number of Records]', None))
+
+
+class DataSourceFieldsFoundIn(unittest.TestCase):
+    def setUp(self):
+        self.wb = Workbook(TEST_TWB_FILE)
+        self.ds = self.wb.datasources[0]  # Assume the first datasource in the file
+
+    def test_datasource_fields_found_in_returns_fields(self):
+        actual_values = self.ds.fields.used_by_sheet('Sheet 1')
+        self.assertIsNotNone(actual_values)
+        self.assertEqual(1, len(actual_values))
+        self.assertIn('A', (x.name for x in actual_values))
+
+    def test_datasource_fields_found_in_does_not_return_fields_not_used_in_worksheet(self):
+        actual_values = self.ds.fields.used_by_sheet('Sheet 1')
+        self.assertIsNotNone(actual_values)
+        self.assertEqual(1, len(actual_values))
+        self.assertNotIn('X', (x.name for x in actual_values))
+
+    def test_datasource_fields_found_in_returns_multiple_fields(self):
+        actual_values = self.ds.fields.used_by_sheet('Sheet 2')
+        self.assertIsNotNone(actual_values)
+        self.assertEqual(2, len(actual_values))
+        self.assertIn('A', (x.name for x in actual_values))
+        self.assertIn('X', (x.name for x in actual_values))
+        self.assertNotIn('Y', (x.name for x in actual_values))
+
+    def test_datasource_fields_found_in_accepts_lists(self):
+        actual_values = self.ds.fields.used_by_sheet(['Sheet 1', 'Sheet 2'])
+        self.assertIsNotNone(actual_values)
+        self.assertEqual(2, len(actual_values))
+        self.assertIn('A', (x.name for x in actual_values))
+        self.assertIn('X', (x.name for x in actual_values))
+        self.assertNotIn('Y', (x.name for x in actual_values))
