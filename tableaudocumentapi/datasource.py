@@ -181,8 +181,8 @@ class Datasource(object):
     def _get_all_fields(self):
         column_field_objects = self._get_column_objects()
         existing_column_fields = [x.id for x in column_field_objects]
-        metadata_field_objects = (x for x in self._get_metadata_objects() if x.id not in existing_column_fields)
-        field_objects = itertools.chain(column_field_objects, metadata_field_objects)
+        metadata_only_field_objects = (x for x in self._get_metadata_objects() if x.id not in existing_column_fields)
+        field_objects = itertools.chain(column_field_objects, metadata_only_field_objects)
 
         return FieldDictionary({k: v for k, v in field_objects})
 
