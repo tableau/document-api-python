@@ -4,6 +4,7 @@
 #
 ###############################################################################
 import collections
+import itertools
 import xml.etree.ElementTree as ET
 import xml.sax.saxutils as sax
 import zipfile
@@ -178,16 +179,17 @@ class Datasource(object):
         return self._fields
 
     def _get_all_fields(self):
-        column_objects = [_column_object_from_column_xml(self._datasourceTree, xml)
-                          for xml in self._datasourceTree.findall('.//column')]
-        existing_fields = [x.id for x in column_objects]
-        metadata_fields = (x.text
-                           for x in self._datasourceTree.findall(".//metadata-record[@class='column']/local-name"))
+        column_field_objects = self._get_column_objects()
+        existing_column_fields = [x.id for x in column_field_objects]
+        metadata_only_field_objects = (x for x in self._get_metadata_objects() if x.id not in existing_column_fields)
+        field_objects = itertools.chain(column_field_objects, metadata_only_field_objects)
 
-        missing_fields = (x for x in metadata_fields if x not in existing_fields)
-        column_objects.extend((
-            _column_object_from_metadata_xml(_get_metadata_xml_for_field(self._datasourceTree, field_name))
-            for field_name in missing_fields
-        ))
+        return FieldDictionary({k: v for k, v in field_objects})
 
-        return FieldDictionary({k: v for k, v in column_objects})
+    def _get_metadata_objects(self):
+        return (_column_object_from_metadata_xml(x)
+                for x in self._datasourceTree.findall(".//metadata-record[@class='column']"))
+
+    def _get_column_objects(self):
+        return [_column_object_from_column_xml(self._datasourceTree, xml)
+                for xml in self._datasourceTree.findall('.//column')]
