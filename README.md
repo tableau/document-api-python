@@ -6,15 +6,26 @@ This repo contains Python source and example files for the Tableau Document API.
 
 Document API
 ---------------
-The Document API provides a supported way to programmatically make updates to Tableau workbook (`.twb`) and datasource (`.tds`) files. If you've been making changes to these file types by directly updating the XML--that is, by XML hacking--this SDK is for you :)
+The Document API provides a supported way to programmatically make updates to Tableau workbook and data source files. If you've been making changes to these file types by directly updating the XML--that is, by XML hacking--this SDK is for you :)
 
-Currently only the following operations are supported:
+Features include:
+- Support for 8.X, 9.X, and 10.X workbook and data source files
+  - Including TDSX and TWBX files
+- Getting connection information from data sources and workbooks
+  - Server Name
+  - Username
+  - Database Name
+  - Authentication Type
+  - Connection Type
+- Updating connection information in workbooks and data sources
+  - Server Name
+  - Username
+  - Database Name
+- Getting Field information from data sources and workbooks
+  - Get all fields in a data source
+  - Get all feilds in use by certain sheets in a workbook
 
-- Modify database server
-- Modify database name
-- Modify database user
-
-We don't yet support creating files from scratch. In addition, support for `.twbx` and `.tdsx` files is coming.
+We don't yet support creating files from scratch, adding extracts into workbooks or data sources, or updating field information
 
 
 ###Getting Started
@@ -34,9 +45,6 @@ Download the `.zip` file that contains the SDK. Unzip the file and then run the 
 pip install -e <directory containing setup.py>
 ```
 
-We plan on putting the package in PyPi to make installation easier.
-
-
 ###Basics
 The following example shows the basic syntax for using the Document API to update a workbook:
 
@@ -52,7 +60,7 @@ sourceWB.datasources[0].connections[0].username = "benl"
 sourceWB.save()
 ```
 
-With Data Integration in Tableau 10, a datasource can have multiple connections. To access the connections simply index them like you would datasources
+With Data Integration in Tableau 10, a data source can have multiple connections. To access the connections simply index them like you would datasources
 
 ```python
 from tableaudocumentapi import Workbook
@@ -75,13 +83,13 @@ sourceWB.save()
 **Notes**
 
 - Import the `Workbook` object from the `tableaudocumentapi` module.
-- To open a workbook, instantiate a `Workbook` object and pass the `.twb` file name in the constructor.
-- The `Workbook` object exposes a `datasources` collection.
-- Each datasource object has a `connection` object that supports a `server`, `dbname`, and `username` property.
+- To open a workbook, instantiate a `Workbook` object and pass the file name as the first argument.
+- The `Workbook` object exposes a list of `datasources` in the workbook
+- Each data source object has a `connection` object that supports a `server`, `dbname`, and `username` property.
 - Save changes to the workbook by calling the `save` or `save_as` method.
 
 
 
 ###Examples
 
-The downloadable package contains an example named `replicateWorkbook.py` (in the folder `\Examples\Replicate Workbook`). This example reads an existing workbook and reads a .csv file that contains a list of servers, database names, and users. For each new user in the .csv file, the code copies the original workbook, updates the `server`, `dbname`, and `username` properties, and saves the workbook under a new name.
+The downloadable package contains several example scripts that show more detailed usage of the Document API
