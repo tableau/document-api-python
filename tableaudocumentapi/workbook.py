@@ -10,6 +10,7 @@ import weakref
 import xml.etree.ElementTree as ET
 
 from tableaudocumentapi import Datasource, xfile
+from tableaudocumentapi.xml_open import xml_open
 
 
 class Workbook(object):
@@ -31,12 +32,7 @@ class Workbook(object):
 
         self._filename = filename
 
-        # Determine if this is a twb or twbx and get the xml root
-        if zipfile.is_zipfile(self._filename):
-            self._workbookTree = xfile.get_xml_from_archive(
-                self._filename)
-        else:
-            self._workbookTree = ET.parse(self._filename)
+        self._workbookTree = xml_open(self._filename)
 
         self._workbookRoot = self._workbookTree.getroot()
         # prepare our datasource objects

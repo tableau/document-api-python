@@ -9,7 +9,7 @@ Document API
 The Document API provides a supported way to programmatically make updates to Tableau workbook and data source files. If you've been making changes to these file types by directly updating the XML--that is, by XML hacking--this SDK is for you :)
 
 Features include:
-- Support for 8.X, 9.X, and 10.X workbook and data source files
+- Support for 9.X, and 10.X workbook and data source files
   - Including TDSX and TWBX files
 - Getting connection information from data sources and workbooks
   - Server Name
