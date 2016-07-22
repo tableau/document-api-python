@@ -45,6 +45,20 @@ Download the `.zip` file that contains the SDK. Unzip the file and then run the 
 pip install -e <directory containing setup.py>
 ```
 
+#### Installing the Development Version From Git
+
+*Only do this if you know you want the development version, no guarantee that we won't break APIs during development*
+
+```text
+pip install git+https://github.com/tableau/document-api-python.git@development
+```
+
+If you go this route, but want to switch back to the non-development version, you need to run the following command before installing the stable version:
+
+```text
+pip uninstall tableaudocumentapi
+```
+
 ###Basics
 The following example shows the basic syntax for using the Document API to update a workbook:
 
