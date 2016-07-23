@@ -17,12 +17,14 @@ def temporary_directory(*args, **kwargs):
 
 
 def find_file_in_zip(zip):
+    _VALID_ROOTS = ('workbook', 'datasource')
+
     for filename in zip.namelist():
         try:
             with zip.open(filename) as xml_candidate:
-                ET.parse(xml_candidate).getroot().tag in (
-                    'workbook', 'datasource')
-                return filename
+                root_tag = ET.parse(xml_candidate).getroot().tag
+                if root_tag in _VALID_ROOTS:
+                    return filename
         except ET.ParseError:
             # That's not an XML file by gosh
             pass
