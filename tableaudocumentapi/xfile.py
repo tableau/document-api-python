@@ -24,7 +24,6 @@ def xml_open(filename):
     else:
         tree = ET.parse(filename)
     file_version = Version(tree.getroot().attrib.get('version', '0.0'))
-    print(file_version, MIN_SUPPORTED_VERSION)
     if file_version < MIN_SUPPORTED_VERSION:
         raise TableauVersionNotSupportedException(file_version)
     return tree

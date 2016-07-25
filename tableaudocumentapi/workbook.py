@@ -141,6 +141,7 @@ class Workbook(object):
                 datasource = ds_index[datasource_name]
                 for column in dependency.findall('.//column'):
                     column_name = column.attrib['name']
-                    datasource.fields[column_name].add_used_in(worksheet_name)
+                    if column_name in datasource.fields:
+                        datasource.fields[column_name].add_used_in(worksheet_name)
 
         return worksheets
