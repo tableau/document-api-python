@@ -11,7 +11,7 @@ import xml.sax.saxutils as sax
 from tableaudocumentapi import Connection, xfile
 from tableaudocumentapi import Field
 from tableaudocumentapi.multilookup_dict import MultiLookupDict
-from tableaudocumentapi.xml_open import xml_open
+from tableaudocumentapi.xfile import xml_open
 
 ########
 # This is needed in order to determine if something is a string or not.  It is necessary because

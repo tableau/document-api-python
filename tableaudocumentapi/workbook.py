@@ -10,7 +10,7 @@ import weakref
 import xml.etree.ElementTree as ET
 
 from tableaudocumentapi import Datasource, xfile
-from tableaudocumentapi.xml_open import xml_open
+from tableaudocumentapi.xfile import xml_open
 
 
 class Workbook(object):
