@@ -39,15 +39,25 @@ class MultiLookupDict(dict):
         self._indexes['alias'] = _build_index('alias', self)
         self._indexes['caption'] = _build_index('caption', self)
 
+    def _get_real_key(self, key):
+        if key in self._indexes['alias']:
+            return self._indexes['alias'][key]
+        if key in self._indexes['caption']:
+            return self._indexes['caption'][key]
+
+        return key
+
     def __setitem__(self, key, value):
+        real_key = self._get_real_key(key)
+
         alias = _resolve_value('alias', value)
         caption = _resolve_value('caption', value)
         if alias is not None:
-            self._indexes['alias'][alias] = key
+            self._indexes['alias'][alias] = real_key
         if caption is not None:
-            self._indexes['caption'][caption] = key
+            self._indexes['caption'][caption] = real_key
 
-        dict.__setitem__(self, key, value)
+        dict.__setitem__(self, real_key, value)
 
     def get(self, key, default_value=_no_default_value):
         try:
@@ -58,9 +68,5 @@ class MultiLookupDict(dict):
             raise
 
     def __getitem__(self, key):
-        if key in self._indexes['alias']:
-            key = self._indexes['alias'][key]
-        elif key in self._indexes['caption']:
-            key = self._indexes['caption'][key]
-
-        return dict.__getitem__(self, key)
+        real_key = self._get_real_key(key)
+        return dict.__getitem__(self, real_key)
