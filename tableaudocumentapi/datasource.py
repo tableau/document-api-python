@@ -7,11 +7,11 @@ import collections
 import itertools
 import xml.etree.ElementTree as ET
 import xml.sax.saxutils as sax
-import zipfile
 
 from tableaudocumentapi import Connection, xfile
 from tableaudocumentapi import Field
 from tableaudocumentapi.multilookup_dict import MultiLookupDict
+from tableaudocumentapi.xfile import xml_open
 
 ########
 # This is needed in order to determine if something is a string or not.  It is necessary because
@@ -113,10 +113,7 @@ class Datasource(object):
     def from_file(cls, filename):
         """Initialize datasource from file (.tds)"""
 
-        if zipfile.is_zipfile(filename):
-            dsxml = xfile.get_xml_from_archive(filename).getroot()
-        else:
-            dsxml = ET.parse(filename).getroot()
+        dsxml = xml_open(filename).getroot()
         return cls(dsxml, filename)
 
     def save(self):
