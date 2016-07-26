@@ -12,10 +12,11 @@ install:
 # command to run tests
 script:
   # Tests
-  - python test.py
+  - python setup.py test
   # pep8
-  - pep8 --ignore=E501 .
+  - pep8 .
   # Examples
   - (cd "Examples/Replicate Workbook" && python replicateWorkbook.py)
   - (cd "Examples/List TDS Info" && python listTDSInfo.py)
+  - (cd "Examples/GetFields" && python show_fields.py)
 

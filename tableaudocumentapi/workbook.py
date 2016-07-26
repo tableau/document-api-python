@@ -4,8 +4,13 @@
 #
 ###############################################################################
 import os
+import zipfile
+import weakref
+
 import xml.etree.ElementTree as ET
-from tableaudocumentapi import Datasource
+
+from tableaudocumentapi import Datasource, xfile
+from tableaudocumentapi.xfile import xml_open
 
 
 class Workbook(object):
@@ -24,30 +29,21 @@ class Workbook(object):
         Constructor.
 
         """
-        # We have a valid type of input file
-        if self._is_valid_file(filename):
-            # set our filename, open .twb, initialize things
-            self._filename = filename
-            self._workbookTree = ET.parse(filename)
-            self._workbookRoot = self._workbookTree.getroot()
 
-            # prepare our datasource objects
-            self._datasources = self._prepare_datasources(
-                self._workbookRoot)  # self.workbookRoot.find('datasources')
-        else:
-            print('Invalid file type. Must be .twb or .tds.')
-            raise Exception()
+        self._filename = filename
 
-    @classmethod
-    def from_file(cls, filename):
-        "Initialize datasource from file (.tds)"
-        if self._is_valid_file(filename):
-            self._filename = filename
-            dsxml = ET.parse(filename).getroot()
-            return cls(dsxml)
-        else:
-            print('Invalid file type. Must be .twb or .tds.')
-            raise Exception()
+        self._workbookTree = xml_open(self._filename)
+
+        self._workbookRoot = self._workbookTree.getroot()
+        # prepare our datasource objects
+        self._datasources = self._prepare_datasources(
+            self._workbookRoot)  # self.workbookRoot.find('datasources')
+
+        self._datasource_index = self._prepare_datasource_index(self._datasources)
+
+        self._worksheets = self._prepare_worksheets(
+            self._workbookRoot, self._datasource_index
+        )
 
     ###########
     # datasources
@@ -55,6 +51,13 @@ class Workbook(object):
     @property
     def datasources(self):
         return self._datasources
+
+    ###########
+    # worksheets
+    ###########
+    @property
+    def worksheets(self):
+        return self._worksheets
 
     ###########
     # filename
@@ -76,7 +79,7 @@ class Workbook(object):
         """
 
         # save the file
-        self._workbookTree.write(self._filename, encoding="utf-8", xml_declaration=True)
+        xfile._save_file(self._filename, self._workbookTree)
 
     def save_as(self, new_filename):
         """
@@ -89,25 +92,56 @@ class Workbook(object):
             Nothing.
 
         """
-
-        self._workbookTree.write(new_filename, encoding="utf-8", xml_declaration=True)
+        xfile._save_file(
+            self._filename, self._workbookTree, new_filename)
 
     ###########################################################################
     #
     # Private API.
     #
     ###########################################################################
-    def _prepare_datasources(self, xmlRoot):
+    @staticmethod
+    def _prepare_datasource_index(datasources):
+        retval = weakref.WeakValueDictionary()
+        for datasource in datasources:
+            retval[datasource.name] = datasource
+
+        return retval
+
+    @staticmethod
+    def _prepare_datasources(xml_root):
         datasources = []
 
         # loop through our datasources and append
-        for datasource in xmlRoot.find('datasources'):
+        datasource_elements = xml_root.find('datasources')
+        if datasource_elements is None:
+            return []
+
+        for datasource in datasource_elements:
             ds = Datasource(datasource)
             datasources.append(ds)
 
         return datasources
 
     @staticmethod
-    def _is_valid_file(filename):
-        fileExtension = os.path.splitext(filename)[-1].lower()
-        return fileExtension in ('.twb', '.tds')
+    def _prepare_worksheets(xml_root, ds_index):
+        worksheets = []
+        worksheets_element = xml_root.find('.//worksheets')
+        if worksheets_element is None:
+            return worksheets
+
+        for worksheet_element in worksheets_element:
+            worksheet_name = worksheet_element.attrib['name']
+            worksheets.append(worksheet_name)  # TODO: A real worksheet object, for now, only name
+
+            dependencies = worksheet_element.findall('.//datasource-dependencies')
+
+            for dependency in dependencies:
+                datasource_name = dependency.attrib['datasource']
+                datasource = ds_index[datasource_name]
+                for column in dependency.findall('.//column'):
+                    column_name = column.attrib['name']
+                    if column_name in datasource.fields:
+                        datasource.fields[column_name].add_used_in(worksheet_name)
+
+        return worksheets
