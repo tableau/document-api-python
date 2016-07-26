@@ -51,14 +51,13 @@ def temporary_directory(*args, **kwargs):
 
 def find_file_in_zip(zip_file):
     for filename in zip_file.namelist():
-        try:
-            with zip_file.open(filename) as xml_candidate:
-                ET.parse(xml_candidate).getroot().tag in (
-                    'workbook', 'datasource')
+        with zip_file.open(filename) as xml_candidate:
+            try:
+                ET.parse(xml_candidate)
                 return filename
-        except ET.ParseError:
-            # That's not an XML file by gosh
-            pass
+            except ET.ParseError:
+                # That's not an XML file by gosh
+                pass
 
 
 def get_xml_from_archive(filename):
