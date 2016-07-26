@@ -4,9 +4,11 @@ import unittest
 import xml.etree.ElementTree as ET
 
 from tableaudocumentapi import Workbook, Datasource, Connection, ConnectionParser
-from tableaudocumentapi.xfile import TableauInvalidFileException
+from tableaudocumentapi.xfile import TableauInvalidFileException, TableauVersionNotSupportedException
 
 TEST_DIR = os.path.dirname(__file__)
+
+TABLEAU_82_TWB = os.path.join(TEST_DIR, 'assets', 'TABLEAU_82_TWB.twb')
 
 TABLEAU_93_TWB = os.path.join(TEST_DIR, 'assets', 'TABLEAU_93_TWB.twb')
 
@@ -293,12 +295,18 @@ class LoadOnlyValidFileTypes(unittest.TestCase):
 
     def test_exception_when_workbook_given_tdsx(self):
         with self.assertRaises(TableauInvalidFileException):
-            ds = Workbook(TABLEAU_10_TDSX)
+            wb = Workbook(TABLEAU_10_TDSX)
 
     def test_exception_when_datasource_given_twbx(self):
         with self.assertRaises(TableauInvalidFileException):
-            wb = Datasource.from_file(TABLEAU_10_TWBX)
+            ds = Datasource.from_file(TABLEAU_10_TWBX)
 
+
+class SupportedWorkbookVersions(unittest.TestCase):
+
+    def test_82_workbook_throws_exception(self):
+        with self.assertRaises(TableauVersionNotSupportedException):
+            wb = Workbook(TABLEAU_82_TWB)
 
 if __name__ == '__main__':
     unittest.main()

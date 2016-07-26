@@ -28,14 +28,16 @@ def xml_open(filename, expected_root=None):
     else:
         tree = ET.parse(filename)
 
-    file_version = Version(tree.getroot().attrib.get('version', '0.0'))
+    tree_root = tree.getroot()
+
+    file_version = Version(tree_root.attrib.get('version', '0.0'))
 
     if file_version < MIN_SUPPORTED_VERSION:
         raise TableauVersionNotSupportedException(file_version)
 
-    if expected_root and expected_root != tree.getroot().tag:
+    if expected_root and (expected_root != tree_root.tag):
         raise TableauInvalidFileException(
-            "{} is not a valid {} file".format(tree.getroot(), expected_root))
+            "'{}'' is not a valid '{}' file".format(filename, expected_root))
 
     return tree
 
