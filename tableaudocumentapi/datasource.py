@@ -113,7 +113,7 @@ class Datasource(object):
     def from_file(cls, filename):
         """Initialize datasource from file (.tds)"""
 
-        dsxml = xml_open(filename).getroot()
+        dsxml = xml_open(filename, cls.__name__.lower()).getroot()
         return cls(dsxml, filename)
 
     def save(self):

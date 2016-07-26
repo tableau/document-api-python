@@ -4,6 +4,7 @@ import unittest
 import xml.etree.ElementTree as ET
 
 from tableaudocumentapi import Workbook, Datasource, Connection, ConnectionParser
+from tableaudocumentapi.xfile import TableauInvalidFileException
 
 TEST_DIR = os.path.dirname(__file__)
 
@@ -282,9 +283,21 @@ class WorkbookModelV10TWBXTests(unittest.TestCase):
 
 
 class EmptyWorkbookWillLoad(unittest.TestCase):
+
     def test_no_exceptions_thrown(self):
         wb = Workbook(EMPTY_WORKBOOK)
         self.assertIsNotNone(wb)
+
+
+class LoadOnlyValidFileTypes(unittest.TestCase):
+
+    def test_exception_when_workbook_given_tdsx(self):
+        with self.assertRaises(TableauInvalidFileException):
+            ds = Workbook(TABLEAU_10_TDSX)
+
+    def test_exception_when_datasource_given_twbx(self):
+        with self.assertRaises(TableauInvalidFileException):
+            wb = Datasource.from_file(TABLEAU_10_TWBX)
 
 
 if __name__ == '__main__':

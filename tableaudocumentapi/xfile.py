@@ -17,15 +17,26 @@ class TableauVersionNotSupportedException(Exception):
     pass
 
 
-def xml_open(filename):
-    # Determine if this is a twb or twbx and get the xml root
+class TableauInvalidFileException(Exception):
+    pass
+
+
+def xml_open(filename, expected_root=None):
+
     if zipfile.is_zipfile(filename):
         tree = get_xml_from_archive(filename)
     else:
         tree = ET.parse(filename)
+
     file_version = Version(tree.getroot().attrib.get('version', '0.0'))
+
     if file_version < MIN_SUPPORTED_VERSION:
         raise TableauVersionNotSupportedException(file_version)
+
+    if expected_root and expected_root != tree.getroot().tag:
+        raise TableauInvalidFileException(
+            "{} is not a valid {} file".format(tree.getroot(), expected_root))
+
     return tree
 
 
