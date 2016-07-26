@@ -3,61 +3,7 @@
 # Connection - A class for writing connections to Tableau files
 #
 ###############################################################################
-
-KNOWN_DB_CLASSES = ('msaccess',
-                    'msolap',
-                    'bigquery',
-                    'asterncluster',
-                    'bigsql',
-                    'aurora',
-                    'awshadoophive',
-                    'dataengine',
-                    'DataStax',
-                    'db2',
-                    'essbase',
-                    'exasolution',
-                    'excel',
-                    'excel-direct',
-                    'excel-reader',
-                    'firebird',
-                    'powerpivot',
-                    'genericodbc',
-                    'google-analytics',
-                    'googlecloudsql',
-                    'google-sheets',
-                    'greenplum',
-                    'saphana',
-                    'hadoophive',
-                    'hortonworkshadoophive',
-                    'maprhadoophive',
-                    'marklogic',
-                    'memsql',
-                    'mysql',
-                    'netezza',
-                    'oracle',
-                    'paraccel',
-                    'postgres',
-                    'progressopenedge',
-                    'redshift',
-                    'snowflake',
-                    'spark',
-                    'splunk',
-                    'kognitio',
-                    'sqlserver',
-                    'salesforce',
-                    'sapbw',
-                    'sybasease',
-                    'sybaseiq',
-                    'tbio',
-                    'teradata',
-                    'vectorwise',
-                    'vertica',
-                    'denormalized-cube',
-                    'csv',
-                    'textscan',
-                    'webdata',
-                    'webdata-direct',
-                    'cubeextract')
+from tableaudocumentapi.dbclass import is_valid_dbclass
 
 
 class Connection(object):
@@ -170,8 +116,8 @@ class Connection(object):
     @dbclass.setter
     def dbclass(self, value):
 
-        if value not in KNOWN_DB_CLASSES:
-            raise AttributeError("'{}' is not a valid database type")
+        if not is_valid_dbclass(value):
+            raise AttributeError("'{}' is not a valid database type".format(value))
 
         self._class = value
         self._connectionXML.set('dbclass', value)
