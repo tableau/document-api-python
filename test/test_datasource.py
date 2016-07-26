@@ -51,6 +51,11 @@ class DataSourceFieldsTDS(unittest.TestCase):
     def test_datasource_field_is_ordinal(self):
         self.assertTrue(self.ds.fields['[x]'].is_ordinal)
 
+    def test_datasource_field_datatype(self):
+        self.assertEqual(self.ds.fields['[x]'].datatype, 'integer')
+
+    def test_datasource_field_role(self):
+        self.assertEqual(self.ds.fields['[x]'].role, 'measure')
 
 class DataSourceFieldsTWB(unittest.TestCase):
     def setUp(self):
