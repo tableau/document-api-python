@@ -19,6 +19,7 @@ TEST_TWB_FILE = os.path.join(
 
 
 class DataSourceFieldsTDS(unittest.TestCase):
+
     def setUp(self):
         self.ds = Datasource.from_file(TEST_TDS_FILE)
 
@@ -51,11 +52,19 @@ class DataSourceFieldsTDS(unittest.TestCase):
     def test_datasource_field_is_ordinal(self):
         self.assertTrue(self.ds.fields['[x]'].is_ordinal)
 
+    def test_datasource_field_datatype(self):
+        self.assertEqual(self.ds.fields['[x]'].datatype, 'integer')
+
+    def test_datasource_field_role(self):
+        self.assertEqual(self.ds.fields['[x]'].role, 'measure')
+
 
 class DataSourceFieldsTWB(unittest.TestCase):
+
     def setUp(self):
         self.wb = Workbook(TEST_TWB_FILE)
-        self.ds = self.wb.datasources[0]  # Assume the first datasource in the file
+        # Assume the first datasource in the file
+        self.ds = self.wb.datasources[0]
 
     def test_datasource_fields_loaded_in_workbook(self):
         self.assertIsNotNone(self.ds.fields)
@@ -63,9 +72,11 @@ class DataSourceFieldsTWB(unittest.TestCase):
 
 
 class DataSourceFieldsFoundIn(unittest.TestCase):
+
     def setUp(self):
         self.wb = Workbook(TEST_TWB_FILE)
-        self.ds = self.wb.datasources[0]  # Assume the first datasource in the file
+        # Assume the first datasource in the file
+        self.ds = self.wb.datasources[0]
 
     def test_datasource_fields_found_in_returns_fields(self):
         actual_values = self.ds.fields.used_by_sheet('Sheet 1')
