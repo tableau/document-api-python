@@ -32,7 +32,7 @@ class Workbook(object):
 
         self._filename = filename
 
-        self._workbookTree = xml_open(self._filename)
+        self._workbookTree = xml_open(self._filename, self.__class__.__name__.lower())
 
         self._workbookRoot = self._workbookTree.getroot()
         # prepare our datasource objects
