@@ -3,6 +3,7 @@
 # Connection - A class for writing connections to Tableau files
 #
 ###############################################################################
+from tableaudocumentapi.dbclass import is_valid_dbclass
 
 
 class Connection(object):
@@ -111,3 +112,12 @@ class Connection(object):
     @property
     def dbclass(self):
         return self._class
+
+    @dbclass.setter
+    def dbclass(self, value):
+
+        if not is_valid_dbclass(value):
+            raise AttributeError("'{}' is not a valid database type".format(value))
+
+        self._class = value
+        self._connectionXML.set('dbclass', value)

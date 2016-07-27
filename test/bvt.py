@@ -64,6 +64,13 @@ class ConnectionModelTests(unittest.TestCase):
         self.assertEqual(conn.username, 'bob')
         self.assertEqual(conn.server, 'mssql2014.test.tsi.lan')
 
+    def test_bad_dbclass_rasies_attribute_error(self):
+        conn = Connection(self.connection)
+        conn.dbclass = 'sqlserver'
+        self.assertEqual(conn.dbclass, 'sqlserver')
+        with self.assertRaises(AttributeError):
+            conn.dbclass = 'NotReal'
+
 
 class DatasourceModelTests(unittest.TestCase):
 
