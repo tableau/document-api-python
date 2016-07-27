@@ -61,3 +61,12 @@ class MLDTests(unittest.TestCase):
     def test_multilookupdict_get_returns_value(self):
         actual = self.mld.get('baz')
         self.assertEqual(1, actual['value'])
+
+    def test_multilookupdict_can_set_item(self):
+        before = self.mld['baz']
+        self.mld['baz'] = 4
+        self.assertEqual(4, self.mld['baz'])
+
+    def test_multilookupdict_can_set_new_item(self):
+        self.mld['wakka'] = 1
+        self.assertEqual(1, self.mld['wakka'])
