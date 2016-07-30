@@ -84,7 +84,6 @@ class ConnectionModelTests(unittest.TestCase):
         self.assertEqual(conn.authentication, 'd')
 
 
-
 class DatasourceModelTests(unittest.TestCase):
 
     def setUp(self):
