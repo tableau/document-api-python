@@ -3,6 +3,7 @@
 # Connection - A class for writing connections to Tableau files
 #
 ###############################################################################
+import xml.etree.ElementTree as ET
 from tableaudocumentapi.dbclass import is_valid_dbclass
 
 
@@ -32,6 +33,18 @@ class Connection(object):
 
     def __repr__(self):
         return "'<Connection server='{}' dbname='{}' @ {}>'".format(self._server, self._dbname, hex(id(self)))
+
+    @classmethod
+    def from_attributes(cls, server, dbname, username, dbclass, authentication=''):
+        root = ET.Element('connection')
+        root.set('authentication', authentication)
+        xml = cls(root)
+        xml.server = server
+        xml.dbname = dbname
+        xml.username = username
+        xml.dbclass = dbclass
+
+        return xml
 
     ###########
     # dbname
@@ -120,4 +133,4 @@ class Connection(object):
             raise AttributeError("'{}' is not a valid database type".format(value))
 
         self._class = value
-        self._connectionXML.set('dbclass', value)
+        self._connectionXML.set('class', value)
