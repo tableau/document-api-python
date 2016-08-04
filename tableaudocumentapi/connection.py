@@ -36,8 +36,7 @@ class Connection(object):
 
     @classmethod
     def from_attributes(cls, server, dbname, username, dbclass, authentication=''):
-        root = ET.Element('connection')
-        root.set('authentication', authentication)
+        root = ET.Element('connection', authentication=authentication)
         xml = cls(root)
         xml.server = server
         xml.dbname = dbname

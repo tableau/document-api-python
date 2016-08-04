@@ -5,6 +5,8 @@
 ###############################################################################
 import collections
 import itertools
+import random
+import string
 import xml.etree.ElementTree as ET
 import xml.sax.saxutils as sax
 
@@ -38,6 +40,7 @@ def _is_used_by_worksheet(names, field):
 
 
 class FieldDictionary(MultiLookupDict):
+
     def used_by_sheet(self, name):
         # If we pass in a string, no need to get complicated, just check to see if name is in
         # the field's list of worksheets
@@ -63,7 +66,15 @@ def _column_object_from_metadata_xml(metadata_xml):
     return _ColumnObjectReturnTuple(field_object.id, field_object)
 
 
+def make_unique_name(dbclass):
+    rand_part = ''.join(random.choice(
+        string.ascii_lowercase + string.digits) for _ in range(28))
+    name = dbclass + '.' + rand_part
+    return name
+
+
 class ConnectionParser(object):
+
     def __init__(self, datasource_xml, version):
         self._dsxml = datasource_xml
         self._dsversion = version
@@ -115,6 +126,20 @@ class Datasource(object):
 
         dsxml = xml_open(filename, cls.__name__.lower()).getroot()
         return cls(dsxml, filename)
+
+    @classmethod
+    def from_scratch(cls, caption, connections):
+        root = ET.Element('datasource', caption=caption, version='10.0')
+        outer_connection = ET.SubElement(root, 'connection')
+        outer_connection.set('class', 'federated')
+        named_conns = ET.SubElement(outer_connection, 'named-connections')
+        for conn in connections:
+            nc = ET.SubElement(named_conns,
+                               'named-connection',
+                               name=make_unique_name(conn.dbclass),
+                               caption=conn.server)
+            nc.append(conn._connectionXML)
+        return cls(root)
 
     def save(self):
         """
