@@ -13,6 +13,7 @@ def _resolve_value(key, value):
         if retval is None:
             retval = getattr(value, key, None)
     except AttributeError:
+        # We should never hit this.
         retval = None
     return retval
 
@@ -49,13 +50,6 @@ class MultiLookupDict(dict):
 
     def __setitem__(self, key, value):
         real_key = self._get_real_key(key)
-
-        alias = _resolve_value('alias', value)
-        caption = _resolve_value('caption', value)
-        if alias is not None:
-            self._indexes['alias'][alias] = real_key
-        if caption is not None:
-            self._indexes['caption'][caption] = real_key
 
         dict.__setitem__(self, real_key, value)
 

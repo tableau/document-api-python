@@ -19,7 +19,7 @@ from tableaudocumentapi.xfile import xml_open
 # dropped, remove this and change the basestring references below to str
 try:
     basestring
-except NameError:
+except NameError:  # pragma: no cover
     basestring = str
 ########
 
