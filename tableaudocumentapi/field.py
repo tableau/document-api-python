@@ -42,8 +42,10 @@ class Field(object):
 
         if column_xml is not None:
             self._initialize_from_column_xml(column_xml)
-            if metadata_xml is not None:
-                self.apply_metadata(metadata_xml)
+            # This isn't currently never called because of the way we get the data from the xml,
+            # but during the refactor, we might need it.  This is commented out as a reminder
+            # if metadata_xml is not None:
+            #     self.apply_metadata(metadata_xml)
 
         elif metadata_xml is not None:
             self._initialize_from_metadata_xml(metadata_xml)

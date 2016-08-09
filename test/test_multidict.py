@@ -22,6 +22,10 @@ class MLDTests(unittest.TestCase):
             }
         })
 
+    def test_multilookupdict_can_be_empty(self):
+        mld = MultiLookupDict()
+        self.assertIsNotNone(mld)
+
     def test_multilookupdict_name_only(self):
         actual = self.mld['[baz]']
         self.assertEqual(3, actual['value'])
