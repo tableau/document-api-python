@@ -128,8 +128,8 @@ class Datasource(object):
         return cls(dsxml, filename)
 
     @classmethod
-    def from_scratch(cls, caption, connections):
-        root = ET.Element('datasource', caption=caption, version='10.0')
+    def from_connections(cls, caption, connections):
+        root = ET.Element('datasource', caption=caption, version='10.0', inline='true')
         outer_connection = ET.SubElement(root, 'connection')
         outer_connection.set('class', 'federated')
         named_conns = ET.SubElement(outer_connection, 'named-connections')
@@ -168,6 +168,7 @@ class Datasource(object):
             Nothing.
 
         """
+
         xfile._save_file(self._filename, self._datasourceTree, new_filename)
 
     ###########
