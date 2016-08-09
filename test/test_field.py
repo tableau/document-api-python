@@ -16,17 +16,14 @@ TEST_TDS_FILE = os.path.join(
 
 class FieldsUnitTest(unittest.TestCase):
     def test_field_throws_if_no_data_passed_in(self):
-        try:
+        with self.assertRaises(AttributeError):
             Field()
-            self.fail('Field should have thrown')
-        except AttributeError:
-            pass
 
 
 class FindMetaDataRecordEdgeTest(unittest.TestCase):
-    class MockXml(object):
+    class MockXmlWithNoFind(object):
         def find(self, *args, **kwargs):
             return None
 
     def test_find_metadata_record_returns_none(self):
-        self.assertIsNone(_find_metadata_record(self.MockXml(), 'foo'))
+        self.assertIsNone(_find_metadata_record(self.MockXmlWithNoFind(), 'foo'))
