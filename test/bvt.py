@@ -201,6 +201,14 @@ class WorkbookModelTests(unittest.TestCase):
         self.assertEqual(wb.datasources[0].name,
                          'sqlserver.17u3bqc16tjtxn14e2hxh19tyvpo')
 
+    def test_can_get_worksheets(self):
+        wb = Workbook(self.workbook_file.name)
+        self.assertIsNotNone(wb.worksheets)
+
+    def test_has_filename(self):
+        wb = Workbook(self.workbook_file.name)
+        self.assertEqual(wb.filename, self.workbook_file.name)
+
     def test_can_update_datasource_connection_and_save(self):
         original_wb = Workbook(self.workbook_file.name)
         original_wb.datasources[0].connections[0].dbname = 'newdb.test.tsi.lan'
