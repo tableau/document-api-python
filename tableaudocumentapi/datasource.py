@@ -6,9 +6,9 @@
 import collections
 import itertools
 import random
-import string
 import xml.etree.ElementTree as ET
 import xml.sax.saxutils as sax
+from uuid import uuid4
 
 from tableaudocumentapi import Connection, xfile
 from tableaudocumentapi import Field
@@ -66,9 +66,30 @@ def _column_object_from_metadata_xml(metadata_xml):
     return _ColumnObjectReturnTuple(field_object.id, field_object)
 
 
+def base36encode(number):
+    """Converts an integer into a base36 string."""
+
+    ALPHABET = "0123456789abcdefghijklmnopqrstuvwxyz"
+
+    base36 = ''
+    sign = ''
+
+    if number < 0:
+        sign = '-'
+        number = -number
+
+    if 0 <= number < len(ALPHABET):
+        return sign + ALPHABET[number]
+
+    while number != 0:
+        number, i = divmod(number, len(ALPHABET))
+        base36 = ALPHABET[i] + base36
+
+    return sign + base36
+
+
 def make_unique_name(dbclass):
-    rand_part = ''.join(random.choice(
-        string.ascii_lowercase + string.digits) for _ in range(28))
+    rand_part = base36encode(uuid4().int)
     name = dbclass + '.' + rand_part
     return name
 
