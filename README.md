@@ -23,7 +23,7 @@ Features include:
   - Database Name
 - Getting Field information from data sources and workbooks
   - Get all fields in a data source
-  - Get all feilds in use by certain sheets in a workbook
+  - Get all fields in use by certain sheets in a workbook
 
 We don't yet support creating files from scratch, adding extracts into workbooks or data sources, or updating field information
 
@@ -45,7 +45,7 @@ Download the `.zip` file that contains the SDK. Unzip the file and then run the 
 pip install -e <directory containing setup.py>
 ```
 
-#### Installing the Development Version From Git
+#### Installing the Development Version from Git
 
 *Only do this if you know you want the development version, no guarantee that we won't break APIs during development*
 
@@ -74,7 +74,7 @@ sourceWB.datasources[0].connections[0].username = "benl"
 sourceWB.save()
 ```
 
-With Data Integration in Tableau 10, a data source can have multiple connections. To access the connections simply index them like you would datasources
+With Data Integration in Tableau 10, a data source can have multiple connections. To access the connections simply index them like you would datasources.
 
 ```python
 from tableaudocumentapi import Workbook
@@ -104,6 +104,6 @@ sourceWB.save()
 
 
 
-###Examples
+###[Examples](Examples)
 
-The downloadable package contains several example scripts that show more detailed usage of the Document API
+The downloadable package contains several example scripts that show more detailed usage of the Document API.
