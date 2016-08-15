@@ -104,6 +104,10 @@ def save_into_archive(xml_tree, filename, new_filename=None):
 
 
 def _save_file(container_file, xml_tree, new_filename=None):
+
+    if container_file is None:
+        container_file = new_filename
+
     if zipfile.is_zipfile(container_file):
         save_into_archive(xml_tree, container_file, new_filename)
     else:

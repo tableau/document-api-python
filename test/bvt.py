@@ -74,6 +74,25 @@ class ConnectionModelTests(unittest.TestCase):
         with self.assertRaises(AttributeError):
             conn.dbclass = 'NotReal'
 
+    def test_can_create_connection_from_scratch(self):
+        conn = Connection.from_attributes(
+            server='a', dbname='b', username='c', dbclass='mysql', authentication='d')
+        self.assertEqual(conn.server, 'a')
+        self.assertEqual(conn.dbname, 'b')
+        self.assertEqual(conn.username, 'c')
+        self.assertEqual(conn.dbclass, 'mysql')
+        self.assertEqual(conn.authentication, 'd')
+
+    def test_can_create_datasource_from_connections(self):
+        conn1 = Connection.from_attributes(
+            server='a', dbname='b', username='c', dbclass='mysql', authentication='d')
+        conn2 = Connection.from_attributes(
+            server='1', dbname='2', username='3', dbclass='mysql', authentication='7')
+        ds = Datasource.from_connections('test', connections=[conn1, conn2])
+
+        self.assertEqual(ds.connections[0].server, 'a')
+        self.assertEqual(ds.connections[1].server, '1')
+
 
 class DatasourceModelTests(unittest.TestCase):
 
