@@ -23,6 +23,8 @@ for count, field in enumerate(sourceTDS.fields.values()):
     if field.default_aggregation:
         print('      the default aggregation is {}'.format(field.default_aggregation))
         blank_line = True
+    if field.description:
+        print('      the description is {}'.format(field.description))
 
     if blank_line:
         print('')

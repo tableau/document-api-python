@@ -58,6 +58,12 @@ class DataSourceFieldsTDS(unittest.TestCase):
     def test_datasource_field_role(self):
         self.assertEqual(self.ds.fields['[x]'].role, 'measure')
 
+    def test_datasource_field_description(self):
+        actual = self.ds.fields['[a]'].description
+        self.assertIsNotNone(actual)
+        contains_string = actual.index(u'muted gray')
+        self.assertTrue(contains_string >= 0)
+
 
 class DataSourceFieldsTWB(unittest.TestCase):
 
