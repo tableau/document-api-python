@@ -16,7 +16,7 @@ script:
   # pep8
   - pep8 .
   # Examples
-  - (cd "Examples/Replicate Workbook" && python replicateWorkbook.py)
-  - (cd "Examples/List TDS Info" && python listTDSInfo.py)
-  - (cd "Examples/GetFields" && python show_fields.py)
+  - (cd "samples/Replicate Workbook" && python replicateWorkbook.py)
+  - (cd "samples/List TDS Info" && python listTDSInfo.py)
+  - (cd "samples/GetFields" && python show_fields.py)
 
