@@ -4,8 +4,11 @@ import unittest
 import xml.etree.ElementTree as ET
 
 from tableaudocumentapi import Workbook, Datasource, Connection, ConnectionParser
+from tableaudocumentapi.xfile import TableauInvalidFileException, TableauVersionNotSupportedException
 
 TEST_DIR = os.path.dirname(__file__)
+
+TABLEAU_82_TWB = os.path.join(TEST_DIR, 'assets', 'TABLEAU_82_TWB.twb')
 
 TABLEAU_93_TWB = os.path.join(TEST_DIR, 'assets', 'TABLEAU_93_TWB.twb')
 
@@ -63,6 +66,32 @@ class ConnectionModelTests(unittest.TestCase):
         self.assertEqual(conn.dbname, 'BubblesInMyDrink')
         self.assertEqual(conn.username, 'bob')
         self.assertEqual(conn.server, 'mssql2014.test.tsi.lan')
+
+    def test_bad_dbclass_rasies_attribute_error(self):
+        conn = Connection(self.connection)
+        conn.dbclass = 'sqlserver'
+        self.assertEqual(conn.dbclass, 'sqlserver')
+        with self.assertRaises(AttributeError):
+            conn.dbclass = 'NotReal'
+
+    def test_can_create_connection_from_scratch(self):
+        conn = Connection.from_attributes(
+            server='a', dbname='b', username='c', dbclass='mysql', authentication='d')
+        self.assertEqual(conn.server, 'a')
+        self.assertEqual(conn.dbname, 'b')
+        self.assertEqual(conn.username, 'c')
+        self.assertEqual(conn.dbclass, 'mysql')
+        self.assertEqual(conn.authentication, 'd')
+
+    def test_can_create_datasource_from_connections(self):
+        conn1 = Connection.from_attributes(
+            server='a', dbname='b', username='c', dbclass='mysql', authentication='d')
+        conn2 = Connection.from_attributes(
+            server='1', dbname='2', username='3', dbclass='mysql', authentication='7')
+        ds = Datasource.from_connections('test', connections=[conn1, conn2])
+
+        self.assertEqual(ds.connections[0].server, 'a')
+        self.assertEqual(ds.connections[1].server, '1')
 
 
 class DatasourceModelTests(unittest.TestCase):
@@ -191,6 +220,14 @@ class WorkbookModelTests(unittest.TestCase):
         self.assertEqual(wb.datasources[0].name,
                          'sqlserver.17u3bqc16tjtxn14e2hxh19tyvpo')
 
+    def test_can_get_worksheets(self):
+        wb = Workbook(self.workbook_file.name)
+        self.assertIsNotNone(wb.worksheets)
+
+    def test_has_filename(self):
+        wb = Workbook(self.workbook_file.name)
+        self.assertEqual(wb.filename, self.workbook_file.name)
+
     def test_can_update_datasource_connection_and_save(self):
         original_wb = Workbook(self.workbook_file.name)
         original_wb.datasources[0].connections[0].dbname = 'newdb.test.tsi.lan'
@@ -282,10 +319,28 @@ class WorkbookModelV10TWBXTests(unittest.TestCase):
 
 
 class EmptyWorkbookWillLoad(unittest.TestCase):
+
     def test_no_exceptions_thrown(self):
         wb = Workbook(EMPTY_WORKBOOK)
         self.assertIsNotNone(wb)
 
+
+class LoadOnlyValidFileTypes(unittest.TestCase):
+
+    def test_exception_when_workbook_given_tdsx(self):
+        with self.assertRaises(TableauInvalidFileException):
+            wb = Workbook(TABLEAU_10_TDSX)
+
+    def test_exception_when_datasource_given_twbx(self):
+        with self.assertRaises(TableauInvalidFileException):
+            ds = Datasource.from_file(TABLEAU_10_TWBX)
+
+
+class SupportedWorkbookVersions(unittest.TestCase):
+
+    def test_82_workbook_throws_exception(self):
+        with self.assertRaises(TableauVersionNotSupportedException):
+            wb = Workbook(TABLEAU_82_TWB)
 
 if __name__ == '__main__':
     unittest.main()

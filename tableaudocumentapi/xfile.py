@@ -17,15 +17,28 @@ class TableauVersionNotSupportedException(Exception):
     pass
 
 
-def xml_open(filename):
-    # Determine if this is a twb or twbx and get the xml root
+class TableauInvalidFileException(Exception):
+    pass
+
+
+def xml_open(filename, expected_root=None):
+
     if zipfile.is_zipfile(filename):
         tree = get_xml_from_archive(filename)
     else:
         tree = ET.parse(filename)
-    file_version = Version(tree.getroot().attrib.get('version', '0.0'))
+
+    tree_root = tree.getroot()
+
+    file_version = Version(tree_root.attrib.get('version', '0.0'))
+
     if file_version < MIN_SUPPORTED_VERSION:
         raise TableauVersionNotSupportedException(file_version)
+
+    if expected_root and (expected_root != tree_root.tag):
+        raise TableauInvalidFileException(
+            "'{}'' is not a valid '{}' file".format(filename, expected_root))
+
     return tree
 
 
@@ -40,14 +53,13 @@ def temporary_directory(*args, **kwargs):
 
 def find_file_in_zip(zip_file):
     for filename in zip_file.namelist():
-        try:
-            with zip_file.open(filename) as xml_candidate:
-                ET.parse(xml_candidate).getroot().tag in (
-                    'workbook', 'datasource')
+        with zip_file.open(filename) as xml_candidate:
+            try:
+                ET.parse(xml_candidate)
                 return filename
-        except ET.ParseError:
-            # That's not an XML file by gosh
-            pass
+            except ET.ParseError:
+                # That's not an XML file by gosh
+                pass
 
 
 def get_xml_from_archive(filename):
@@ -92,6 +104,10 @@ def save_into_archive(xml_tree, filename, new_filename=None):
 
 
 def _save_file(container_file, xml_tree, new_filename=None):
+
+    if container_file is None:
+        container_file = new_filename
+
     if zipfile.is_zipfile(container_file):
         save_into_archive(xml_tree, container_file, new_filename)
     else:

@@ -1,3 +1,10 @@
+## 0.3 (31 August 2016)
+
+* Added basic connection class retargeting (#65)
+* Added ability to create a new connection (#69)
+* Added description to the field object (#73)
+* Improved Test Coverage (#62, #67)
+
 ## 0.2 (22 July 2016)
 
 * Added support for loading twbx and tdsx files (#43, #44)

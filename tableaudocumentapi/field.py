@@ -1,4 +1,6 @@
 import functools
+import xml.etree.ElementTree as ET
+
 
 _ATTRIBUTES = [
     'id',           # Name of the field as specified in the file, usually surrounded by [ ]
@@ -8,6 +10,7 @@ _ATTRIBUTES = [
     'type',         # three possible values: quantitative, ordinal, or nominal
     'alias',        # Name of the field as displayed in Tableau if the default name isn't wanted
     'calculation',  # If this field is a calculated field, this will be the formula
+    'description',  # If this field has a description, this will be the description (including formatting tags)
 ]
 
 _METADATA_ATTRIBUTES = [
@@ -42,8 +45,10 @@ class Field(object):
 
         if column_xml is not None:
             self._initialize_from_column_xml(column_xml)
-            if metadata_xml is not None:
-                self.apply_metadata(metadata_xml)
+            # This isn't currently never called because of the way we get the data from the xml,
+            # but during the refactor, we might need it.  This is commented out as a reminder
+            # if metadata_xml is not None:
+            #     self.apply_metadata(metadata_xml)
 
         elif metadata_xml is not None:
             self._initialize_from_metadata_xml(metadata_xml)
@@ -163,6 +168,11 @@ class Field(object):
         return self._aggregation
 
     @property
+    def description(self):
+        """ The contents of the <desc> tag on a field """
+        return self._description
+
+    @property
     def worksheets(self):
         return list(self._worksheets)
 
@@ -182,3 +192,11 @@ class Field(object):
             return None
 
         return calc.attrib.get('formula', None)
+
+    @staticmethod
+    def _read_description(xmldata):
+        description = xmldata.find('.//desc')
+        if description is None:
+            return None
+
+        return u'{}'.format(ET.tostring(description, encoding='utf-8'))  # This is necessary for py3 support

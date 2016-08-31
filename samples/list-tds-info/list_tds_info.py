@@ -6,7 +6,7 @@ from tableaudocumentapi import Datasource
 ############################################################
 # Step 2)  Open the .tds we want to replicate
 ############################################################
-sourceTDS = Datasource.from_file('World.tds')
+sourceTDS = Datasource.from_file('world.tds')
 
 ############################################################
 # Step 3)  List out info from the TDS

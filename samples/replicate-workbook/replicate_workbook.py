@@ -8,7 +8,7 @@ from tableaudocumentapi import Workbook
 ############################################################
 # Step 2)  Open the .twb we want to replicate
 ############################################################
-sourceWB = Workbook('Sample - Superstore.twb')
+sourceWB = Workbook('sample-superstore.twb')
 
 ############################################################
 # Step 3)  Use a database list (in CSV), loop thru and
