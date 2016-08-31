@@ -2,8 +2,8 @@
 
 * Added basic connection class retargeting (#65)
 * Added ability to create a new connection (#69)
-* Improved Test Coverage (#62, #67)
 * Added description to the field object (#73)
+* Improved Test Coverage (#62, #67)
 
 ## 0.2 (22 July 2016)
 
