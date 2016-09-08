@@ -1,4 +1,5 @@
 import functools
+import sys
 import xml.etree.ElementTree as ET
 
 
@@ -199,4 +200,9 @@ class Field(object):
         if description is None:
             return None
 
-        return u'{}'.format(ET.tostring(description, encoding='utf-8'))  # This is necessary for py3 support
+        description_string = ET.tostring(description, encoding='utf-8')
+        # Format expects a unicode string so in Python 2 we have to do the explicit conversion
+        if sys.version_info[0] == 2:
+            description_string = description_string.decode('utf-8')
+
+        return u'{}'.format(description_string)  # This is necessary for py3 support
