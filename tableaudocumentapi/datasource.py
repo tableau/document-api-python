@@ -31,7 +31,7 @@ _ColumnObjectReturnTuple = collections.namedtuple('_ColumnObjectReturnTupleType'
 def _get_metadata_xml_for_field(root_xml, field_name):
     if "'" in field_name:
         field_name = sax.escape(field_name, {"'": "&apos;"})
-    xpath = ".//metadata-record[@class='column'][local-name='{}']".format(field_name)
+    xpath = u".//metadata-record[@class='column'][local-name='{}']".format(field_name)
     return root_xml.find(xpath)
 
 
