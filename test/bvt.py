@@ -42,7 +42,7 @@ class ConnectionParserTests(unittest.TestCase):
         connections = parser.get_connections()
         self.assertIsInstance(connections, list)
         self.assertIsInstance(connections[0], Connection)
-        self.assertEqual(connections[0].dbname, 'testv1')
+        self.assertEqual(connections[0].dbname, 'TestV1')
 
 
 class ConnectionModelTests(unittest.TestCase):
@@ -54,18 +54,18 @@ class ConnectionModelTests(unittest.TestCase):
         conn = Connection(self.connection)
         self.assertEqual(conn.dbname, 'TestV1')
         self.assertEqual(conn.username, '')
-        self.assertEqual(conn.server, 'mssql2012.test.tsi.lan')
+        self.assertEqual(conn.server, 'mssql2012')
         self.assertEqual(conn.dbclass, 'sqlserver')
         self.assertEqual(conn.authentication, 'sspi')
 
     def test_can_write_attributes_to_connection(self):
         conn = Connection(self.connection)
         conn.dbname = 'BubblesInMyDrink'
-        conn.server = 'mssql2014.test.tsi.lan'
+        conn.server = 'mssql2014'
         conn.username = 'bob'
         self.assertEqual(conn.dbname, 'BubblesInMyDrink')
         self.assertEqual(conn.username, 'bob')
-        self.assertEqual(conn.server, 'mssql2014.test.tsi.lan')
+        self.assertEqual(conn.server, 'mssql2014')
 
     def test_bad_dbclass_rasies_attribute_error(self):
         conn = Connection(self.connection)
@@ -117,15 +117,15 @@ class DatasourceModelTests(unittest.TestCase):
 
     def test_can_save_tds(self):
         original_tds = Datasource.from_file(self.tds_file.name)
-        original_tds.connections[0].dbname = 'newdb.test.tsi.lan'
+        original_tds.connections[0].dbname = 'newdb'
         original_tds.save()
 
         new_tds = Datasource.from_file(self.tds_file.name)
-        self.assertEqual(new_tds.connections[0].dbname, 'newdb.test.tsi.lan')
+        self.assertEqual(new_tds.connections[0].dbname, 'newdb')
 
     def test_save_has_xml_declaration(self):
         original_tds = Datasource.from_file(self.tds_file.name)
-        original_tds.connections[0].dbname = 'newdb.test.tsi.lan'
+        original_tds.connections[0].dbname = 'newdb'
 
         original_tds.save()
 
@@ -158,11 +158,11 @@ class DatasourceModelV10Tests(unittest.TestCase):
 
     def test_can_save_tds(self):
         original_tds = Datasource.from_file(self.tds_file.name)
-        original_tds.connections[0].dbname = 'newdb.test.tsi.lan'
+        original_tds.connections[0].dbname = 'newdb'
         original_tds.save()
 
         new_tds = Datasource.from_file(self.tds_file.name)
-        self.assertEqual(new_tds.connections[0].dbname, 'newdb.test.tsi.lan')
+        self.assertEqual(new_tds.connections[0].dbname, 'newdb')
 
 
 class DatasourceModelV10TDSXTests(unittest.TestCase):
@@ -183,22 +183,22 @@ class DatasourceModelV10TDSXTests(unittest.TestCase):
 
     def test_can_open_tdsx_and_save_changes(self):
         original_tdsx = Datasource.from_file(self.tdsx_file.name)
-        original_tdsx.connections[0].server = 'newdb.test.tsi.lan'
+        original_tdsx.connections[0].server = 'newdb'
         original_tdsx.save()
 
         new_tdsx = Datasource.from_file(self.tdsx_file.name)
         self.assertEqual(new_tdsx.connections[
-                         0].server, 'newdb.test.tsi.lan')
+                         0].server, 'newdb')
 
     def test_can_open_tdsx_and_save_as_changes(self):
         new_tdsx_filename = 'newtdsx.tdsx'
         original_wb = Datasource.from_file(self.tdsx_file.name)
-        original_wb.connections[0].server = 'newdb.test.tsi.lan'
+        original_wb.connections[0].server = 'newdb'
         original_wb.save_as(new_tdsx_filename)
 
         new_wb = Datasource.from_file(new_tdsx_filename)
         self.assertEqual(new_wb.connections[
-                         0].server, 'newdb.test.tsi.lan')
+                         0].server, 'newdb')
         os.unlink(new_tdsx_filename)
 
 
@@ -230,12 +230,12 @@ class WorkbookModelTests(unittest.TestCase):
 
     def test_can_update_datasource_connection_and_save(self):
         original_wb = Workbook(self.workbook_file.name)
-        original_wb.datasources[0].connections[0].dbname = 'newdb.test.tsi.lan'
+        original_wb.datasources[0].connections[0].dbname = 'newdb'
         original_wb.save()
 
         new_wb = Workbook(self.workbook_file.name)
         self.assertEqual(new_wb.datasources[0].connections[
-                         0].dbname, 'newdb.test.tsi.lan')
+                         0].dbname, 'newdb')
 
 
 class WorkbookModelV10Tests(unittest.TestCase):
@@ -260,17 +260,17 @@ class WorkbookModelV10Tests(unittest.TestCase):
 
     def test_can_update_datasource_connection_and_saveV10(self):
         original_wb = Workbook(self.workbook_file.name)
-        original_wb.datasources[0].connections[0].dbname = 'newdb.test.tsi.lan'
+        original_wb.datasources[0].connections[0].dbname = 'newdb'
 
         original_wb.save()
 
         new_wb = Workbook(self.workbook_file.name)
         self.assertEqual(new_wb.datasources[0].connections[
-                         0].dbname, 'newdb.test.tsi.lan')
+                         0].dbname, 'newdb')
 
     def test_save_has_xml_declaration(self):
         original_wb = Workbook(self.workbook_file.name)
-        original_wb.datasources[0].connections[0].dbname = 'newdb.test.tsi.lan'
+        original_wb.datasources[0].connections[0].dbname = 'newdb'
 
         original_wb.save()
 
@@ -298,22 +298,22 @@ class WorkbookModelV10TWBXTests(unittest.TestCase):
 
     def test_can_open_twbx_and_save_changes(self):
         original_wb = Workbook(self.workbook_file.name)
-        original_wb.datasources[0].connections[0].server = 'newdb.test.tsi.lan'
+        original_wb.datasources[0].connections[0].server = 'newdb'
         original_wb.save()
 
         new_wb = Workbook(self.workbook_file.name)
         self.assertEqual(new_wb.datasources[0].connections[
-                         0].server, 'newdb.test.tsi.lan')
+                         0].server, 'newdb')
 
     def test_can_open_twbx_and_save_as_changes(self):
         new_twbx_filename = 'newtwbx.twbx'
         original_wb = Workbook(self.workbook_file.name)
-        original_wb.datasources[0].connections[0].server = 'newdb.test.tsi.lan'
+        original_wb.datasources[0].connections[0].server = 'newdb'
         original_wb.save_as(new_twbx_filename)
 
         new_wb = Workbook(new_twbx_filename)
         self.assertEqual(new_wb.datasources[0].connections[
-                         0].server, 'newdb.test.tsi.lan')
+                         0].server, 'newdb')
 
         os.unlink(new_twbx_filename)
 
