@@ -12,6 +12,10 @@ TEST_TDS_FILE = os.path.join(
     TEST_ASSET_DIR,
     'datasource_test.tds'
 )
+TEST_UNICODE_FILE = os.path.join(
+    TEST_ASSET_DIR,
+    'unicode.tds'
+)
 
 
 class FieldsUnitTest(unittest.TestCase):
@@ -27,3 +31,9 @@ class FindMetaDataRecordEdgeTest(unittest.TestCase):
 
     def test_find_metadata_record_returns_none(self):
         self.assertIsNone(_find_metadata_record(self.MockXmlWithNoFind(), 'foo'))
+
+
+class FieldsHandleUnicode(unittest.TestCase):
+    def test_description_unicode(self):
+        ds = Datasource.from_file(TEST_UNICODE_FILE)
+        self.assertIsNotNone(ds.fields['A'].description)
