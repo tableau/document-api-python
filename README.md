@@ -104,6 +104,6 @@ sourceWB.save()
 
 
 
-###[Examples](Examples)
+###[Examples](samples)
 
 The downloadable package contains several example scripts that show more detailed usage of the Document API.
