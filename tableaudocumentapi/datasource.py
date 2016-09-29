@@ -213,6 +213,10 @@ class Datasource(object):
     def connections(self):
         return self._connections
 
+    def clear_repository_location(self):
+        tag = self._datasourceXML.find('./repository-location')
+        self._datasourceXML.remove(tag)
+
     ###########
     # fields
     ###########

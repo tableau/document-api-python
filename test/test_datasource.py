@@ -63,6 +63,19 @@ class DataSourceFieldsTDS(unittest.TestCase):
         self.assertIsNotNone(actual)
         self.assertTrue(u'muted gray' in actual)
 
+    def test_datasource_clear_repository_location(self):
+        filename = os.path.join(TEST_ASSET_DIR, 'clear-repository-test.tds')
+
+        self.assertIsNotNone(self.ds._datasourceXML.find('.//repository-location'))
+        self.ds.clear_repository_location()
+        try:
+            self.ds.save_as(filename)
+            with open(filename, 'r') as newfile:
+                self.assertFalse('repository-location' in newfile.read())
+        finally:
+            if os.path.exists(filename):
+                os.unlink(filename)
+
 
 class DataSourceFieldsTWB(unittest.TestCase):
 
