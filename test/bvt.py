@@ -164,6 +164,24 @@ class DatasourceModelV10Tests(unittest.TestCase):
         new_tds = Datasource.from_file(self.tds_file.name)
         self.assertEqual(new_tds.connections[0].dbname, 'newdb')
 
+    def test_can_save_as_tds(self):
+        new_filename = os.path.join(
+            os.path.dirname(self.tds_file.name),
+            "new_{}".format(os.path.basename(self.tds_file.name))
+        )
+
+        try:
+            original_tds = Datasource.from_file(self.tds_file.name)
+            original_tds.connections[0].dbname = 'newdb'
+
+            original_tds.save_as(new_filename)
+
+            new_tds = Datasource.from_file(new_filename)
+            self.assertEqual(new_tds.connections[0].dbname, 'newdb')
+        finally:
+            if os.path.exists(new_filename):
+                os.unlink(new_filename)
+
 
 class DatasourceModelV10TDSXTests(unittest.TestCase):
 
