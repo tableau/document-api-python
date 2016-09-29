@@ -118,7 +118,6 @@ class Connection(object):
     def authentication(self):
         return self._authentication
 
-
     ###########
     # dbclass
     ###########
