@@ -27,6 +27,9 @@ TABLEAU_10_TDSX = os.path.join(TEST_DIR, 'assets', 'TABLEAU_10_TDSX.tdsx')
 
 EMPTY_WORKBOOK = os.path.join(TEST_DIR, 'assets', 'empty_workbook.twb')
 
+MULTI_CONNECTION_10 = os.path.join(
+    TEST_DIR, 'assets', 'multiple_connections.twb')
+
 
 class ConnectionParserTests(unittest.TestCase):
 
@@ -92,6 +95,26 @@ class ConnectionModelTests(unittest.TestCase):
 
         self.assertEqual(ds.connections[0].server, 'a')
         self.assertEqual(ds.connections[1].server, '1')
+
+
+class ConnectionParserInComplicatedWorkbooks(unittest.TestCase):
+
+    def setUp(self):
+        with open(MULTI_CONNECTION_10, 'rb') as in_file, open('test.twb', 'wb') as out_file:
+            out_file.write(in_file.read())
+            self.twb_file = out_file
+
+    def tearDown(self):
+        self.twb_file.close()
+        os.unlink(self.twb_file.name)
+
+    def test_can_mixed_connections_workbook(self):
+        wb = Workbook(self.twb_file.name)
+        self.assertTrue(len(wb.datasources), 2)
+        self.assertTrue(len(wb.datasources[1].connections), 2)
+        self.assertEqual(wb.datasources[0].connections[0].dbclass, 'sqlproxy')
+        self.assertEqual(wb.datasources[1].connections[0].dbclass, 'mysql')
+        self.assertEqual(wb.datasources[1].connections[1].dbclass, 'sqlserver')
 
 
 class DatasourceModelTests(unittest.TestCase):

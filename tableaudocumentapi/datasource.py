@@ -101,7 +101,9 @@ class ConnectionParser(object):
         self._dsversion = version
 
     def _extract_federated_connections(self):
-        return list(map(Connection, self._dsxml.findall('.//named-connections/named-connection/*')))
+        connections = list(map(Connection, self._dsxml.findall('.//named-connections/named-connection/*')))
+        connections.extend(map(Connection, self._dsxml.findall("./connection[@class='sqlproxy']")))
+        return connections
 
     def _extract_legacy_connection(self):
         return list(map(Connection, self._dsxml.findall('connection')))
