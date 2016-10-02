@@ -3,11 +3,8 @@
 # Workbook - A class for writing Tableau workbook files
 #
 ###############################################################################
-import os
-import zipfile
 import weakref
 
-import xml.etree.ElementTree as ET
 
 from tableaudocumentapi import Datasource, xfile
 from tableaudocumentapi.xfile import xml_open

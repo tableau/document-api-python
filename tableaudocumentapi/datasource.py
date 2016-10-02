@@ -5,7 +5,6 @@
 ###############################################################################
 import collections
 import itertools
-import random
 import xml.etree.ElementTree as ET
 import xml.sax.saxutils as sax
 from uuid import uuid4
