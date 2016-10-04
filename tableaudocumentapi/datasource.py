@@ -215,7 +215,8 @@ class Datasource(object):
 
     def clear_repository_location(self):
         tag = self._datasourceXML.find('./repository-location')
-        self._datasourceXML.remove(tag)
+        if tag is not None:
+            self._datasourceXML.remove(tag)
 
     ###########
     # fields
