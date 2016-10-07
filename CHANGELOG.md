@@ -1,3 +1,8 @@
+## 0.4 (07 October 2016)
+
+* Add ability to remove repository location (#86)
+* Fixed bug in connection parsing when federated connections are present (#87)
+
 ## 0.3 (31 August 2016)
 
 * Added basic connection class retargeting (#65)
