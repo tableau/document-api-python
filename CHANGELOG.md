@@ -2,6 +2,7 @@
 
 * Add ability to remove repository location (#86)
 * Fixed bug in connection parsing when federated connections are present (#87)
+* Fixed bug in UNICODE support (#80)
 
 ## 0.3 (31 August 2016)
 
