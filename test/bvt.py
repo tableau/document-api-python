@@ -18,8 +18,7 @@ TABLEAU_10_TDS = os.path.join(TEST_DIR, 'assets', 'TABLEAU_10_TDS.tds')
 
 TABLEAU_10_TWB = os.path.join(TEST_DIR, 'assets', 'TABLEAU_10_TWB.twb')
 
-TABLEAU_CONNECTION_XML = ET.parse(os.path.join(
-    TEST_DIR, 'assets', 'CONNECTION.xml')).getroot()
+TABLEAU_CONNECTION_XML = os.path.join(TEST_DIR, 'assets', 'CONNECTION.xml')
 
 TABLEAU_10_TWBX = os.path.join(TEST_DIR, 'assets', 'TABLEAU_10_TWBX.twbx')
 
@@ -51,7 +50,7 @@ class ConnectionParserTests(unittest.TestCase):
 class ConnectionModelTests(unittest.TestCase):
 
     def setUp(self):
-        self.connection = TABLEAU_CONNECTION_XML
+        self.connection = ET.parse(TABLEAU_CONNECTION_XML).getroot()
 
     def test_can_read_attributes_from_connection(self):
         conn = Connection(self.connection)
@@ -72,6 +71,12 @@ class ConnectionModelTests(unittest.TestCase):
         self.assertEqual(conn.username, 'bob')
         self.assertEqual(conn.server, 'mssql2014')
         self.assertEqual(conn.port, '1337')
+
+    def test_can_delete_port_from_connection(self):
+        conn = Connection(self.connection)
+        conn.port = None
+        self.assertEqual(conn.port, None)
+        self.assertIsNone(conn._connectionXML.get('port'))
 
     def test_bad_dbclass_rasies_attribute_error(self):
         conn = Connection(self.connection)

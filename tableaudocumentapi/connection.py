@@ -30,7 +30,7 @@ class Connection(object):
         self._username = connxml.get('username')
         self._authentication = connxml.get('authentication')
         self._class = connxml.get('class')
-        self.port = connxml.get('port', None)
+        self._port = connxml.get('port', None)
 
     def __repr__(self):
         return "'<Connection server='{}' dbname='{}' @ {}>'".format(self._server, self._dbname, hex(id(self)))
@@ -146,6 +146,11 @@ class Connection(object):
     @port.setter
     def port(self, value):
         self._port = value
-        # If port is None we don't actually want to update the XML
-        if value is not None:
+        # If port is None we remove the element and don't write it to XML
+        if value is None:
+            try:
+                self._connectionXML.attrib.pop('port')
+            except KeyError:
+                pass
+        else:
             self._connectionXML.set('port', value)
