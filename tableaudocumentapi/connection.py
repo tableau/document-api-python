@@ -149,7 +149,7 @@ class Connection(object):
         # If port is None we remove the element and don't write it to XML
         if value is None:
             try:
-                self._connectionXML.attrib.pop('port')
+                del self._connectionXML.attrib['port']
             except KeyError:
                 pass
         else:
