@@ -30,18 +30,20 @@ class Connection(object):
         self._username = connxml.get('username')
         self._authentication = connxml.get('authentication')
         self._class = connxml.get('class')
+        self.port = connxml.get('port', None)
 
     def __repr__(self):
         return "'<Connection server='{}' dbname='{}' @ {}>'".format(self._server, self._dbname, hex(id(self)))
 
     @classmethod
-    def from_attributes(cls, server, dbname, username, dbclass, authentication=''):
+    def from_attributes(cls, server, dbname, username, dbclass, port=None, authentication=''):
         root = ET.Element('connection', authentication=authentication)
         xml = cls(root)
         xml.server = server
         xml.dbname = dbname
         xml.username = username
         xml.dbclass = dbclass
+        xml.port = port
 
         return xml
 
@@ -133,3 +135,17 @@ class Connection(object):
 
         self._class = value
         self._connectionXML.set('class', value)
+
+    ###########
+    # port
+    ###########
+    @property
+    def port(self):
+        return self._port
+
+    @port.setter
+    def port(self, value):
+        self._port = value
+        # If port is None we don't actually want to update the XML
+        if value is not None:
+            self._connectionXML.set('port', value)
