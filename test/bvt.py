@@ -18,8 +18,7 @@ TABLEAU_10_TDS = os.path.join(TEST_DIR, 'assets', 'TABLEAU_10_TDS.tds')
 
 TABLEAU_10_TWB = os.path.join(TEST_DIR, 'assets', 'TABLEAU_10_TWB.twb')
 
-TABLEAU_CONNECTION_XML = ET.parse(os.path.join(
-    TEST_DIR, 'assets', 'CONNECTION.xml')).getroot()
+TABLEAU_CONNECTION_XML = os.path.join(TEST_DIR, 'assets', 'CONNECTION.xml')
 
 TABLEAU_10_TWBX = os.path.join(TEST_DIR, 'assets', 'TABLEAU_10_TWBX.twbx')
 
@@ -51,7 +50,7 @@ class ConnectionParserTests(unittest.TestCase):
 class ConnectionModelTests(unittest.TestCase):
 
     def setUp(self):
-        self.connection = TABLEAU_CONNECTION_XML
+        self.connection = ET.parse(TABLEAU_CONNECTION_XML).getroot()
 
     def test_can_read_attributes_from_connection(self):
         conn = Connection(self.connection)
@@ -60,15 +59,24 @@ class ConnectionModelTests(unittest.TestCase):
         self.assertEqual(conn.server, 'mssql2012')
         self.assertEqual(conn.dbclass, 'sqlserver')
         self.assertEqual(conn.authentication, 'sspi')
+        self.assertEqual(conn.port, '1433')
 
     def test_can_write_attributes_to_connection(self):
         conn = Connection(self.connection)
         conn.dbname = 'BubblesInMyDrink'
         conn.server = 'mssql2014'
         conn.username = 'bob'
+        conn.port = '1337'
         self.assertEqual(conn.dbname, 'BubblesInMyDrink')
         self.assertEqual(conn.username, 'bob')
         self.assertEqual(conn.server, 'mssql2014')
+        self.assertEqual(conn.port, '1337')
+
+    def test_can_delete_port_from_connection(self):
+        conn = Connection(self.connection)
+        conn.port = None
+        self.assertEqual(conn.port, None)
+        self.assertIsNone(conn._connectionXML.get('port'))
 
     def test_bad_dbclass_rasies_attribute_error(self):
         conn = Connection(self.connection)
@@ -90,11 +98,13 @@ class ConnectionModelTests(unittest.TestCase):
         conn1 = Connection.from_attributes(
             server='a', dbname='b', username='c', dbclass='mysql', authentication='d')
         conn2 = Connection.from_attributes(
-            server='1', dbname='2', username='3', dbclass='mysql', authentication='7')
+            server='1', dbname='2', username='3', dbclass='mysql', port='1337', authentication='7')
         ds = Datasource.from_connections('test', connections=[conn1, conn2])
 
         self.assertEqual(ds.connections[0].server, 'a')
+        self.assertEqual(ds.connections[0].port, None)
         self.assertEqual(ds.connections[1].server, '1')
+        self.assertEqual(ds.connections[1].port, '1337')
 
 
 class ConnectionParserInComplicatedWorkbooks(unittest.TestCase):
