@@ -1,5 +1,6 @@
 <?xml version='1.0' encoding='utf-8' ?>
-<datasource formatted-name='postgres.1of3kl00aoax5d1a1ejma1397430' inline='true' source-platform='mac' version='9.3' xmlns:user='http://www.tableausoftware.com/xml/user'>
+<datasource caption='foo' formatted-name='postgres.1of3kl00aoax5d1a1ejma1397430' inline='true' source-platform='mac'
+            version='9.3' xmlns:user='http://www.tableausoftware.com/xml/user'>
   <repository-location />
   <connection authentication='username-password' class='postgres' dbname='TestV1' odbc-native-protocol='yes' port='5432' server='postgres91.test.tsi.lan' username='test'>
     <relation name='xy' table='[public].[xy]' type='table' />
