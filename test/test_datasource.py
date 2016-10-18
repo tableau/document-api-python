@@ -1,5 +1,9 @@
-import unittest
+import os
 import os.path
+import shutil
+import tempfile
+import unittest
+
 
 from tableaudocumentapi import Datasource, Workbook
 
@@ -22,6 +26,19 @@ class DataSourceFieldsTDS(unittest.TestCase):
 
     def setUp(self):
         self.ds = Datasource.from_file(TEST_TDS_FILE)
+        self.to_delete = set()
+
+    def cleanUp(self):
+        for path in self.to_delete:
+            if os.path.isdir(path):
+                shutil.rmtree(path, ignore_errors=True)
+            elif os.path.isfile(path):
+                os.unlink(path)
+
+    def get_temp_file(self, filename):
+        tempdir = tempfile.mkdtemp('tda-datasource')
+        self.to_delete.add(tempdir)
+        return os.path.join(tempdir, filename)
 
     def test_datasource_returns_correct_fields(self):
         self.assertIsNotNone(self.ds.fields)
@@ -62,6 +79,22 @@ class DataSourceFieldsTDS(unittest.TestCase):
         actual = self.ds.fields['[a]'].description
         self.assertIsNotNone(actual)
         self.assertTrue(u'muted gray' in actual)
+
+    def test_datasource_caption(self):
+        actual = self.ds.caption
+        self.assertIsNotNone(actual)
+        self.assertEqual(actual, 'foo')
+
+    def test_datasource_can_set_caption(self):
+        filename = self.get_temp_file('test_datasource_can_set_caption')
+        self.ds.caption = 'bar'
+        self.ds.save_as(filename)
+
+        actual = Datasource.from_file(filename)
+        self.assertIsNotNone(actual)
+        self.assertIsNotNone(actual.caption)
+        self.assertEqual(actual.caption, 'bar')
+
 
     def test_datasource_clear_repository_location(self):
         filename = os.path.join(TEST_ASSET_DIR, 'clear-repository-test.tds')

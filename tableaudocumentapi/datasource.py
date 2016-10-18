@@ -137,6 +137,7 @@ class Datasource(object):
         self._name = self._datasourceXML.get('name') or self._datasourceXML.get(
             'formatted-name')  # TDS files don't have a name attribute
         self._version = self._datasourceXML.get('version')
+        self._caption = self._datasourceXML.get('caption', '')
         self._connection_parser = ConnectionParser(
             self._datasourceXML, version=self._version)
         self._connections = self._connection_parser.get_connections()
@@ -206,6 +207,15 @@ class Datasource(object):
     @property
     def version(self):
         return self._version
+
+    @property
+    def caption(self):
+        return self._caption
+
+    @caption.setter
+    def caption(self, value):
+        self._datasourceXML.attrib['caption'] = value
+        self._caption = value
 
     ###########
     # connections
