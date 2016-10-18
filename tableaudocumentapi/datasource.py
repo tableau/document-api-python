@@ -214,8 +214,13 @@ class Datasource(object):
 
     @caption.setter
     def caption(self, value):
-        self._datasourceXML.attrib['caption'] = value
+        self._datasourceXML.set('caption', value)
         self._caption = value
+
+    @caption.deleter
+    def caption(self):
+        del self._datasourceXML.attrib['caption']
+        self._caption = ''
 
     ###########
     # connections

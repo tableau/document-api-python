@@ -95,6 +95,15 @@ class DataSourceFieldsTDS(unittest.TestCase):
         self.assertIsNotNone(actual.caption)
         self.assertEqual(actual.caption, 'bar')
 
+    def test_datasource_can_remove_caption(self):
+        filename = self.get_temp_file('test_datasource_can_remove_caption')
+        del self.ds.caption
+        self.ds.save_as(filename)
+
+        actual = Datasource.from_file(filename)
+        self.assertIsNotNone(actual)
+        self.assertEqual(actual.caption, '')
+
     def test_datasource_clear_repository_location(self):
         filename = os.path.join(TEST_ASSET_DIR, 'clear-repository-test.tds')
 
