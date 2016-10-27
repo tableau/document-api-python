@@ -64,3 +64,6 @@ target/
 #Other things
 .DS_Store
 .idea
+
+#Jekyll
+docs/_site
