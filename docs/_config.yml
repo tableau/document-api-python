@@ -1,0 +1,17 @@
+# Site settings
+title: Tableau Document API
+email: jdominguez@tableau.com
+description: Programmatically update your Tableau workbooks and data sources.
+baseurl: "/document-api-python"
+permalinks: pretty
+defaults:
+  -
+    scope:
+      path: "" # Apply to all files
+    values:
+      layout: "default"
+
+# Build settings
+markdown: kramdown
+highlighter: rouge
+
