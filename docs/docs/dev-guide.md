@@ -3,6 +3,7 @@ title: Developer Guide
 layout: docs
 ---
 
+<<<<<<< 6ee666bf06d5ab59931100b3955779c35693e33f
 ## Submitting your first patch
 
 1. Make sure you have [signed the CLA](http://tableau.github.io/#contributor-license-agreement-cla)
