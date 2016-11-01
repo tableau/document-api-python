@@ -1,3 +1,9 @@
+## 05 (01 November 2016)
+
+* Added ability to set the port for connections (#97)
+* Added ability to read and write caption for datasources (#99)
+* Added documentation
+
 ## 0.4 (07 October 2016)
 
 * Add ability to remove repository location (#86)

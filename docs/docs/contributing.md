@@ -2,6 +2,7 @@
 title: Contributing
 layout: docs
 ---
+# Contributing
 
 We welcome contributions to this project!
 
