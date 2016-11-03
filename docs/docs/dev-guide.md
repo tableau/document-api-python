@@ -3,7 +3,6 @@ title: Developer Guide
 layout: docs
 ---
 
-<<<<<<< 6ee666bf06d5ab59931100b3955779c35693e33f
 ## Submitting your first patch
 
 1. Make sure you have [signed the CLA](http://tableau.github.io/#contributor-license-agreement-cla)
@@ -53,7 +52,7 @@ layout: docs
    Our documentation is written in markdown and built with Jekyll on Github Pages. All of the documentation source files can be found in `docs/docs`.
 
    When adding a new feature or improving existing functionality we may ask that you update the documentation along with your code.
-   
+
    If you are just making a PR for documentation updates (adding new docs, fixing typos, improving wording) the easiest method is to use the built in `Edit this file` in the Github UI
 
 1. Submit to your fork.
