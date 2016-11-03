@@ -6,7 +6,7 @@ This repo contains Python source and example files for the Tableau Document API.
 
 For more information, see the documentation:
 
-<tableau.github.io/document-api-python>
+<http://tableau.github.io/document-api-python>
 
 Document API
 ---------------
