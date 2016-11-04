@@ -13,6 +13,7 @@ from tableaudocumentapi import Connection, xfile
 from tableaudocumentapi import Field
 from tableaudocumentapi.multilookup_dict import MultiLookupDict
 from tableaudocumentapi.xfile import xml_open
+from tableaudocumentapi import metadata_structure
 
 ########
 # This is needed in order to determine if something is a string or not.  It is necessary because
@@ -310,6 +311,87 @@ class Datasource(object):
             raise ValueError("Need to supply a field to remove element")
 
         self._datasourceTree.getroot().remove(field.xml)
+        self._refresh_fields()
+
+    def add_metadata_record(self, name, parent, datatype):
+        """ This function creates and appends a full metadata-record column.
+
+        This function depends on the datatype-to-values information from metadata_structure.py.
+
+        TODO: This function is huge and compicated. Rework this ASAP!
+        Maybe create a own file for metadata-fields?
+        """
+        # get first part of values needed for a meta-record
+        db_class = self.connections[0].dbclass
+        defaults = getattr(metadata_structure, db_class, None)
+
+        # TODO Are those mappings valid for other databases?
+        # If not: Create default mappings for other databases
+        if not defaults:
+            msg = "No default mappings are available for {}-databases.".format(db_class)
+            raise NotImplementedError(msg)
+
+        # get second part of values needed for a meta-record
+        passed_values = {
+            'remote-name': name,
+            'local-name': '[{}]'.format(name),
+            'parent-name': '[{}]'.format(parent),
+            'remote-alias': name,
+            'local-type': datatype,
+        }
+
+        # merge them
+        record_attributes = dict(itertools.chain(defaults[datatype].items(), passed_values.items()))
+
+        # determine the value of "ordinal" for new record
+        ordinals = self._datasourceTree.findall('.//*/metadata-record/ordinal')
+        max_nr = max([int(x.text) for x in ordinals] + [0])
+        record_attributes['ordinal'] = str(max_nr + 1)
+
+        # create base record
+        record = ET.Element('metadata-record')
+        record.set('class', 'column')
+
+        # add all sub-elements of the metadata-record field
+        for key, value in record_attributes.items():
+            if key == '__extra__':
+                # Those need special treatment
+                continue
+            elem = ET.Element(key)
+            elem.text = value
+            record.append(elem)
+
+        # add the 'collation' sub-elements if the metadata_structure provides them
+        collation_info = record_attributes.get('__extra__', {}).get('collation', {})
+        if collation_info:
+            collation = ET.Element('collation')
+            collation.set('flag', collation_info['flag'])
+            collation.set('name', collation_info['name'])
+            record.append(collation)
+
+        # add the 'attribute' sub-elements if the metadata_structure provides them
+        attribute_info = record_attributes.get('__extra__', {}).get('attributes', {})
+        if attribute_info:
+
+            attrs = ET.Element('attributes')
+
+            attr1 = ET.Element('attribute')
+            attr1.set('datatype', 'string')
+            attr1.set('name', 'DebugRemoteType')
+            attr1.text = attribute_info['DebugRemoteType']
+            attrs.append(attr1)
+
+            attr2 = ET.Element('attribute')
+            attr2.set('datatype', 'string')
+            attr2.set('name', 'DebugWireType')
+            attr2.text = attribute_info['DebugWireType']
+            attrs.append(attr2)
+
+            record.append(attrs)
+
+        # append to the base xml
+        base = self._datasourceTree.find('.//metadata-records')
+        base.append(record)
         self._refresh_fields()
 
     ###########
