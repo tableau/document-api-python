@@ -52,7 +52,15 @@ def temporary_directory(*args, **kwargs):
 
 
 def find_file_in_zip(zip_file):
-    for filename in zip_file.namelist():
+    '''Returns the twb/tds file from a Tableau packaged file format. Packaged
+    files can contain cache entries which are also valid XML, so only look for
+    files with a .tds or .twb extension.
+    '''
+
+    candidate_files = filter(lambda x: x.split('.')[-1] in ('twb', 'tds'),
+                             zip_file.namelist())
+
+    for filename in candidate_files:
         with zip_file.open(filename) as xml_candidate:
             try:
                 ET.parse(xml_candidate)
@@ -81,10 +89,10 @@ def build_archive_file(archive_contents, zip_file):
 
 
 def save_into_archive(xml_tree, filename, new_filename=None):
-    # Saving a archive means extracting the contents into a temp folder,
+    # Saving an archive means extracting the contents into a temp folder,
     # saving the changes over the twb/tds in that folder, and then
-    # packaging it back up into a specifically formatted zip with the correct
-    # relative file paths
+    # packaging it back up into a zip with a very specific format
+    # e.g. no empty files for directories, which Windows and Mac do by default
 
     if new_filename is None:
         new_filename = filename
