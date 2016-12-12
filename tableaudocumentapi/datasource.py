@@ -235,6 +235,56 @@ class Datasource(object):
             self._datasourceXML.remove(tag)
 
     ###########
+    # Folders
+    ###########
+
+    @property
+    def folders(self):
+        """ Returns all folders.
+        """
+        return self._datasourceTree.findall('.//folder')
+
+    def add_folder(self, name, role, fields):
+        """ Adds a folder field with the given fields.
+
+        Args:
+            name:  Name of the new folder. String.
+            role:  Role of the new folder. String.
+            fields:  Fields of the new folder. String.
+
+        Returns:
+            The new calculated folder that was created. ET.Element.
+        """
+        # TODO: It might be better to create a dedicated "Folder" object:
+        # Currently, there is a difference in Folder-Objects (ET.Elements) and
+        # other Fields (dedicated Field-objects)
+        folder = ET.Element('folder')
+        folder.set('name', name)
+        folder.set('role', role)
+
+        for field in fields:
+            item = ET.Element("folder-item")
+            item.set("name", field)
+            item.set("type", "field")
+            folder.append(item)
+
+        self._datasourceTree.getroot().append(folder)
+        return folder
+
+    def add_to_folder(self, name, fields):
+        """ Adds fields to a folder field with the given fields.
+        """
+        folder = self._datasourceTree.find(".//folder/[@name='{}']".format(name))
+        if not folder:
+            raise ValueError("Could not find a folder named {}.".format(name))
+
+        for field in fields:
+            item = ET.Element("folder-item")
+            item.set("name", field)
+            item.set("type", "field")
+            folder.append(item)
+
+    ###########
     # fields
     ###########
     @property
