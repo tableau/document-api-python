@@ -11,10 +11,7 @@ from tableaudocumentapi.xfile import xml_open
 
 
 class Workbook(object):
-    """
-    A class for writing Tableau workbook files.
-
-    """
+    """A class for writing Tableau workbook files."""
 
     ###########################################################################
     #
@@ -22,14 +19,15 @@ class Workbook(object):
     #
     ###########################################################################
     def __init__(self, filename):
-        """
-        Constructor.
+        """Open the workbook at `filename`. This will handle packaged and unpacked
+        workbook files automatically. This will also parse Data Sources and Worksheets
+        for access.
 
         """
 
         self._filename = filename
 
-        self._workbookTree = xml_open(self._filename, self.__class__.__name__.lower())
+        self._workbookTree = xml_open(self._filename, 'workbook')
 
         self._workbookRoot = self._workbookTree.getroot()
         # prepare our datasource objects
@@ -42,23 +40,14 @@ class Workbook(object):
             self._workbookRoot, self._datasource_index
         )
 
-    ###########
-    # datasources
-    ###########
     @property
     def datasources(self):
         return self._datasources
 
-    ###########
-    # worksheets
-    ###########
     @property
     def worksheets(self):
         return self._worksheets
 
-    ###########
-    # filename
-    ###########
     @property
     def filename(self):
         return self._filename

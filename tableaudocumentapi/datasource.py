@@ -16,7 +16,7 @@ from tableaudocumentapi.xfile import xml_open
 
 ########
 # This is needed in order to determine if something is a string or not.  It is necessary because
-# of differences between python2 (basestring) and python3 (str).  If python2 support is every
+# of differences between python2 (basestring) and python3 (str).  If python2 support is ever
 # dropped, remove this and change the basestring references below to str
 try:
     basestring
@@ -35,7 +35,7 @@ def _get_metadata_xml_for_field(root_xml, field_name):
 
 
 def _is_used_by_worksheet(names, field):
-    return any((y for y in names if y in field.worksheets))
+    return any(y for y in names if y in field.worksheets)
 
 
 class FieldDictionary(MultiLookupDict):
@@ -87,13 +87,14 @@ def base36encode(number):
     return sign + base36
 
 
-def make_unique_name(dbclass):
+def _make_unique_name(dbclass):
     rand_part = base36encode(uuid4().int)
     name = dbclass + '.' + rand_part
     return name
 
 
 class ConnectionParser(object):
+    """Parser for detecting and extracting connections from differing Tableau file formats."""
 
     def __init__(self, datasource_xml, version):
         self._dsxml = datasource_xml
@@ -101,6 +102,8 @@ class ConnectionParser(object):
 
     def _extract_federated_connections(self):
         connections = list(map(Connection, self._dsxml.findall('.//named-connections/named-connection/*')))
+        # 'sqlproxy' connections (Tableau Server Connections) are not embedded into named-connection elements
+        # extract them manually for now
         connections.extend(map(Connection, self._dsxml.findall("./connection[@class='sqlproxy']")))
         return connections
 
@@ -108,6 +111,8 @@ class ConnectionParser(object):
         return list(map(Connection, self._dsxml.findall('connection')))
 
     def get_connections(self):
+        """Find and return all connections based on file format version."""
+
         if float(self._dsversion) < 10:
             connections = self._extract_legacy_connection()
         else:
@@ -116,8 +121,8 @@ class ConnectionParser(object):
 
 
 class Datasource(object):
-    """
-    A class for writing datasources to Tableau files.
+    """A class representing Tableau Data Sources, embedded in workbook files or
+    in TDS files.
 
     """
 
@@ -145,13 +150,15 @@ class Datasource(object):
 
     @classmethod
     def from_file(cls, filename):
-        """Initialize datasource from file (.tds)"""
+        """Initialize datasource from file (.tds ot .tdsx)"""
 
-        dsxml = xml_open(filename, cls.__name__.lower()).getroot()
+        dsxml = xml_open(filename, 'datasource').getroot()
         return cls(dsxml, filename)
 
     @classmethod
     def from_connections(cls, caption, connections):
+        """Create a new Data Source give a list of Connections."""
+
         root = ET.Element('datasource', caption=caption, version='10.0', inline='true')
         outer_connection = ET.SubElement(root, 'connection')
         outer_connection.set('class', 'federated')
@@ -159,7 +166,7 @@ class Datasource(object):
         for conn in connections:
             nc = ET.SubElement(named_conns,
                                'named-connection',
-                               name=make_unique_name(conn.dbclass),
+                               name=_make_unique_name(conn.dbclass),
                                caption=conn.server)
             nc.append(conn._connectionXML)
         return cls(root)
@@ -194,16 +201,10 @@ class Datasource(object):
 
         xfile._save_file(self._filename, self._datasourceTree, new_filename)
 
-    ###########
-    # name
-    ###########
     @property
     def name(self):
         return self._name
 
-    ###########
-    # version
-    ###########
     @property
     def version(self):
         return self._version
@@ -222,9 +223,6 @@ class Datasource(object):
         del self._datasourceXML.attrib['caption']
         self._caption = ''
 
-    ###########
-    # connections
-    ###########
     @property
     def connections(self):
         return self._connections
@@ -234,9 +232,6 @@ class Datasource(object):
         if tag is not None:
             self._datasourceXML.remove(tag)
 
-    ###########
-    # fields
-    ###########
     @property
     def fields(self):
         if not self._fields:
@@ -244,6 +239,8 @@ class Datasource(object):
         return self._fields
 
     def _get_all_fields(self):
+        # Some columns are represented by `column` tags and others as `metadata-record` tags
+        # Find them all and chain them into one dictionary
         column_field_objects = self._get_column_objects()
         existing_column_fields = [x.id for x in column_field_objects]
         metadata_only_field_objects = (x for x in self._get_metadata_objects() if x.id not in existing_column_fields)
