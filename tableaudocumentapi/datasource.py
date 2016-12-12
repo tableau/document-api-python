@@ -1,8 +1,3 @@
-###############################################################################
-#
-# Datasource - A class for writing datasources to Tableau files
-#
-###############################################################################
 import collections
 import itertools
 import xml.etree.ElementTree as ET
@@ -126,11 +121,6 @@ class Datasource(object):
 
     """
 
-    ###########################################################################
-    #
-    # Public API.
-    #
-    ###########################################################################
     def __init__(self, dsxml, filename=None):
         """
         Constructor.  Default is to create datasource from xml.

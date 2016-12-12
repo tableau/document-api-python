@@ -1,8 +1,3 @@
-###############################################################################
-#
-# Workbook - A class for writing Tableau workbook files
-#
-###############################################################################
 import weakref
 
 
@@ -13,11 +8,6 @@ from tableaudocumentapi.xfile import xml_open
 class Workbook(object):
     """A class for writing Tableau workbook files."""
 
-    ###########################################################################
-    #
-    # Public API.
-    #
-    ###########################################################################
     def __init__(self, filename):
         """Open the workbook at `filename`. This will handle packaged and unpacked
         workbook files automatically. This will also parse Data Sources and Worksheets
@@ -81,11 +71,6 @@ class Workbook(object):
         xfile._save_file(
             self._filename, self._workbookTree, new_filename)
 
-    ###########################################################################
-    #
-    # Private API.
-    #
-    ###########################################################################
     @staticmethod
     def _prepare_datasource_index(datasources):
         retval = weakref.WeakValueDictionary()

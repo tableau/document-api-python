@@ -25,7 +25,7 @@ def xml_open(filename, expected_root=None):
     """Opens the provided 'filename'. Handles detecting if the file is an archive,
     detecting the document version, and validating the root tag."""
 
-    # Is the file a zip (twbx or tdsx)
+    # Is the file a zip (.twbx or .tdsx)
     if zipfile.is_zipfile(filename):
         tree = get_xml_from_archive(filename)
     else:

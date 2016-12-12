@@ -1,20 +1,9 @@
-###############################################################################
-#
-# Connection - A class for writing connections to Tableau files
-#
-###############################################################################
 import xml.etree.ElementTree as ET
 from tableaudocumentapi.dbclass import is_valid_dbclass
 
 
 class Connection(object):
     """A class representing connections inside Data Sources."""
-
-    ###########################################################################
-    #
-    # Public API.
-    #
-    ###########################################################################
 
     def __init__(self, connxml):
         """Connection is usually instantiated by passing in connection elements
@@ -114,7 +103,8 @@ class Connection(object):
 
     @property
     def dbclass(self):
-        """The type of connection (e.g. 'MySQL', 'Postgresql')."""
+        """The type of connection (e.g. 'MySQL', 'Postgresql'). A complete list
+        can be found in dbclass.py"""
         return self._class
 
     @dbclass.setter
