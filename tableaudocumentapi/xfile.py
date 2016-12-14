@@ -22,19 +22,23 @@ class TableauInvalidFileException(Exception):
 
 
 def xml_open(filename, expected_root=None):
+    """Opens the provided 'filename'. Handles detecting if the file is an archive,
+    detecting the document version, and validating the root tag."""
 
+    # Is the file a zip (.twbx or .tdsx)
     if zipfile.is_zipfile(filename):
         tree = get_xml_from_archive(filename)
     else:
         tree = ET.parse(filename)
 
+    # Is the file a supported version
     tree_root = tree.getroot()
-
     file_version = Version(tree_root.attrib.get('version', '0.0'))
 
     if file_version < MIN_SUPPORTED_VERSION:
         raise TableauVersionNotSupportedException(file_version)
 
+    # Does the root tag match the object type (workbook or data source)
     if expected_root and (expected_root != tree_root.tag):
         raise TableauInvalidFileException(
             "'{}'' is not a valid '{}' file".format(filename, expected_root))
@@ -79,6 +83,10 @@ def get_xml_from_archive(filename):
 
 
 def build_archive_file(archive_contents, zip_file):
+    """Build a Tableau-compatible archive file."""
+
+    # This is tested against Desktop and Server, and reverse engineered by lots
+    # of trial and error. Do not change this logic.
     for root_dir, _, files in os.walk(archive_contents):
         relative_dir = os.path.relpath(root_dir, archive_contents)
         for f in files:

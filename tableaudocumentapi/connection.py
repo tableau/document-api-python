@@ -1,27 +1,14 @@
-###############################################################################
-#
-# Connection - A class for writing connections to Tableau files
-#
-###############################################################################
 import xml.etree.ElementTree as ET
 from tableaudocumentapi.dbclass import is_valid_dbclass
 
 
 class Connection(object):
-    """
-    A class for writing connections to Tableau files.
-
-    """
-
-    ###########################################################################
-    #
-    # Public API.
-    #
-    ###########################################################################
+    """A class representing connections inside Data Sources."""
 
     def __init__(self, connxml):
-        """
-        Constructor.
+        """Connection is usually instantiated by passing in connection elements
+        in a Data Source. If creating a connection from scratch you can call
+        `from_attributes` passing in the connection attributes.
 
         """
         self._connectionXML = connxml
@@ -37,6 +24,9 @@ class Connection(object):
 
     @classmethod
     def from_attributes(cls, server, dbname, username, dbclass, port=None, authentication=''):
+        """Creates a new connection that can be added into a Data Source.
+        defaults to `''` which will be treated as 'prompt' by Tableau."""
+
         root = ET.Element('connection', authentication=authentication)
         xml = cls(root)
         xml.server = server
@@ -47,11 +37,9 @@ class Connection(object):
 
         return xml
 
-    ###########
-    # dbname
-    ###########
     @property
     def dbname(self):
+        """Database name for the connection. Not the table name."""
         return self._dbname
 
     @dbname.setter
@@ -69,11 +57,9 @@ class Connection(object):
         self._dbname = value
         self._connectionXML.set('dbname', value)
 
-    ###########
-    # server
-    ###########
     @property
     def server(self):
+        """Hostname or IP address of the database server. May also be a URL in some connection types."""
         return self._server
 
     @server.setter
@@ -91,11 +77,9 @@ class Connection(object):
         self._server = value
         self._connectionXML.set('server', value)
 
-    ###########
-    # username
-    ###########
     @property
     def username(self):
+        """Username used to authenticate to the database."""
         return self._username
 
     @username.setter
@@ -113,22 +97,26 @@ class Connection(object):
         self._username = value
         self._connectionXML.set('username', value)
 
-    ###########
-    # authentication
-    ###########
     @property
     def authentication(self):
         return self._authentication
 
-    ###########
-    # dbclass
-    ###########
     @property
     def dbclass(self):
+        """The type of connection (e.g. 'MySQL', 'Postgresql'). A complete list
+        can be found in dbclass.py"""
         return self._class
 
     @dbclass.setter
     def dbclass(self, value):
+        """Set the connection's dbclass property.
+
+        Args:
+            value:  New dbclass value. String.
+
+        Returns:
+            Nothing.
+        """
 
         if not is_valid_dbclass(value):
             raise AttributeError("'{}' is not a valid database type".format(value))
@@ -136,15 +124,22 @@ class Connection(object):
         self._class = value
         self._connectionXML.set('class', value)
 
-    ###########
-    # port
-    ###########
     @property
     def port(self):
+        """Port used to connect to the database."""
         return self._port
 
     @port.setter
     def port(self, value):
+        """Set the connection's port property.
+
+        Args:
+            value:  New port value. String.
+
+        Returns:
+            Nothing.
+        """
+
         self._port = value
         # If port is None we remove the element and don't write it to XML
         if value is None:
