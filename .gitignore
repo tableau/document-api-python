@@ -65,5 +65,11 @@ target/
 .DS_Store
 .idea
 
+#Editor things
+*.sublime-project
+*.sublime-workspace
+settings.json
+tasks.json
+
 #Jekyll
 docs/_site
