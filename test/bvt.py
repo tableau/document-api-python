@@ -60,6 +60,8 @@ class ConnectionModelTests(unittest.TestCase):
         self.assertEqual(conn.dbclass, 'sqlserver')
         self.assertEqual(conn.authentication, 'sspi')
         self.assertEqual(conn.port, '1433')
+        self.assertEqual(conn.initial_sql, '')
+        self.assertEqual(conn.query_band, '')
 
     def test_can_write_attributes_to_connection(self):
         conn = Connection(self.connection)
@@ -67,16 +69,32 @@ class ConnectionModelTests(unittest.TestCase):
         conn.server = 'mssql2014'
         conn.username = 'bob'
         conn.port = '1337'
+        conn.initial_sql = "insert values (1, 'winning') into schema.table"
+        conn.query_band = 'TableauReport=<workbookname>'
         self.assertEqual(conn.dbname, 'BubblesInMyDrink')
         self.assertEqual(conn.username, 'bob')
         self.assertEqual(conn.server, 'mssql2014')
         self.assertEqual(conn.port, '1337')
+        self.assertEqual(conn.initial_sql, "insert values (1, 'winning') into schema.table")
+        self.assertEqual(conn.query_band, 'TableauReport=<workbookname>')
 
     def test_can_delete_port_from_connection(self):
         conn = Connection(self.connection)
         conn.port = None
         self.assertEqual(conn.port, None)
         self.assertIsNone(conn._connectionXML.get('port'))
+
+    def test_can_delete_initial_sql_from_connection(self):
+        conn = Connection(self.connection)
+        conn.initial_sql = None
+        self.assertEqual(conn.initial_sql, None)
+        self.assertIsNone(conn._connectionXML.get('initial_sql'))
+
+    def test_can_delete_query_band_from_connection(self):
+        conn = Connection(self.connection)
+        conn.query_band = None
+        self.assertEqual(conn.query_band, None)
+        self.assertIsNone(conn._connectionXML.get('query_band'))
 
     def test_bad_dbclass_rasies_attribute_error(self):
         conn = Connection(self.connection)

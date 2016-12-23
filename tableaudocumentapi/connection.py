@@ -18,12 +18,15 @@ class Connection(object):
         self._authentication = connxml.get('authentication')
         self._class = connxml.get('class')
         self._port = connxml.get('port', None)
+        self._query_band = connxml.get('query-band-spec', None)
+        self._initial_sql = connxml.get('one-time-sql', None)
 
     def __repr__(self):
         return "'<Connection server='{}' dbname='{}' @ {}>'".format(self._server, self._dbname, hex(id(self)))
 
     @classmethod
-    def from_attributes(cls, server, dbname, username, dbclass, port=None, authentication=''):
+    def from_attributes(cls, server, dbname, username, dbclass, port=None, query_band=None,
+                        initial_sql=None, authentication=''):
         """Creates a new connection that can be added into a Data Source.
         defaults to `''` which will be treated as 'prompt' by Tableau."""
 
@@ -34,6 +37,8 @@ class Connection(object):
         xml.username = username
         xml.dbclass = dbclass
         xml.port = port
+        xml.query_band = query_band
+        xml.initial_sql = initial_sql
 
         return xml
 
@@ -149,3 +154,55 @@ class Connection(object):
                 pass
         else:
             self._connectionXML.set('port', value)
+
+    @property
+    def query_band(self):
+        """Query band passed on connection to database."""
+        return self._query_band
+
+    @query_band.setter
+    def query_band(self, value):
+        """Set the connection's query_band property.
+
+        Args:
+            value:  New query_band value. String.
+
+        Returns:
+            Nothing.
+        """
+
+        self._query_band = value
+        # If query band is None we remove the element and don't write it to XML
+        if value is None:
+            try:
+                del self._connectionXML.attrib['query-band-spec']
+            except KeyError:
+                pass
+        else:
+            self._connectionXML.set('query-band-spec', value)
+
+    @property
+    def initial_sql(self):
+        """Initial SQL to be run."""
+        return self._initial_sql
+
+    @initial_sql.setter
+    def initial_sql(self, value):
+        """Set the connection's initial_sql property.
+
+        Args:
+            value:  New initial_sql value. String.
+
+        Returns:
+            Nothing.
+        """
+
+        self._initial_sql = value
+        # If initial_sql is None we remove the element and don't write it to XML
+        if value is None:
+            try:
+                del self._connectionXML.attrib['one-time-sql']
+            except KeyError:
+                pass
+        else:
+            self._connectionXML.set('one-time-sql', value)

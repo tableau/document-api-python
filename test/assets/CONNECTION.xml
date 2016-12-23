@@ -1,1 +1,1 @@
-<connection authentication='sspi' class='sqlserver' dbname='TestV1' odbc-native-protocol='yes' one-time-sql='' server='mssql2012' username='' port='1433'></connection>
+<connection authentication='sspi' class='sqlserver' dbname='TestV1' odbc-native-protocol='yes' one-time-sql='' server='mssql2012' username='' port='1433' query-band-spec=''></connection>
