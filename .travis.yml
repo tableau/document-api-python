@@ -6,17 +6,18 @@ python:
   - "3.3"
   - "3.4"
   - "3.5"
+  - "3.6"
   - "pypy"
 # command to install dependencies
 install:
   - "pip install -e ."
-  - "pip install pep8"
+  - "pip install pycodestyle"
 # command to run tests
 script:
   # Tests
   - python setup.py test
-  # pep8
-  - pep8 .
+  # pycodestyle
+  - pycodestyle tableaudocumentapi test samples
   # Examples
   - (cd "samples/replicate-workbook" && python replicate_workbook.py)
   - (cd "samples/list-tds-info" && python list_tds_info.py)
