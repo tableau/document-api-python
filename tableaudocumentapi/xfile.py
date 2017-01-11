@@ -22,19 +22,23 @@ class TableauInvalidFileException(Exception):
 
 
 def xml_open(filename, expected_root=None):
+    """Opens the provided 'filename'. Handles detecting if the file is an archive,
+    detecting the document version, and validating the root tag."""
 
+    # Is the file a zip (.twbx or .tdsx)
     if zipfile.is_zipfile(filename):
         tree = get_xml_from_archive(filename)
     else:
         tree = ET.parse(filename)
 
+    # Is the file a supported version
     tree_root = tree.getroot()
-
     file_version = Version(tree_root.attrib.get('version', '0.0'))
 
     if file_version < MIN_SUPPORTED_VERSION:
         raise TableauVersionNotSupportedException(file_version)
 
+    # Does the root tag match the object type (workbook or data source)
     if expected_root and (expected_root != tree_root.tag):
         raise TableauInvalidFileException(
             "'{}'' is not a valid '{}' file".format(filename, expected_root))
@@ -52,7 +56,15 @@ def temporary_directory(*args, **kwargs):
 
 
 def find_file_in_zip(zip_file):
-    for filename in zip_file.namelist():
+    '''Returns the twb/tds file from a Tableau packaged file format. Packaged
+    files can contain cache entries which are also valid XML, so only look for
+    files with a .tds or .twb extension.
+    '''
+
+    candidate_files = filter(lambda x: x.split('.')[-1] in ('twb', 'tds'),
+                             zip_file.namelist())
+
+    for filename in candidate_files:
         with zip_file.open(filename) as xml_candidate:
             try:
                 ET.parse(xml_candidate)
@@ -71,6 +83,10 @@ def get_xml_from_archive(filename):
 
 
 def build_archive_file(archive_contents, zip_file):
+    """Build a Tableau-compatible archive file."""
+
+    # This is tested against Desktop and Server, and reverse engineered by lots
+    # of trial and error. Do not change this logic.
     for root_dir, _, files in os.walk(archive_contents):
         relative_dir = os.path.relpath(root_dir, archive_contents)
         for f in files:
@@ -81,10 +97,10 @@ def build_archive_file(archive_contents, zip_file):
 
 
 def save_into_archive(xml_tree, filename, new_filename=None):
-    # Saving a archive means extracting the contents into a temp folder,
+    # Saving an archive means extracting the contents into a temp folder,
     # saving the changes over the twb/tds in that folder, and then
-    # packaging it back up into a specifically formatted zip with the correct
-    # relative file paths
+    # packaging it back up into a zip with a very specific format
+    # e.g. no empty files for directories, which Windows and Mac do by default
 
     if new_filename is None:
         new_filename = filename
