@@ -6,6 +6,7 @@ The following people have contributed to this project to make it possible, and w
 
 * [Charley Peng](https://github.com/chid)
 * [Miguel Sánchez](https://github.com/MiguelSR)
+* [Ryan Richmond](https://github.com/r-richmond)
 
 ## Core Team
 

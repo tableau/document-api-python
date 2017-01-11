@@ -1,3 +1,11 @@
+## 06 (11 January 2017)
+
+* Initial SQL and query banding support (#123)
+* Fixed bug in xfiles to allow opening workbooks with external file caches (#117, #118)
+* Code Cleanup (#120, #121)
+* Added Py36 support (#124)
+* Switched to pycodestyle from pip8 on travis runs (#124)
+
 ## 05 (01 November 2016)
 
 * Added ability to set the port for connections (#97)
