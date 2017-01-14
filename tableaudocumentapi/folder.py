@@ -1,5 +1,5 @@
-from functools import wraps
 import xml.etree.ElementTree as ET
+from functools import wraps
 
 from tableaudocumentapi import Field
 
@@ -45,7 +45,7 @@ class FolderItem(object):
 
     @classmethod
     def from_xml(cls, xml):
-        return cls(xml.get('name'), xml.get('type'))
+        return cls(xml.get('name', None), xml.get('type', None))
 
     @classmethod
     def from_field(cls, field):
@@ -61,10 +61,10 @@ class Folder(object):
     def __init__(self, datasource, xml):
         self._datasource = datasource
         self._xml = xml
-        self.name, self.role = self._xml.get('name'), self._xml.get('role')
+        self.name = self._xml.get('name', None)
+        self.role = self._xml.get('role', None)
         folder_item_xml = self._xml.findall('folder-item')
-        self._folder_items = [FolderItem.from_xml(
-            xml) for xml in folder_item_xml]
+        self._folder_items = [FolderItem.from_xml(xml) for xml in folder_item_xml]
 
     # Alternative constructors
 
@@ -74,10 +74,15 @@ class Folder(object):
         return [cls(datasource, xml) for xml in folders_xml]
 
     @classmethod
-    def from_name_and_role(cls, datasource, name, role):
-        """"""
-        xml = ET.Element('folder', {'name': name, 'role': role})
-        return cls(datasource, xml)
+    def from_name_and_role(cls, name, role, parent_datasource):
+        """Creates a new folder with a given name and a given role.
+        """
+        attributes = {
+            'name': name,
+            'role': role
+        }
+        xml = ET.Element('folder', attrib=attributes)
+        return cls(parent_datasource, xml)
 
     # Properties
 

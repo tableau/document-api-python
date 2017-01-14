@@ -1,11 +1,13 @@
-import unittest
-import os.path
+# -*- coding: utf-8 -*-
 
-from tableaudocumentapi import Datasource
-from tableaudocumentapi.folder import Folder, FolderItem
-from tableaudocumentapi.folder import AlreadyMemberOfThisFolderException, MemberOfMultipleFoldersException
+import os.path
+import unittest
 import xml.etree.ElementTree as ET
 
+from tableaudocumentapi import Datasource
+from tableaudocumentapi.folder import (AlreadyMemberOfThisFolderException,
+                                       Folder, FolderItem,
+                                       MemberOfMultipleFoldersException)
 
 TEST_ASSET_DIR = os.path.join(
     os.path.dirname(__file__),

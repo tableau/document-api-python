@@ -283,14 +283,10 @@ class Datasource(object):
         if name in self.folders.keys():
             raise ValueError('Folder names must be unique')
 
-        folder = Folder.from_name_and_role(self, name, role)
-        # find the index of the last column to insert the folder
-        base_xml = self._datasourceXML
-        children = base_xml.getchildren()
-        columns = base_xml.findall('.//column')
-        last_column = max(map(lambda x: children.index(x), columns))
-
-        # insert folder
-        base_xml.insert(last_column + 1, folder.xml)
+        # Create the folder object
+        parent_datasource = self  # The parent of the new folder is the current datasource
+        folder = Folder.from_name_and_role(name, role, parent_datasource)
+        # Add the folder xml to the datasources xml
+        self._datasourceXML.append(folder.xml)
         self._refresh_folders()
         return folder
