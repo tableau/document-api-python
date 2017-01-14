@@ -135,7 +135,7 @@ class TestFolders(unittest.TestCase):
         self.assertFalse(persisted_folder.has_item(field_already_in_folder))
 
     def test_change_attributes(self):
-        name = "蚵仔煎"
+        name = u"蚵仔煎"
         folder = self.tds.folders["MyTestFolder"]
         folder.name = name
         folder.role = "measures"
@@ -150,7 +150,7 @@ class TestFolders(unittest.TestCase):
     def test_add_new_folder(self):
         """ The test-TDS-file should allow new folders to be added.
         """
-        folder_name = "蚵仔煎"
+        folder_name = u"蚵仔煎"
         folder_role = "dimensions"
         field_not_in_a_folder = '[typ]'
 
