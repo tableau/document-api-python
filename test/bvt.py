@@ -393,5 +393,6 @@ class SupportedWorkbookVersions(unittest.TestCase):
         with self.assertRaises(TableauVersionNotSupportedException):
             wb = Workbook(TABLEAU_82_TWB)
 
+
 if __name__ == '__main__':
     unittest.main()

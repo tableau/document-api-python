@@ -1,5 +1,6 @@
 from functools import wraps
 
+
 def argument_is_one_of(*allowed_values):
     def property_type_decorator(func):
         @wraps(func)
