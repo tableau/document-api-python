@@ -63,11 +63,31 @@ class TestFieldChange(unittest.TestCase):
         """
         return hash(ET.tostring(self.tds._datasourceTree.getroot()))
 
+    def check_state_change(self, should_change, msg, field_name):
+        """ Check whether the XML has changed and update the current state.
+
+            Args:
+                should_change: Whether the XML is supposed to have changed or not. Boolean.
+                msg: The message to be displayed in an error case, as key for the MESSAGES dict. String.
+                field_name: The field name that will be displayed in the error message. String.
+
+            Returns:
+                Nothing.
+        """
+        new_state = self.current_hash()
+        compare_func = self.assertNotEqual if should_change else self.assertEqual
+        compare_func(
+            self.state,
+            new_state,
+            msg=MESSAGES[msg].format(field_name)
+        )
+        self.state = new_state
+
     def test_change_values(self):
         """ Test if the value changes of a field are reflected in the object and in the underlying XML structure.
         """
         field_to_test = "[amount]"
-        state = self.current_hash()
+        self.state = self.current_hash()
         # change all fields
         for key, value in NEW_VALUES.items():
             setattr(self.tds.fields[field_to_test], key, value)
@@ -78,19 +98,13 @@ class TestFieldChange(unittest.TestCase):
                 msg=MESSAGES['test_change_values1'].format(key)
             )
             # the new value must be reflected in the xml
-            new_state = self.current_hash()
-            self.assertNotEqual(
-                state,
-                new_state,
-                msg=MESSAGES['test_change_values2'].format(key)
-            )
-            state = new_state
+            self.check_state_change(True, 'test_change_values2', key)
 
     def test_change_values_fail(self):
         """ Test if the value changes of a field are rejected if the wrong arguments are passed.
         """
         field_to_test = "[amount]"
-        state = self.current_hash()
+        self.state = self.current_hash()
         # change all fields
         for key, value in WRONG_VALUES.items():
 
@@ -104,42 +118,29 @@ class TestFieldChange(unittest.TestCase):
                 value,
                 msg=MESSAGES['test_change_valuesFail1'].format(key)
             )
-
             # the new value must NOT be reflected in the xml
-            new_state = self.current_hash()
-            self.assertEqual(
-                state,
-                new_state,
-                msg=MESSAGES['test_change_valuesFail2'].format(key)
-            )
-            state = new_state
+            self.check_state_change(False, 'test_change_valuesFail2', key)
 
     def test_remove_field(self):
         """ Test if a Field can be removed.
         """
         field_to_test = "[amount]"
-        state = self.current_hash()
+        self.state = self.current_hash()
         # change all fields
         field = self.tds.fields["[amount]"]
         self.tds.remove_field(field)
-        self.assertNotEqual(state, self.current_hash())
+        self.assertNotEqual(self.state, self.current_hash())
 
     def test_change_aliases(self):
         """ Test if the alias changes of a field are reflected in the object and in the underlying XML structure.
         """
         field_to_test = "[amount]"
-        state = self.current_hash()
+        self.state = self.current_hash()
         # change all fields
         for key, value in ALIASES.items():
             self.tds.fields[field_to_test].add_alias(key, value)
             # the new value must be reflected in the xml
-            new_state = self.current_hash()
-            self.assertNotEqual(
-                state,
-                new_state,
-                msg=MESSAGES['test_change_aliases1'].format(field_to_test)
-            )
-            state = new_state
+            self.check_state_change(True, 'test_change_aliases1', field_to_test)
 
         # check whether all fields of ALIASES have been applied
         self.assertEqual(
@@ -165,7 +166,7 @@ class TestFieldChange(unittest.TestCase):
     def test_calculation_change(self):
         """ Test whether changing calculations of a field works.
         """
-        state = self.current_hash()
+        self.state = self.current_hash()
         new_calc = '33 * 44'
         fld_name = '[Calculation_357754699576291328]'
         self.tds.calculations[fld_name].calculation = new_calc
@@ -175,7 +176,7 @@ class TestFieldChange(unittest.TestCase):
 
         # Check XML representation
         new_state = self.current_hash()
-        self.assertNotEqual(state, new_state)
+        self.assertNotEqual(self.state, new_state)
 
     def test_calculation_new(self):
         """ Test if creating a new calculation works.

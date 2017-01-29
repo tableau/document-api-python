@@ -262,14 +262,14 @@ class Datasource(object):
         return [_column_object_from_column_xml(self._datasourceTree, xml)
                 for xml in self._datasourceTree.findall('.//column')]
 
-    def add_field(self, name, datatype, role, type, caption):
+    def add_field(self, name, datatype, role, field_type, caption):
         """ Adds a base field object with the given values.
 
         Args:
             name: Name of the new Field. String.
             datatype:  Datatype of the new field. String.
             role:  Role of the new field. String.
-            type:  Type of the new field. String.
+            field_type:  Type of the new field. String.
             caption:  Caption of the new field. String.
 
         Returns:
@@ -284,12 +284,7 @@ class Datasource(object):
             caption = name.replace('[', '').replace(']', '').title()
 
         # Create the elements
-        column = ET.Element('column')
-        column.set('caption', caption)
-        column.set('datatype', datatype)
-        column.set('role', role)
-        column.set('type', type)
-        column.set('name', name)
+        column = xfile.create_column(caption, datatype, role, field_type, name)
 
         self._datasourceTree.getroot().append(column)
 
@@ -319,8 +314,6 @@ class Datasource(object):
     def calculations(self):
         """ Returns all calculated fields.
         """
-        # TODO: There is a default [Number of Records] calculation.
-        # Should this be excluded so users can't meddle with it?
         return {k: v for k, v in self.fields.items() if v.calculation is not None}
 
     def add_calculation(self, caption, formula, datatype, role, type):

@@ -1,6 +1,7 @@
 import functools
 import xml.etree.ElementTree as ET
-from functools import wraps
+
+from tableaudocumentapi.property_decorators import argument_is_one_of
 
 _ATTRIBUTES = [
     'id',           # Name of the field as specified in the file, usually surrounded by [ ]
@@ -24,21 +25,6 @@ _METADATA_TO_FIELD_MAP = [
 ]
 
 
-def argument_is_one_of(*allowed_values):
-    def property_type_decorator(func):
-        @wraps(func)
-        def wrapper(self, value):
-            if value not in allowed_values:
-                error = "Invalid argument: {0}. {1} must be one of {2}."
-                msg = error.format(value, func.__name__, allowed_values)
-                raise ValueError(error)
-            return func(self, value)
-
-        return wrapper
-
-    return property_type_decorator
-
-
 def _find_metadata_record(record, attrib):
     element = record.find('.//{}'.format(attrib))
     if element is None:
@@ -57,8 +43,6 @@ class Field(object):
         for attrib in _METADATA_ATTRIBUTES:
             setattr(self, '_{}'.format(attrib), None)
         self._worksheets = set()
-
-        self._xml = None
 
         if column_xml is not None:
             self._initialize_from_column_xml(column_xml)
@@ -225,17 +209,17 @@ class Field(object):
 
     @type.setter
     @argument_is_one_of('quantitative', 'ordinal', 'nominal')
-    def type(self, type):
+    def type(self, field_type):
         """ Set the type of a field
 
             Args:
-                type:  New type. String.
+                field_type:  New type. String.
 
             Returns:
                 Nothing.
         """
-        self._type = type
-        self._xml.set('type', type)
+        self._type = field_type
+        self._xml.set('type', field_type)
 
     ########################################
     # Aliases getter and setter
