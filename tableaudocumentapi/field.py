@@ -69,6 +69,16 @@ class Field(object):
                                   read_name=metadata_name)
         self.apply_metadata(xmldata)
 
+    @classmethod
+    def create_field_xml(cls, caption, datatype, role, field_type, name):
+        column = ET.Element('column')
+        column.set('caption', caption)
+        column.set('datatype', datatype)
+        column.set('role', role)
+        column.set('type', field_type)
+        column.set('name', name)
+        return column
+
     ########################################
     # Special Case methods for construction fields from various sources
     # not intended for client use

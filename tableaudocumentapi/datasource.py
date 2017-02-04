@@ -284,7 +284,7 @@ class Datasource(object):
             caption = name.replace('[', '').replace(']', '').title()
 
         # Create the elements
-        column = xfile.create_column(caption, datatype, role, field_type, name)
+        column = Field.create_field_xml(caption, datatype, role, field_type, name)
 
         self._datasourceTree.getroot().append(column)
 

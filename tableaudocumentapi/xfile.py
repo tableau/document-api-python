@@ -70,16 +70,6 @@ def get_xml_from_archive(filename):
     return xml_tree
 
 
-def create_column(caption, datatype, role, field_type, name):
-    column = ET.Element('column')
-    column.set('caption', caption)
-    column.set('datatype', datatype)
-    column.set('role', role)
-    column.set('type', field_type)
-    column.set('name', name)
-    return column
-
-
 def build_archive_file(archive_contents, zip_file):
     for root_dir, _, files in os.walk(archive_contents):
         relative_dir = os.path.relpath(root_dir, archive_contents)
