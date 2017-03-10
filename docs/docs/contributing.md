@@ -51,7 +51,7 @@ anyone can add to an issue:
 
 ## Fixes, Implementations, and Documentation
 
-For all other things, please submit a PR that includes the fix, documentation, or new code that you are trying to contribute. More information on submitting a PR can be found in the [developer guide](dev-guide.md)
+For all other things, please submit a PR that includes the fix, documentation, or new code that you are trying to contribute.  More information on this can be found in our [developer guide](http://tableau.github.io/document-api-python/docs/dev-guide)
 
 If the feature is complex or has multiple solutions that could be equally appropriate approaches, it would be helpful to file an issue to discuss the
 design trade-offs of each solution before implementing, to allow us to collectively arrive at the best solution, which most likely exists in the middle
