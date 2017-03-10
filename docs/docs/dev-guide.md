@@ -17,13 +17,19 @@ layout: docs
    git clone http://github.com/<your_username>/document-api-python
    ```
 
+1. Check out the development branch
+
+   ```shell
+   git checkout development
+   ```
+
 1. Run the tests to make sure everything is peachy:
 
    ```shell
    python setup.py test
    ```
 
-1. Set up the feature, fix, or documentation branch.
+1. Set up the feature, fix, or documentation branch. 
 
    It is recommended to use the format issue#-type-description (e.g. 13-fix-connection-bug) like so:
 
