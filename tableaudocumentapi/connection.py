@@ -234,7 +234,7 @@ class Connection(object):
     @property
     def service(self):
         """Database service for the connection. Not the table name."""
-        return self._schema
+        return self._service
 
     @service.setter
     def service(self, value):
