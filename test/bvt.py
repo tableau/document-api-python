@@ -112,13 +112,6 @@ class ConnectionModelTests(unittest.TestCase):
         self.assertEqual(conn.dbclass, 'mysql')
         self.assertEqual(conn.authentication, 'd')
 
-    def test_can_create_oracle_connection_from_scratch(self):
-        conn = Connection.from_attributes(
-            server='a', dbname='b', username='c', dbclass='oracle', schema='d', service='e')
-        self.assertEqual(conn.server, 'a')
-        self.assertEqual(conn.schema, 'd')
-        self.assertEqual(conn.service, 'e')
-
     def test_can_create_datasource_from_connections(self):
         conn1 = Connection.from_attributes(
             server='a', dbname='b', username='c', dbclass='mysql', authentication='d')
