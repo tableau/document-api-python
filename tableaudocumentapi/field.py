@@ -62,8 +62,9 @@ class Field(object):
 
     def _initialize_from_metadata_xml(self, xmldata):
         for metadata_name, field_name in _METADATA_TO_FIELD_MAP:
-            self._apply_attribute(xmldata, field_name, lambda x: xmldata.find('.//{}'.format(metadata_name)).text,
-                                  read_name=metadata_name)
+            if(xmldata.find('.//{}'.format(metadata_name)) is not None):
+                self._apply_attribute(xmldata, field_name, lambda x: xmldata.find('.//{}'.format(metadata_name)).text,
+                                      read_name=metadata_name)
         self.apply_metadata(xmldata)
 
     ########################################
