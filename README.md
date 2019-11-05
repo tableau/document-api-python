@@ -1,7 +1,7 @@
 # document-api-python
 [![Tableau Supported](https://img.shields.io/badge/Support%20Level-Tableau%20Supported-53bd92.svg)](https://www.tableau.com/support-levels-it-and-developer-tools) [![Build Status](https://travis-ci.org/tableau/document-api-python.svg?branch=master)](https://travis-ci.org/tableau/document-api-python)
 
-This repo contains Python source and example files for the Tableau Document API. We're just getting started and have plans to expand what you find here. Help us by submitting feedback, issues, and pull requests!
+This repo contains Python source and example files for the Tableau Document API. 
 
 For more information, see the documentation:
 
