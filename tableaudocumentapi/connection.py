@@ -24,6 +24,8 @@ class Connection(object):
         self._query_band = connxml.get('query-band-spec', None)
         self._initial_sql = connxml.get('one-time-sql', None)
         self._connection_data = connxml.get('connectionData')
+        
+        print("connection xml", self._connectionXML)
 
     def __repr__(self):
         return "'<Connection server='{}' dbname='{}' @ {}>'".format(self._server, self._dbname, hex(id(self)))
@@ -128,6 +130,12 @@ class Connection(object):
 
         """
         self._connpath = value
+        # path can be None, in that case try to remove the element and don't write it to XML
+        if value is None:
+            try:
+                del self._connectionXML.attrib['path']
+            except KeyError:
+                pass
         self._connectionXML.set('path', value)
 
     @property
@@ -274,3 +282,29 @@ class Connection(object):
                 pass
         else:
             self._connectionXML.set('one-time-sql', value)
+
+    @property
+    def connection_data(self):
+        """Data connection string used to create data extract from WDC."""
+        return self._connection_data
+
+    @connection_data.setter
+    def connection_data(self, value):
+        """Set the connection's connection_data property.
+
+        Args:
+            value: New connection data value. String.
+
+        Returns:
+            Nothing.
+
+        """
+        self._connection_data = value
+        # If connection_data is None we remove the element and don't write it to XML
+        if value is None:
+            try:
+                del self._connectionXML.attrib['connectionData']
+            except KeyError:
+                pass
+        else:
+            self._connectionXML.set('connectionData', value)
