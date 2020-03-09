@@ -251,7 +251,7 @@ class Datasource(object):
 
 
     def _get_custom_sql(self):
-        return self._datasourceXML.find('relation')
+        return [qry for qry in self._datasourceXML.iter('relation')]
 
     def add_field(self, name, datatype, role, field_type, caption):
         """ Adds a base field object with the given values.
