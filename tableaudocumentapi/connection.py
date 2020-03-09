@@ -24,8 +24,6 @@ class Connection(object):
         self._query_band = connxml.get('query-band-spec', None)
         self._initial_sql = connxml.get('one-time-sql', None)
         self._connection_data = connxml.get('connectionData')
-        
-        print("connection xml", self._connectionXML)
 
     def __repr__(self):
         return "'<Connection server='{}' dbname='{}' @ {}>'".format(self._server, self._dbname, hex(id(self)))

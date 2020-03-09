@@ -88,6 +88,8 @@ def _make_unique_name(dbclass):
     return name
 
 
+# TODO make extract relation of ds parser & class relation
+
 class ConnectionParser(object):
     """Parser for detecting and extracting connections from differing Tableau file formats."""
 
