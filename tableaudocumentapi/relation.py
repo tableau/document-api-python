@@ -1,4 +1,4 @@
-class Relation(object):
+class ConnectionRelation(object):
     """A class representing relations between data source and connections (inside Data Sources)."""
 
     def __init__(self, relationxml):

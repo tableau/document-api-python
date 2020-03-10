@@ -4,7 +4,7 @@ import xml.etree.ElementTree as ET
 import xml.sax.saxutils as sax
 from uuid import uuid4
 
-from tableaudocumentapi import Connection, xfile
+from tableaudocumentapi import Connection, xfile, ConnectionRelation
 from tableaudocumentapi import Field
 from tableaudocumentapi.multilookup_dict import MultiLookupDict
 from tableaudocumentapi.xfile import xml_open
@@ -88,8 +88,6 @@ def _make_unique_name(dbclass):
     return name
 
 
-# TODO make extract relation of ds parser & class relation
-
 class ConnectionParser(object):
     """Parser for detecting and extracting connections from differing Tableau file formats."""
 
@@ -98,7 +96,8 @@ class ConnectionParser(object):
         self._dsversion = version
 
     def _extract_federated_connections(self):
-        connections = list(map(Connection, self._dsxml.findall('.//named-connections/named-connection/*')))
+        
+        connections = list(map(Connection, self._dsxml.findall('.//named-connections/named-connection')))
         # 'sqlproxy' connections (Tableau Server Connections) are not embedded into named-connection elements
         # extract them manually for now
         connections.extend(map(Connection, self._dsxml.findall("./connection[@class='sqlproxy']")))
@@ -115,6 +114,17 @@ class ConnectionParser(object):
         else:
             connections = self._extract_federated_connections()
         return connections
+
+
+class RelationParser(object):
+    """Parser for detecting and extracting relations in a Data Source."""
+
+    def __init__(self, dsxml):
+        self._dsxml = dsxml
+
+    def get_relations(self):
+        """Finds and return all relation elements for federated connections within the data source."""
+        return list(map(ConnectionRelation, self._dsxml.findall('./connection/relation')))
 
 
 class Datasource(object):
@@ -138,6 +148,8 @@ class Datasource(object):
         self._connection_parser = ConnectionParser(
             self._datasourceXML, version=self._version)
         self._connections = self._connection_parser.get_connections()
+        self._relation_parser = RelationParser(self._datasourceXML)
+        self._connection_relations = self._relation_parser.get_relations()
         self._fields = None
 
     @classmethod
@@ -218,6 +230,10 @@ class Datasource(object):
     @property
     def connections(self):
         return self._connections
+    
+    @property
+    def connection_relations(self):
+        return self._connection_relations
 
     def clear_repository_location(self):
         tag = self._datasourceXML.find('./repository-location')

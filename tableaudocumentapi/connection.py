@@ -5,12 +5,15 @@ from tableaudocumentapi.dbclass import is_valid_dbclass
 class Connection(object):
     """A class representing connections inside Data Sources."""
 
-    def __init__(self, connxml):
+    def __init__(self, namedconnxml):
         """Connection is usually instantiated by passing in connection elements
         in a Data Source. If creating a connection from scratch you can call
         `from_attributes` passing in the connection attributes.
 
         """
+        # TODO each named connection should only have contain one connection instance always, maybe raise error if it does not?
+        connxml = namedconnxml.findall('connection')[0]  
+     
         self._connectionXML = connxml
         self._dbname = connxml.get('dbname')
         self._protocol = connxml.get('channel')
@@ -24,6 +27,7 @@ class Connection(object):
         self._query_band = connxml.get('query-band-spec', None)
         self._initial_sql = connxml.get('one-time-sql', None)
         self._connection_data = connxml.get('connectionData')
+        self._connection_name = namedconnxml.get('name')
 
     def __repr__(self):
         return "'<Connection server='{}' dbname='{}' @ {}>'".format(self._server, self._dbname, hex(id(self)))
@@ -306,3 +310,11 @@ class Connection(object):
                 pass
         else:
             self._connectionXML.set('connectionData', value)
+
+    @property
+    def connection_name(self):
+        """
+        Named connection name to which the connection belongs.
+        Cannot be changed via this class because it comes from one step above in the XMl element tree.
+        """
+        return self._connection_name
