@@ -1,4 +1,5 @@
 import xml.etree.ElementTree as ET
+import json
 from tableaudocumentapi.dbclass import is_valid_dbclass
 
 
@@ -55,6 +56,21 @@ class Connection(object):
 
         return xml
 
+    def connection_data_to_dictionary(self):
+        """Returns self.connection_data as a dictionary. So it can be processed using Python dictionary functions."""
+        return json.loads(self._connection_data)
+    
+    @staticmethod
+    def connection_data_to_string(value, separators=(',', ':')):
+        """
+        Converts given value to JSONified string.
+        
+        Args:
+            value: JSON serializable dictionary to be used as connectionData query
+            separators: separators to be used in the JSON
+        """
+        return json.dumps(value, separators=separators)
+
     @property
     def dbname(self):
         """Database name for the connection. Not the table name."""
@@ -77,7 +93,7 @@ class Connection(object):
 
     @property
     def protocol(self):
-        """Internet protocol to be used for WDC URL http or https."""
+        """Internet protocol to be used for WDC URL: http or https."""
         return self._protocol
 
     @protocol.setter
@@ -291,26 +307,26 @@ class Connection(object):
         return self._connection_data
 
     @connection_data.setter
-    def connection_data(self, value):
+    def connection_data(self, value, separators=(',', ':')):
         """Set the connection's connection_data property.
 
         Args:
-            value: New connection data value. String.
+            value: New connection data value. JSON-like string or JSON-serializable dictionary.
 
         Returns:
             Nothing.
 
         """
-        self._connection_data = value
-        # If connection_data is None we remove the element and don't write it to XML
-        if value is None:
-            try:
-                del self._connectionXML.attrib['connectionData']
-            except KeyError:
-                pass
-        else:
+        if isinstance(value, str):
+            self._connection_data = value
             self._connectionXML.set('connectionData', value)
-
+        elif isinstance(value, dict):
+            value = self.connection_data_to_string(value, separators=separators)
+            self._connection_data = value
+            self._connectionXML.set('connectionData', value)
+        else:
+            raise TypeError("dataConnection value must be a string or dictionary.")
+        
     @property
     def connection_name(self):
         """

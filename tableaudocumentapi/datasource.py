@@ -175,6 +175,17 @@ class Datasource(object):
             nc.append(conn._connectionXML)
         return cls(root)
 
+    def change_field_name_in_datasource(self, original_column_name, new_column_name, datasource_name):
+        """
+        tags where the change has to happen:
+        metadata-record, is per connection but parent-name is datasource name + metadata-record in extract/connection/metadata-records
+        column, per datasource - list columns from ds which name is as passed, some columns are calculations
+        column-instance, per datasource - same as for columns
+        folder-item, per ds but //folder-item
+        bucket tag in style//bucket containing field name but also bound to datasource_name
+        """
+        pass
+
     def save(self):
         """
         Call finalization code and save file.
