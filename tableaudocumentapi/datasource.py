@@ -97,7 +97,7 @@ class ConnectionParser(object):
 
     def _extract_federated_connections(self):
         
-        connections = list(map(Connection, self._dsxml.findall('.//named-connections/named-connection')))
+        connections = list(map(Connection, self._dsxml.findall("./connection[@class='federated']")))
         # 'sqlproxy' connections (Tableau Server Connections) are not embedded into named-connection elements
         # extract them manually for now
         connections.extend(map(Connection, self._dsxml.findall("./connection[@class='sqlproxy']")))

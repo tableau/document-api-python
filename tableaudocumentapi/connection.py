@@ -1,19 +1,22 @@
 import xml.etree.ElementTree as ET
 import json
 from tableaudocumentapi.dbclass import is_valid_dbclass
+from tableaudocumentapi.metadata_record import MetadataRecord
 
 
 class Connection(object):
     """A class representing connections inside Data Sources."""
 
-    def __init__(self, namedconnxml):
+    def __init__(self, outerconnxml):
         """Connection is usually instantiated by passing in connection elements
         in a Data Source. If creating a connection from scratch you can call
         `from_attributes` passing in the connection attributes.
 
         """
-        # TODO each named connection should only have contain one connection instance always, maybe raise error if it does not?
-        connxml = namedconnxml.findall('connection')[0]  
+        # TODO each named connection should have contain one connection instance always, maybe raise error if it does not?
+        namedconnxml = outerconnxml.findall('./named-connections/named-connection')[0]
+        connxml = namedconnxml.findall('connection')[0]
+        metadata_records = outerconnxml.findall('.//*metadata-record')
      
         self._connectionXML = connxml
         self._dbname = connxml.get('dbname')
@@ -29,6 +32,7 @@ class Connection(object):
         self._initial_sql = connxml.get('one-time-sql', None)
         self._connection_data = connxml.get('connectionData')
         self._connection_name = namedconnxml.get('name')
+        self._metadata_records = list(MetadataRecord(mtdr) for mtdr in metadata_records)
 
     def __repr__(self):
         return "'<Connection server='{}' dbname='{}' @ {}>'".format(self._server, self._dbname, hex(id(self)))
@@ -60,6 +64,12 @@ class Connection(object):
         """Returns self.connection_data as a dictionary. So it can be processed using Python dictionary functions."""
         return json.loads(self._connection_data)
     
+    @classmethod
+    def populate_metadata_records(self, mtdrecords):
+        """Populates metadata records according to metadataRecord class.
+        """
+        return [map(MetadataRecord, mtdr) for mtdr in mtdrecords]
+    
     @staticmethod
     def connection_data_to_string(value, separators=(',', ':')):
         """
@@ -70,7 +80,7 @@ class Connection(object):
             separators: separators to be used in the JSON
         """
         return json.dumps(value, separators=separators)
-
+    
     @property
     def dbname(self):
         """Database name for the connection. Not the table name."""
@@ -334,3 +344,10 @@ class Connection(object):
         Cannot be changed via this class because it comes from one step above in the XMl element tree.
         """
         return self._connection_name
+
+    @property
+    def metadata_records(self):
+        """
+        Metadata records elements.
+        """
+        return self._metadata_records
