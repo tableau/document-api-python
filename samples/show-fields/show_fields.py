@@ -7,6 +7,7 @@ from tableaudocumentapi import Datasource
 # Step 2)  Open the .tds we want to inspect
 ############################################################
 sourceTDS = Datasource.from_file('world.tds')
+sourceTDS = Datasource.from_file('Tableau Doc API Sample Source.tdsx')
 
 ############################################################
 # Step 3)  Print out all of the fields and what type they are

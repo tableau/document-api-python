@@ -1,0 +1,225 @@
+<?xml version='1.0' encoding='utf-8' ?>
+
+<!-- build 20201.20.0326.1623                               -->
+<datasource formatted-name='Tableau Doc API Sample Source (local copy)' inline='true' source-platform='mac' version='18.1' xml:base='https://us-east-1.online.tableau.com' xmlns:user='http://www.tableausoftware.com/xml/user'>
+  <repository-location id='TableauDocAPISampleSource' path='/t/hoverstaging/datasources' revision='1.0' site='hoverstaging' />
+  <connection class='federated'>
+    <named-connections>
+      <named-connection caption='Tableau Sample Data' name='textscan.0g16wok1i8x8lz1an9cnw0xmh7db'>
+        <connection class='textscan' directory='/Users/jayrosenthal/code/jay_code/tableau' filename='Tableau Sample Data.csv' server='' workgroup-auth-mode='as-is' />
+      </named-connection>
+    </named-connections>
+    <relation connection='textscan.0g16wok1i8x8lz1an9cnw0xmh7db' name='Tableau Sample Data.csv' table='[Tableau Sample Data#csv]' type='table'>
+      <columns character-set='UTF-8' header='yes' locale='en_US' separator=','>
+        <column datatype='integer' name='my_int_dimension' ordinal='0' />
+        <column datatype='string' name='my_string' ordinal='1' />
+        <column datatype='datetime' name='my_datetime' ordinal='2' />
+        <column datatype='date' name='my_date' ordinal='3' />
+        <column datatype='integer' name='my_int_measure' ordinal='4' />
+      </columns>
+    </relation>
+    <metadata-records>
+      <metadata-record class='capability'>
+        <remote-name />
+        <remote-type>0</remote-type>
+        <parent-name>[Tableau Sample Data.csv]</parent-name>
+        <remote-alias />
+        <aggregation>Count</aggregation>
+        <contains-null>true</contains-null>
+        <attributes>
+          <attribute datatype='string' name='character-set'>&quot;UTF-8&quot;</attribute>
+          <attribute datatype='string' name='collation'>&quot;en_US&quot;</attribute>
+          <attribute datatype='string' name='field-delimiter'>&quot;,&quot;</attribute>
+          <attribute datatype='string' name='header-row'>&quot;true&quot;</attribute>
+          <attribute datatype='string' name='locale'>&quot;en_US&quot;</attribute>
+          <attribute datatype='string' name='single-char'>&quot;&quot;</attribute>
+        </attributes>
+      </metadata-record>
+      <metadata-record class='column'>
+        <remote-name>my_int_dimension</remote-name>
+        <remote-type>20</remote-type>
+        <local-name>[my_int_dimension]</local-name>
+        <parent-name>[Tableau Sample Data.csv]</parent-name>
+        <remote-alias>my_int_dimension</remote-alias>
+        <ordinal>0</ordinal>
+        <local-type>integer</local-type>
+        <aggregation>Sum</aggregation>
+        <contains-null>true</contains-null>
+      </metadata-record>
+      <metadata-record class='column'>
+        <remote-name>my_string</remote-name>
+        <remote-type>129</remote-type>
+        <local-name>[my_string]</local-name>
+        <parent-name>[Tableau Sample Data.csv]</parent-name>
+        <remote-alias>my_string</remote-alias>
+        <ordinal>1</ordinal>
+        <local-type>string</local-type>
+        <aggregation>Count</aggregation>
+        <scale>1</scale>
+        <width>1073741823</width>
+        <contains-null>true</contains-null>
+        <collation flag='0' name='LEN_RUS' />
+      </metadata-record>
+      <metadata-record class='column'>
+        <remote-name>my_datetime</remote-name>
+        <remote-type>135</remote-type>
+        <local-name>[my_datetime]</local-name>
+        <parent-name>[Tableau Sample Data.csv]</parent-name>
+        <remote-alias>my_datetime</remote-alias>
+        <ordinal>2</ordinal>
+        <local-type>datetime</local-type>
+        <aggregation>Year</aggregation>
+        <contains-null>true</contains-null>
+      </metadata-record>
+      <metadata-record class='column'>
+        <remote-name>my_date</remote-name>
+        <remote-type>133</remote-type>
+        <local-name>[my_date]</local-name>
+        <parent-name>[Tableau Sample Data.csv]</parent-name>
+        <remote-alias>my_date</remote-alias>
+        <ordinal>3</ordinal>
+        <local-type>date</local-type>
+        <aggregation>Year</aggregation>
+        <contains-null>true</contains-null>
+      </metadata-record>
+      <metadata-record class='column'>
+        <remote-name>my_int_measure</remote-name>
+        <remote-type>20</remote-type>
+        <local-name>[my_int_measure]</local-name>
+        <parent-name>[Tableau Sample Data.csv]</parent-name>
+        <remote-alias>my_int_measure</remote-alias>
+        <ordinal>4</ordinal>
+        <local-type>integer</local-type>
+        <aggregation>Sum</aggregation>
+        <contains-null>true</contains-null>
+      </metadata-record>
+    </metadata-records>
+  </connection>
+  <aliases enabled='yes' />
+  <column caption='My String * 10' datatype='integer' name='[Calculation_2870904074370371584]' role='measure' type='quantitative'>
+    <calculation class='tableau' formula='LEN([my_string]) * 10' />
+    <desc>
+      <formatted-text>
+        <run>A calculation with the string length * 10.</run>
+      </formatted-text>
+    </desc>
+  </column>
+  <column datatype='integer' name='[Number of Records]' role='measure' type='quantitative' user:auto-column='numrec'>
+    <calculation class='tableau' formula='1' />
+  </column>
+  <column caption='My Date' datatype='date' name='[my_date]' role='dimension' type='ordinal'>
+    <desc>
+      <formatted-text>
+        <run>My Date is a date dimension field</run>
+      </formatted-text>
+    </desc>
+  </column>
+  <column caption='My Datetime' datatype='datetime' name='[my_datetime]' role='dimension' type='ordinal'>
+    <desc>
+      <formatted-text>
+        <run>My Datetime is a datetime dimension field</run>
+      </formatted-text>
+    </desc>
+  </column>
+  <column aggregation='Sum' caption='My Int Dimension' datatype='integer' name='[my_int_dimension]' role='dimension' type='ordinal'>
+    <desc>
+      <formatted-text>
+        <run>My int Dimension is an integer that is a fimension field</run>
+      </formatted-text>
+    </desc>
+  </column>
+  <column caption='My Int Measure' datatype='integer' name='[my_int_measure]' role='measure' type='quantitative'>
+    <desc>
+      <formatted-text>
+        <run>My Int Measure is an integer field that is a measure</run>
+      </formatted-text>
+    </desc>
+  </column>
+  <column caption='My String' datatype='string' name='[my_string]' role='dimension' type='nominal'>
+    <desc>
+      <formatted-text>
+        <run>My String is a string that is a dimension field</run>
+      </formatted-text>
+    </desc>
+  </column>
+  <extract count='-1' enabled='true' units='records'>
+    <connection authentication='auth-none' author-locale='en_US' class='hyper' dbname='/Users/jayrosenthal/code/jay_code/document-api-python/samples/show-fields/Tableau Doc API Sample Source (local copy).tds Files/Data/Extracts/federated_0y7ota10g10jyi1bdyakj1.hyper' default-settings='yes' schema='Extract' sslmode='' tablename='Extract' update-time='05/03/2020 01:10:37 AM' username='tableau_internal_user'>
+      <relation name='Extract' table='[Extract].[Extract]' type='table' />
+      <refresh>
+        <refresh-event add-from-file-path='Tableau Sample Data' increment-value='%null%' refresh-type='create' rows-inserted='4' timestamp-start='2020-05-03 01:10:37.697' />
+      </refresh>
+      <metadata-records>
+        <metadata-record class='column'>
+          <remote-name>my_int_dimension</remote-name>
+          <remote-type>20</remote-type>
+          <local-name>[my_int_dimension]</local-name>
+          <parent-name>[Extract]</parent-name>
+          <remote-alias>my_int_dimension</remote-alias>
+          <ordinal>0</ordinal>
+          <family>Tableau Sample Data.csv</family>
+          <local-type>integer</local-type>
+          <aggregation>Sum</aggregation>
+          <approx-count>4</approx-count>
+          <contains-null>true</contains-null>
+        </metadata-record>
+        <metadata-record class='column'>
+          <remote-name>my_string</remote-name>
+          <remote-type>129</remote-type>
+          <local-name>[my_string]</local-name>
+          <parent-name>[Extract]</parent-name>
+          <remote-alias>my_string</remote-alias>
+          <ordinal>1</ordinal>
+          <family>Tableau Sample Data.csv</family>
+          <local-type>string</local-type>
+          <aggregation>Count</aggregation>
+          <approx-count>3</approx-count>
+          <contains-null>true</contains-null>
+          <collation flag='0' name='LEN_RUS' />
+        </metadata-record>
+        <metadata-record class='column'>
+          <remote-name>my_datetime</remote-name>
+          <remote-type>135</remote-type>
+          <local-name>[my_datetime]</local-name>
+          <parent-name>[Extract]</parent-name>
+          <remote-alias>my_datetime</remote-alias>
+          <ordinal>2</ordinal>
+          <family>Tableau Sample Data.csv</family>
+          <local-type>datetime</local-type>
+          <aggregation>Year</aggregation>
+          <approx-count>4</approx-count>
+          <contains-null>true</contains-null>
+        </metadata-record>
+        <metadata-record class='column'>
+          <remote-name>my_date</remote-name>
+          <remote-type>133</remote-type>
+          <local-name>[my_date]</local-name>
+          <parent-name>[Extract]</parent-name>
+          <remote-alias>my_date</remote-alias>
+          <ordinal>3</ordinal>
+          <family>Tableau Sample Data.csv</family>
+          <local-type>date</local-type>
+          <aggregation>Year</aggregation>
+          <approx-count>4</approx-count>
+          <contains-null>true</contains-null>
+        </metadata-record>
+        <metadata-record class='column'>
+          <remote-name>my_int_measure</remote-name>
+          <remote-type>20</remote-type>
+          <local-name>[my_int_measure]</local-name>
+          <parent-name>[Extract]</parent-name>
+          <remote-alias>my_int_measure</remote-alias>
+          <ordinal>4</ordinal>
+          <family>Tableau Sample Data.csv</family>
+          <local-type>integer</local-type>
+          <aggregation>Sum</aggregation>
+          <approx-count>4</approx-count>
+          <contains-null>true</contains-null>
+        </metadata-record>
+      </metadata-records>
+    </connection>
+  </extract>
+  <layout dim-ordering='alphabetic' dim-percentage='0.518836' measure-ordering='alphabetic' measure-percentage='0.481164' show-structure='true' />
+  <semantic-values>
+    <semantic-value key='[Country].[Name]' value='&quot;United States&quot;' />
+  </semantic-values>
+</datasource>
