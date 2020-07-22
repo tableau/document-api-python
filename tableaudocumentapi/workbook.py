@@ -29,6 +29,10 @@ class Workbook(object):
         self._worksheets = self._prepare_worksheets(
             self._workbookRoot, self._datasource_index
         )
+        
+        self._dashboards = self._prepare_dashboards(
+            self._workbookRoot, self._datasource_index
+        )
 
     @property
     def datasources(self):
@@ -37,6 +41,10 @@ class Workbook(object):
     @property
     def worksheets(self):
         return self._worksheets
+        
+    @property
+    def dashboards(self):
+        return self._dashboards
 
     @property
     def filename(self):
@@ -116,3 +124,16 @@ class Workbook(object):
                         datasource.fields[column_name].add_used_in(worksheet_name)
 
         return worksheets
+        
+    @staticmethod
+    def _prepare_dashboards(xml_root, ds_index):
+        dashboards = []
+        dashboards_element = xml_root.find('.//dashboards')
+        if dashboards_element is None:
+            return dashboards
+
+        for dashboard_element in dashboards_element:
+            dashboard_name = dashboard_element.attrib['name']
+            dashboards.append(dashboard_name)  # TODO: A real worksheet object, for now, only name
+
+        return dashboards
