@@ -8,6 +8,7 @@ from tableaudocumentapi import Connection, xfile, ConnectionRelation
 from tableaudocumentapi import Field
 from tableaudocumentapi.multilookup_dict import MultiLookupDict
 from tableaudocumentapi.xfile import xml_open
+from tableaudocumentapi.column import Column
 
 ########
 # This is needed in order to determine if something is a string or not.  It is necessary because
@@ -151,6 +152,7 @@ class Datasource(object):
         self._relation_parser = RelationParser(self._datasourceXML)
         self._connection_relations = self._relation_parser.get_relations()
         self._fields = None
+        self._columns = list(Column(clm) for clm in self._datasourceXML.findall('column'))
 
     @classmethod
     def from_file(cls, filename):
@@ -256,7 +258,11 @@ class Datasource(object):
         if not self._fields:
             self._fields = self._get_all_fields()
         return self._fields
-
+    
+    @property
+    def columns(self):
+        return self._columns
+    
     def _get_all_fields(self):
         # Some columns are represented by `column` tags and others as `metadata-record` tags
         # Find them all and chain them into one dictionary
