@@ -1,3 +1,5 @@
+from tableaudocumentapi.column import Column
+
 class ConnectionRelation(object):
     """A class representing relations between data source and connections (inside Data Sources)."""
 
@@ -9,10 +11,15 @@ class ConnectionRelation(object):
         self._datasource_name provides the name of the datasource for which relation is
 
         """
+
+        has_columns, columns = self.get_relation_columns(relationxml)
+
         self._relationXML = relationxml
         self._connection_name = relationxml.get('connection')
         self._datasource_name = relationxml.get('name')
         self._table_name = relationxml.get('table')
+        self._has_columns = has_columns
+        self._columns = list(Column(col)for col in columns)
 
     @property
     def connection_name(self):
@@ -29,6 +36,14 @@ class ConnectionRelation(object):
         """The name of the table created by WDC."""
         return self._table_name
     
+    @property
+    def has_columns(self):
+        return self._has_columns
+    
+    @property
+    def columns(self):
+        return self._columns
+    
     @table_name.setter
     def table_name(self, value):
         """
@@ -43,3 +58,8 @@ class ConnectionRelation(object):
         """
         self._table_name = value
         self._relationXML.set('table', value)
+
+    @staticmethod
+    def get_relation_columns(relationxml):
+        columns = relationxml.findall('columns')
+        return True if columns else False, columns

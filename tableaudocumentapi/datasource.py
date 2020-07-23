@@ -9,6 +9,9 @@ from tableaudocumentapi import Field
 from tableaudocumentapi.multilookup_dict import MultiLookupDict
 from tableaudocumentapi.xfile import xml_open
 from tableaudocumentapi.column import Column
+from tableaudocumentapi.columnInstance import ColumnInstance
+from tableaudocumentapi.extract import DatasourceExtract
+from tableaudocumentapi.style_encoding import StyleEncoding
 
 ########
 # This is needed in order to determine if something is a string or not.  It is necessary because
@@ -153,6 +156,9 @@ class Datasource(object):
         self._connection_relations = self._relation_parser.get_relations()
         self._fields = None
         self._columns = list(Column(clm) for clm in self._datasourceXML.findall('column'))
+        self._column_instances = list(ColumnInstance(clmInst) for clmInst in self._datasourceXML.findall('column-instance'))
+        self._extract = DatasourceExtract(self._datasourceXML.find('extract'))
+        self._style_encoding = StyleEncoding(self._datasourceXML.find('style/*/encoding'))
 
     @classmethod
     def from_file(cls, filename):
@@ -262,6 +268,18 @@ class Datasource(object):
     @property
     def columns(self):
         return self._columns
+    
+    @property
+    def column_instances(self):
+        return self._column_instances
+
+    @property
+    def extract(self):
+        return self._extract
+
+    @property
+    def style_encoding(self):
+        return self._style_encoding
     
     def _get_all_fields(self):
         # Some columns are represented by `column` tags and others as `metadata-record` tags
