@@ -128,7 +128,9 @@ class RelationParser(object):
 
     def get_relations(self):
         """Finds and return all relation elements for federated connections within the data source."""
-        return list(map(ConnectionRelation, self._dsxml.findall('./connection/relation')))
+        
+        relations = list(map(ConnectionRelation, self._dsxml.findall('./connection/relation')))
+        return relations
 
 
 class Datasource(object):
@@ -155,7 +157,7 @@ class Datasource(object):
         self._relation_parser = RelationParser(self._datasourceXML)
         self._connection_relations = self._relation_parser.get_relations()
         self._fields = None
-        self._columns = list(Column(clm) for clm in self._datasourceXML.findall('column'))
+        self._columns = list(map(Column, self._datasourceXML.findall('column')))
         self._column_instances = list(ColumnInstance(clmInst) for clmInst in self._datasourceXML.findall('column-instance'))
         self._extract = DatasourceExtract(self._datasourceXML.find('extract'))
         self._style_encoding = StyleEncoding(self._datasourceXML.find('style/*/encoding'))

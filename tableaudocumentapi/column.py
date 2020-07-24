@@ -50,12 +50,12 @@ class Column(object):
     @staticmethod
     def set_calculation(columnxmlelement):
         calculation_el = columnxmlelement.find('calculation')
-        return True if calculation_el else False, calculation_el
+        return True if not calculation_el is None  else False, calculation_el
 
     @staticmethod
     def set_aliases(columnxmlelement):
         aliases_el = columnxmlelement.findall('alias')
-        return True if aliases_el else False, aliases_el
+        return True if len(aliases_el) > 0 else False, aliases_el
             
             
 class ColumnAlias(object):
