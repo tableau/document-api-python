@@ -1,4 +1,4 @@
-from tableaudocumentapi.worksheet_datasource_dependecy import DatasourceDependency
+from tableaudocumentapi.worksheet_table_subelements import DatasourceDependency, Filter, SliceColumn
 
 class Worksheet(object):
     """A class representing worksheet object."""
@@ -20,11 +20,10 @@ class Worksheet(object):
         self._join_lod_exclude_overrides = self._worksheetTableXmlElement.find('join-lod-exclude-override')
 
         self._datasources = self._worksheetViewXmlElement.find('datasources')
-        self._datasourceDependenciesXmlElement = self._worksheetViewXmlElement.findall('./datasource-dependencies')
-        self._datasource_dependencies = list(map(DatasourceDependency, self._datasourceDependenciesXmlElement))
-        self._filters = self._worksheetViewXmlElement.findall('./filter')  # each filter can have multiple group filter elements
+        self._datasource_dependencies = list(map(DatasourceDependency, self._worksheetViewXmlElement.findall('./datasource-dependencies')))
+        self._filters = list(map(Filter, self._worksheetViewXmlElement.findall('./filter')))
         self._manual_sorts = self._worksheetViewXmlElement.findall('./manual-sort')
-        self._slices = self._worksheetViewXmlElement.find('slices')
+        self._slices_columns = list(map(SliceColumn, self._worksheetViewXmlElement.findall('./slices/column')))
 
         self._dependent_on_datasources = self.get_names_of_dependency_datasources()  # list of names
         self._datasources_dependent_on_columns = self.get_names_of_columns_per_datasource()
@@ -33,10 +32,6 @@ class Worksheet(object):
     @property
     def worksheet_name(self):
         return self._worksheet_name
-
-    @worksheet_name.setter
-    def worksheet_name(self, value):
-        self._worksheet_name = value
 
     @classmethod
     def get_names_of_dependency_datasources(cls):
@@ -76,86 +71,42 @@ class Worksheet(object):
     def layout_options(self):
         return self._layout_options
 
-    @layout_options.setter
-    def layout_options(self, value):
-        self._layout_options = value
-
     @property
     def styles(self):
         return self._styles
-
-    @styles.setter
-    def styles(self, value):
-        self._styles = value
 
     @property
     def panes(self):
         return self._panes
 
-    @panes.setter
-    def panes(self, value):
-        self._panes = value
-
     @property
     def rows(self):
         return self._rows
-
-    @rows.setter
-    def rows(self, value):
-        self._rows = value
 
     @property
     def cols(self):
         return self._rows
 
-    @cols.setter
-    def cols(self, value):
-        self._cols = value
-
     @property
     def join_lod_exclude_overrides(self):
         return self._join_lod_exclude_overrides
-
-    @join_lod_exclude_overrides.setter
-    def join_lod_exclude_overrides(self, value):
-        self._join_lod_exclude_overrides = value
 
     @property
     def datasources(self):
         return self._datasources
 
-    @datasources.setter
-    def datasources(self, value):
-        self._datasources = value
-
     @property
     def datasources_dependencies(self):
         return self._datasource_dependencies
-
-    @datasources_dependencies.setter
-    def datasources_dependencies(self, value):
-        self._datasource_dependencies = value
 
     @property
     def filters(self):
         return self._filters
 
-    @filters.setter
-    def filters(self, value):
-        self._filters = value
-
     @property
     def manual_sorts(self):
         return self._manual_sorts
 
-    @manual_sorts.setter
-    def manual_sorts(self, value):
-        self._manual_sorts = value
-
     @property
-    def slices(self):
-        return self._slices
-
-    @slices.setter
-    def slices(self, value):
-        self._slices = value
+    def slices_columns(self):
+        return self._slices_columns
