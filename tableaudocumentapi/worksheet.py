@@ -1,3 +1,5 @@
+from tableaudocumentapi.worksheet_datasource_dependecy import DatasourceDependency
+
 class Worksheet(object):
     """A class representing worksheet object."""
 
@@ -18,12 +20,14 @@ class Worksheet(object):
         self._join_lod_exclude_overrides = self._worksheetTableXmlElement.find('join-lod-exclude-override')
 
         self._datasources = self._worksheetViewXmlElement.find('datasources')
-        self._datasource_dependencies = self._worksheetViewXmlElement.findall('./datasource-dependencies')
+        self._datasourceDependenciesXmlElement = self._worksheetViewXmlElement.findall('./datasource-dependencies')
+        self._datasource_dependencies = list(map(DatasourceDependency, self._datasourceDependenciesXmlElement))
         self._filters = self._worksheetViewXmlElement.findall('./filter')  # each filter can have multiple group filter elements
         self._manual_sorts = self._worksheetViewXmlElement.findall('./manual-sort')
         self._slices = self._worksheetViewXmlElement.find('slices')
 
-        self._dependent_on = self.get_names_of_dependency_datasources(self._datasource_dependencies)
+        self._dependent_on_datasources = self.get_names_of_dependency_datasources()  # list of names
+        self._datasources_dependent_on_columns = self.get_names_of_columns_per_datasource()
 
 
     @property
@@ -33,18 +37,40 @@ class Worksheet(object):
     @worksheet_name.setter
     def worksheet_name(self, value):
         self._worksheet_name = value
-    
+
     @classmethod
-    def get_names_of_dependency_datasources(cls, datasource_dependecies_xml):
-        return list(ds.get('datasource') for ds in datasource_dependecies_xml)
+    def get_names_of_dependency_datasources(cls):
+        datasource_names = list(dsxml.find('datasource').get('name') for dsxml in cls.datasources)
+        print(datasource_names)
+        return datasource_names
+
+    @classmethod
+    def get_names_of_columns_per_datasource(cls):
+        names_per_ds = {}
+        
+        # loop through the list of the names of the datasources
+        for ds in cls.dependent_on_datasources:
+            # check against dependent columns and create a map (dictionary)
+            for ds_dep in cls.datasources_dependencies:
+                if ds_dep.dependency_datasource_name == ds:
+                    # column name is enough as it seems that the columns mirror column instances in this case
+                    names_per_ds[ds] = list(cl.name for cl in ds_dep.columns)
+        return names_per_ds
 
     @property
-    def dependent_on(self):
-        return self._dependent_on
+    def dependent_on_datasources(self):
+        """List of data source names on which the worksheet is dependent.
+            :rtype: list()
+        """
+        return self._dependent_on_datasources
 
-    @dependent_on.setter
-    def dependent_on(self, value):
-        self._dependent_on = value
+    @property
+    def datasources_dependent_on_columns(self, ):
+        """Dictionary of data source names on which the worksheet is dependent together with columns of the data sources.
+           keys: data source names.
+           values: list of column names
+        """
+        return self._datasources_dependent_on_columns
 
     @property
     def layout_options(self):
