@@ -1,5 +1,5 @@
 from tableaudocumentapi.worksheet_view_subelements import DatasourceDependency, Filter, SliceColumn, Sort
-from tableaudocumentapi.worksheet_subelements import LayoutOptions, WorksheetPane, WorksheetStyleRule
+from tableaudocumentapi.worksheet_subelements import LayoutOptions, WorksheetPane, WorksheetStyleRule, WorksheetRowsOrCols
 
 class Worksheet(object):
     """A class representing worksheet object."""
@@ -16,14 +16,14 @@ class Worksheet(object):
 
         self._styles = list(map(WorksheetStyleRule, self._worksheetTableXmlElement.findall('./style/style-rule')))
         self._panes = list(map(WorksheetPane, self._worksheetTableXmlElement.findall('./panes/pane')))
-        self._rows = self._worksheetTableXmlElement.find('rows')
-        self._cols = self._worksheetTableXmlElement.find('cols')
+        self._rows = WorksheetRowsOrCols( self._worksheetTableXmlElement.find('rows'))
+        self._cols = WorksheetRowsOrCols(self._worksheetTableXmlElement.find('cols'))
         self._join_lod_exclude_overrides = self._worksheetTableXmlElement.find('join-lod-exclude-override')
 
         self._datasources = self._worksheetViewXmlElement.find('datasources')
         self._datasource_dependencies = list(map(DatasourceDependency, self._worksheetViewXmlElement.findall('./datasource-dependencies')))
         self._filters = list(map(Filter, self._worksheetViewXmlElement.findall('./filter')))
-        self._manual_sorts = self._worksheetViewXmlElement.findall('./manual-sort') # TODO is this real element?
+        self._manual_sorts = self._worksheetViewXmlElement.findall('./manual-sort') # TODO
         self._sorts = list(map(Sort, self._worksheetViewXmlElement.findall('./sort')))
         self._slices_columns = list(map(SliceColumn, self._worksheetViewXmlElement.findall('./slices/column')))
 

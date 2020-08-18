@@ -1,3 +1,5 @@
+import re
+
 class WorksheetBucket(object):
     """Class describing generic Bucket element in the worksheet."""
 
@@ -153,6 +155,8 @@ class WorksheetPane(object):
         self._pane_style_rule_elements = list(map(WorksheetStyleRule, self._xml.findall('./style/style-rule')))
         self._pane_encodings = WorksheetPaneEncoding(self._xml.find('encodings'))
 
+        self._customized_tooltip = self._xml.find('customized-tooltip') # TODO
+
     @property
     def pane_x_axis_name(self):
         return self._pane_x_axis_name
@@ -179,3 +183,43 @@ class WorksheetPane(object):
     def pane_encodings(self):
         return self._pane_encodings
 
+class WorksheetRowsOrCols(object):
+    """Describes rows element in the worksheet.
+    """
+
+    def __init__(self, rowsorcolsxml):
+        self._xml = rowsorcolsxml
+
+        self._rowsorcolscontent = self._xml.text
+
+    @property
+    def rowsorcolscontent(self):
+        return self._rowsorcolscontent
+
+    @rowsorcolscontent.setter
+    def rowsorcolscontent(self, value):
+        self._rowsorcolscontent = value
+        self._xml.text = value
+
+    def replace_correct_fields_names_in_content(self, ds_name, field_name_to_be_replaced, replacement_field_name):
+        """
+        :param ds_name: influenced ds_name, string
+        :param field_name_to_be_replaced: original field name to be replaced, string
+        :param replacement_field_name: new field name, string
+
+        Note: rows / cols content is is a bit tricky, because it can have following forms (or any combinations of them):
+        [ds_name].[field_name]
+        ([ds_name].[field_name1] +|/ [ds_name][field_name2])  # ds_name can be also different for each member
+        (([ds_name].[field_name1] +|/ [ds_name][field_name2]) +|/ [ds_name][field_name3])
+
+        Multiple combinations can be multiple times in the content. Best to do this using also ds_name & regex.
+        """
+        # [ds_name].[xxx:field_name:xx]
+        regex_pattern = r"\[{ds}\]\.\[[\w*:]+{fn}:\w*\]".format(ds=ds_name, fn=field_name_to_be_replaced)
+
+        matched_occurrences = re.search(regex_pattern, self._rowsorcolscontent)
+        if matched_occurrences:
+            matched = matched_occurrences.group(0)
+            replacement = matched.replace(field_name_to_be_replaced, replacement_field_name)
+            new_content = self._rowsorcolscontent.replace(matched, replacement)
+            self.rowsorcolscontent = new_content
