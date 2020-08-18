@@ -23,7 +23,7 @@ class LayoutOptions(object):
     def __init__(self, layoutoptionsxml):
 
         self._layoutxml = layoutoptionsxml
-        self._run_elements = self._layoutxml.findall('.//*run')
+        self._run_elements = self._layoutxml.findall('.//*run') if self._layoutxml else None
 
     @property
     def run_elements(self):
@@ -229,7 +229,7 @@ class JoinLodExcludeOverrides(object):
 
     def __init__(self, jeloxml):
         self._xml = jeloxml
-        self._columns = list(map(WorksheetBucket, self._xml.findall('./column')))
+        self._columns = list(map(WorksheetBucket, self._xml.findall('./column'))) if self._xml else None
 
     @property
     def columns(self):

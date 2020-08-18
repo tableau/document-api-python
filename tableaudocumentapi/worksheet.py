@@ -11,8 +11,8 @@ class Worksheet(object):
         self._worksheetTableXmlElement = worksheetXmlElement.find('table')
         self._worksheetViewXmlElement = self._worksheetTableXmlElement.find('view')
 
-        self._worksheet_name = worksheetXmlElement.get('name')
-        self._layout_options = LayoutOptions(worksheetXmlElement.find('layout-options'))
+        self._worksheet_name = self._worksheetXmlElement.get('name')
+        self._layout_options = LayoutOptions(self._worksheetXmlElement.find('layout-options'))
 
         self._styles = list(map(WorksheetStyleRule, self._worksheetTableXmlElement.findall('./style/style-rule')))
         self._panes = list(map(WorksheetPane, self._worksheetTableXmlElement.findall('./panes/pane')))
@@ -20,7 +20,7 @@ class Worksheet(object):
         self._cols = WorksheetRowsOrCols(self._worksheetTableXmlElement.find('cols'))
         self._join_lod_exclude_overrides = JoinLodExcludeOverrides(self._worksheetTableXmlElement.find('join-lod-exclude-override'))
 
-        self._datasources = self._worksheetViewXmlElement.find('datasources')
+        self._datasources = self._worksheetViewXmlElement.find('./datasources')
         self._datasource_dependencies = list(map(DatasourceDependency, self._worksheetViewXmlElement.findall('./datasource-dependencies')))
         self._filters = list(map(Filter, self._worksheetViewXmlElement.findall('./filter')))
         self._manual_sorts = self._worksheetViewXmlElement.findall('./manual-sort') # TODO
@@ -35,20 +35,19 @@ class Worksheet(object):
     def worksheet_name(self):
         return self._worksheet_name
 
-    @classmethod
-    def get_names_of_dependency_datasources(cls):
-        datasource_names = list(dsxml.find('datasource').get('name') for dsxml in cls.datasources)
+    def get_names_of_dependency_datasources(self):
+        sub_datasources = self._datasources.findall('./datasources')
+        datasource_names = list(dsxml.get('name') for dsxml in sub_datasources)
         print(datasource_names)
         return datasource_names
 
-    @classmethod
-    def get_names_of_columns_per_datasource(cls):
+    def get_names_of_columns_per_datasource(self):
         names_per_ds = {}
 
         # loop through the list of the names of the datasources
-        for ds in cls.dependent_on_datasources:
+        for ds in self._dependent_on_datasources:
             # check against dependent columns and create a map (dictionary)
-            for ds_dep in cls.datasources_dependencies:
+            for ds_dep in self._datasource_dependencies:
                 if ds_dep.dependency_datasource_name == ds:
                     # column name is enough as it seems that the columns mirror column instances in this case
                     names_per_ds[ds] = list(cl.name for cl in ds_dep.columns)
