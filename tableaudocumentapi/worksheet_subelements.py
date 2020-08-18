@@ -131,8 +131,8 @@ class WorksheetPaneEncoding(object):
 
     def __init__(self, encodingsxmlelement):
         self._xml = encodingsxmlelement
-        self._texts = self._xml.findall('./text')
-        self._colors = self._xml.findall('./color')
+        self._texts = list(map(PaneEncodingText, self._xml.findall('./text')))
+        self._colors = list(map(PaneEncodingColor, self._xml.findall('./color')))
 
     @property
     def texts(self):
