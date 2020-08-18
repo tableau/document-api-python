@@ -16,7 +16,7 @@ class StyleMap(object):
         self._style_map_xml_element.find('bucket').text = value
 
 class StyleEncoding(object):
-    """This class represents enconding XML element in the datasource/style/style-rule/enconding XML path."""
+    """This class represents enconding XML element in the datasource/style/style-rule/encoding XML path."""
 
     def __init__(self, styleEncodingXmlElement):
 

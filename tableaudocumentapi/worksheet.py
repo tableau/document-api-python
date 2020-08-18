@@ -1,4 +1,5 @@
-from tableaudocumentapi.worksheet_table_subelements import DatasourceDependency, Filter, SliceColumn
+from tableaudocumentapi.worksheet_view_subelements import DatasourceDependency, Filter, SliceColumn, Sort
+from tableaudocumentapi.worksheet_subelements import LayoutOptions, WorksheetPane, WorksheetStyleRule
 
 class Worksheet(object):
     """A class representing worksheet object."""
@@ -11,7 +12,7 @@ class Worksheet(object):
         self._worksheetViewXmlElement = self._worksheetTableXmlElement.find('view')
 
         self._worksheet_name = worksheetXmlElement.get('name')
-        self._layout_options = worksheetXmlElement.find('layout-options')
+        self._layout_options = LayoutOptions(worksheetXmlElement.find('layout-options'))
 
         self._styles = self._worksheetTableXmlElement.find('style')
         self._panes = self._worksheetTableXmlElement.find('panes')  # encoding & style xml elements
@@ -22,7 +23,8 @@ class Worksheet(object):
         self._datasources = self._worksheetViewXmlElement.find('datasources')
         self._datasource_dependencies = list(map(DatasourceDependency, self._worksheetViewXmlElement.findall('./datasource-dependencies')))
         self._filters = list(map(Filter, self._worksheetViewXmlElement.findall('./filter')))
-        self._manual_sorts = self._worksheetViewXmlElement.findall('./manual-sort')
+        self._manual_sorts = self._worksheetViewXmlElement.findall('./manual-sort') # TODO is this real element?
+        self._sorts = list(map(Sort, self._worksheetViewXmlElement.findall('./sort')))
         self._slices_columns = list(map(SliceColumn, self._worksheetViewXmlElement.findall('./slices/column')))
 
         self._dependent_on_datasources = self.get_names_of_dependency_datasources()  # list of names
@@ -42,7 +44,7 @@ class Worksheet(object):
     @classmethod
     def get_names_of_columns_per_datasource(cls):
         names_per_ds = {}
-        
+
         # loop through the list of the names of the datasources
         for ds in cls.dependent_on_datasources:
             # check against dependent columns and create a map (dictionary)
@@ -106,6 +108,10 @@ class Worksheet(object):
     @property
     def manual_sorts(self):
         return self._manual_sorts
+
+    @property
+    def sort(self):
+        return self._sorts
 
     @property
     def slices_columns(self):
