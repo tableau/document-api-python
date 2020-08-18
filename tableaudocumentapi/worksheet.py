@@ -14,8 +14,8 @@ class Worksheet(object):
         self._worksheet_name = worksheetXmlElement.get('name')
         self._layout_options = LayoutOptions(worksheetXmlElement.find('layout-options'))
 
-        self._styles = self._worksheetTableXmlElement.find('style')
-        self._panes = self._worksheetTableXmlElement.find('panes')  # encoding & style xml elements
+        self._styles = list(map(WorksheetStyleRule, self._worksheetTableXmlElement.findall('./style/style-rule')))
+        self._panes = list(map(WorksheetPane, self._worksheetTableXmlElement.findall('./panes/pane')))
         self._rows = self._worksheetTableXmlElement.find('rows')
         self._cols = self._worksheetTableXmlElement.find('cols')
         self._join_lod_exclude_overrides = self._worksheetTableXmlElement.find('join-lod-exclude-override')
