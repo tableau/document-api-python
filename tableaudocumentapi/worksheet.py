@@ -1,5 +1,5 @@
 from tableaudocumentapi.worksheet_view_subelements import DatasourceDependency, Filter, SliceColumn, Sort
-from tableaudocumentapi.worksheet_subelements import LayoutOptions, WorksheetPane, WorksheetStyleRule, WorksheetRowsOrCols
+from tableaudocumentapi.worksheet_subelements import LayoutOptions, WorksheetPane, WorksheetStyleRule, WorksheetRowsOrCols, JoinLodExcludeOverrides
 
 class Worksheet(object):
     """A class representing worksheet object."""
@@ -18,7 +18,7 @@ class Worksheet(object):
         self._panes = list(map(WorksheetPane, self._worksheetTableXmlElement.findall('./panes/pane')))
         self._rows = WorksheetRowsOrCols( self._worksheetTableXmlElement.find('rows'))
         self._cols = WorksheetRowsOrCols(self._worksheetTableXmlElement.find('cols'))
-        self._join_lod_exclude_overrides = self._worksheetTableXmlElement.find('join-lod-exclude-override')
+        self._join_lod_exclude_overrides = JoinLodExcludeOverrides(self._worksheetTableXmlElement.find('join-lod-exclude-override'))
 
         self._datasources = self._worksheetViewXmlElement.find('datasources')
         self._datasource_dependencies = list(map(DatasourceDependency, self._worksheetViewXmlElement.findall('./datasource-dependencies')))

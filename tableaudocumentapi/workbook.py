@@ -4,6 +4,7 @@ import weakref
 from tableaudocumentapi import Datasource, xfile
 from tableaudocumentapi.xfile import xml_open
 from tableaudocumentapi.worksheet import Worksheet
+from tableaudocumentapi.window import Window
 
 
 class Workbook(object):
@@ -30,6 +31,8 @@ class Workbook(object):
         self._worksheets = self._prepare_worksheets(
             self._workbookRoot, self._datasource_index
         )
+        
+        self._windows = list(map(Window, self._workbookRoot.findall('./windows/window')))
 
     @property
     def datasources(self):
@@ -38,6 +41,10 @@ class Workbook(object):
     @property
     def worksheets(self):
         return self._worksheets
+    
+    @property
+    def windows(self):
+        return self._windows
 
     @property
     def filename(self):

@@ -1,7 +1,7 @@
 import re
 
 class WorksheetBucket(object):
-    """Class describing generic Bucket element in the worksheet."""
+    """Class describing generic Bucket element in the worksheet. Also describes column in join-lod-exclude-overrides element."""
 
     def __init__(self, bucketxml):
         self._bucketxml = bucketxml
@@ -223,3 +223,14 @@ class WorksheetRowsOrCols(object):
             replacement = matched.replace(field_name_to_be_replaced, replacement_field_name)
             new_content = self._rowsorcolscontent.replace(matched, replacement)
             self.rowsorcolscontent = new_content
+
+class JoinLodExcludeOverrides(object):
+    """Describes join-lod-exclude-overrides element in the worksheet."""
+
+    def __init__(self, jeloxml):
+        self._xml = jeloxml
+        self._columns = list(map(WorksheetBucket, self._xml.findall('./column')))
+
+    @property
+    def columns(self):
+        return self._columns
