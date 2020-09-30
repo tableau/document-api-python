@@ -1,4 +1,6 @@
-try:
+#this is a document of python api
+
+try:        #this will search for any errors
     from setuptools import setup
 except ImportError:
     from distutils.core import setup
