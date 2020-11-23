@@ -23,13 +23,20 @@ class Worksheet(object):
         self._datasources = self._worksheetViewXmlElement.find('./datasources')
         self._datasource_dependencies = list(map(DatasourceDependency, self._worksheetViewXmlElement.findall('./datasource-dependencies')))
         self._filters = list(map(Filter, self._worksheetViewXmlElement.findall('./filter')))
-        self._manual_sorts = self._worksheetViewXmlElement.findall('./manual-sort') # TODO
+        self._manual_sorts = self._worksheetViewXmlElement.find('./manual-sort').get('column') if self._worksheetViewXmlElement.find('./manual-sort') is not None else None# TODO
         self._sorts = list(map(Sort, self._worksheetViewXmlElement.findall('./sort')))
         self._slices_columns = list(map(SliceColumn, self._worksheetViewXmlElement.findall('./slices/column')))
 
         self._dependent_on_datasources = self.get_names_of_dependency_datasources()  # list of names
         self._datasources_dependent_on_columns = self.get_names_of_columns_per_datasource()
 
+    @property
+    def manual_sorts(self):
+        return self._manual_sorts
+
+    @manual_sorts.setter
+    def manual_sorts(self, value):
+        self._manual_sorts = value
 
     @property
     def worksheet_name(self):
