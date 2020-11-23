@@ -6,7 +6,7 @@ class DatasourceExtract(object):
     def __init__(self, extractXmlElement):
         
         self._extract_xml = extractXmlElement
-        self._extract_metadata_records = list(MetadataRecord(mtdr) for mtdr in extractXmlElement.findall('.//*metadata-record'))
+        self._extract_metadata_records = list(MetadataRecord(mtdr) for mtdr in extractXmlElement.findall('.//*metadata-record'))  if extractXmlElement is not None else []
         
     @property
     def extract_metadata_records(self):

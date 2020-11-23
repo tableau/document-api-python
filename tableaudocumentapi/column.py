@@ -9,7 +9,7 @@ class Column(object):
 
         self._columnxml = columnxmlelement
         self._calculationxml = calculation_xml
-        self._column_name = columnxmlelement.get('name').strip('[').strip(']')
+        self._column_name = columnxmlelement.get('name').strip('[').strip(']') if columnxmlelement.get('name') is not None else None
         self._has_aliases = has_aliases
         self._is_calculation = is_calculation
         self._calculation_formula = calculation_xml.get('formula') if is_calculation else None

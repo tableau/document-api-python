@@ -133,8 +133,8 @@ class WorksheetPaneEncoding(object):
 
     def __init__(self, encodingsxmlelement):
         self._xml = encodingsxmlelement
-        self._texts = list(map(PaneEncodingText, self._xml.findall('./text')))
-        self._colors = list(map(PaneEncodingColor, self._xml.findall('./color')))
+        self._texts = list(map(PaneEncodingText, self._xml.findall('./text'))) if self._xml else []
+        self._colors = list(map(PaneEncodingColor, self._xml.findall('./color'))) if self._xml else []
 
     @property
     def texts(self):
@@ -143,6 +143,36 @@ class WorksheetPaneEncoding(object):
     @property
     def colors(self):
         return self._colors
+
+
+class WorksheetPaneCustomizedTooltip(object):
+    """Represents encoding at worksheet/../panes/pane/customized-tooltip."""
+
+    def __init__(self, customizedtooltipxmlelement):
+        self._xml = customizedtooltipxmlelement
+        self._formattedtext = list(map(PaneTooltipFormattedTextRun, self._xml.findall('./formatted-text/run'))) if self._xml is not None else []
+
+    @property
+    def formattedtext(self):
+        return self._formattedtext
+
+
+class PaneTooltipFormattedTextRun(object):
+    """text xml element within customized-tooltip."""
+
+    def __init__(self, runxml):
+        self._xml = runxml
+        self._runtext = self._xml.text
+
+    @property
+    def runtext(self):
+        return self._runtext
+
+    @runtext.setter
+    def runtext(self, value):
+        self._xml.text = value
+        self._runtext = value
+
 
 class WorksheetPane(object):
     """Describes worksheet pane element."""
@@ -154,8 +184,7 @@ class WorksheetPane(object):
 
         self._pane_style_rule_elements = list(map(WorksheetStyleRule, self._xml.findall('./style/style-rule')))
         self._pane_encodings = WorksheetPaneEncoding(self._xml.find('encodings'))
-
-        self._customized_tooltip = self._xml.find('customized-tooltip') # TODO
+        self._customized_tooltip = WorksheetPaneCustomizedTooltip(self._xml.find('customized-tooltip')) if self._xml.find('customized-tooltip') else None # TODO
 
     @property
     def pane_x_axis_name(self):
@@ -182,6 +211,10 @@ class WorksheetPane(object):
     @property
     def pane_encodings(self):
         return self._pane_encodings
+
+    @property
+    def customized_tooltip(self):
+        return self._customized_tooltip
 
 class WorksheetRowsOrCols(object):
     """Describes rows element in the worksheet.
