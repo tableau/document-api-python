@@ -1,11 +1,10 @@
 import weakref
 
-
-from tableaudocumentapi import Datasource, xfile
+from tableaudocumentapi import BaseObject, Datasource, xfile
 from tableaudocumentapi.xfile import xml_open
 
 
-class Workbook(object):
+class Workbook(BaseObject):
     """A class for writing Tableau workbook files."""
 
     def __init__(self, filename):
@@ -14,21 +13,33 @@ class Workbook(object):
         for access.
 
         """
-
         self._filename = filename
-
         self._workbookTree = xml_open(self._filename, 'workbook')
-
         self._workbookRoot = self._workbookTree.getroot()
+        self._source_platform = self._workbookRoot.get('source-platform')
+        self._source_build = self._workbookRoot.get('source-build')
         # prepare our datasource objects
         self._datasources = self._prepare_datasources(
-            self._workbookRoot)  # self.workbookRoot.find('datasources')
-
-        self._datasource_index = self._prepare_datasource_index(self._datasources)
-
+            self._workbookRoot
+        )  # self.workbookRoot.find('datasources')
+        self._datasource_index = self._prepare_datasource_index(
+            self._datasources
+        )
         self._worksheets = self._prepare_worksheets(
             self._workbookRoot, self._datasource_index
         )
+
+    @property
+    def filename(self):
+        return self._filename
+
+    @property
+    def source_platform(self):
+        return self._source_platform
+
+    @property
+    def source_build(self):
+        return self._source_build
 
     @property
     def datasources(self):
@@ -37,10 +48,6 @@ class Workbook(object):
     @property
     def worksheets(self):
         return self._worksheets
-
-    @property
-    def filename(self):
-        return self._filename
 
     def save(self):
         """
@@ -74,9 +81,8 @@ class Workbook(object):
     @staticmethod
     def _prepare_datasource_index(datasources):
         retval = weakref.WeakValueDictionary()
-        for datasource in datasources:
+        for datasource in datasources.values():
             retval[datasource.name] = datasource
-
         return retval
 
     @staticmethod
@@ -92,7 +98,7 @@ class Workbook(object):
             ds = Datasource(datasource)
             datasources.append(ds)
 
-        return datasources
+        return {ds.name: ds for ds in datasources}
 
     @staticmethod
     def _prepare_worksheets(xml_root, ds_index):
@@ -116,3 +122,15 @@ class Workbook(object):
                         datasource.fields[column_name].add_used_in(worksheet_name)
 
         return worksheets
+
+    def to_dict(self):
+        base_attrs = [
+            'source_platform', 'filename', 'source_build', 'worksheets'
+        ]
+        to_dict_of_dict_attrs = ['datasources']
+        base = self._to_dict(
+            base_attrs=base_attrs,
+            to_dict_of_dict_attrs=to_dict_of_dict_attrs
+        )
+        base['datasource_index'] = list(self._datasource_index.keys())
+        return base

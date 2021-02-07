@@ -1,11 +1,11 @@
-import collections
 import itertools
-import xml.etree.ElementTree as ET
-import xml.sax.saxutils as sax
+import functools
+import collections
 from uuid import uuid4
+import xml.sax.saxutils as sax
+import xml.etree.ElementTree as ET
 
-from tableaudocumentapi import Connection, xfile
-from tableaudocumentapi import Field
+from tableaudocumentapi import BaseObject, Connection, Field, xfile
 from tableaudocumentapi.multilookup_dict import MultiLookupDict
 from tableaudocumentapi.xfile import xml_open
 
@@ -31,6 +31,14 @@ def _get_metadata_xml_for_field(root_xml, field_name):
 
 def _is_used_by_worksheet(names, field):
     return any(y for y in names if y in field.worksheets)
+
+
+def partialclass(cls, *args, **kwds):
+
+    class NewCls(cls):
+        __init__ = functools.partialmethod(cls.__init__, *args, **kwds)
+
+    return NewCls
 
 
 class FieldDictionary(MultiLookupDict):
@@ -94,28 +102,14 @@ class ConnectionParser(object):
     def __init__(self, datasource_xml, version):
         self._dsxml = datasource_xml
         self._dsversion = version
-
-    def _extract_federated_connections(self):
-        connections = list(map(Connection, self._dsxml.findall('.//named-connections/named-connection/*')))
-        # 'sqlproxy' connections (Tableau Server Connections) are not embedded into named-connection elements
-        # extract them manually for now
-        connections.extend(map(Connection, self._dsxml.findall("./connection[@class='sqlproxy']")))
-        return connections
-
-    def _extract_legacy_connection(self):
-        return list(map(Connection, self._dsxml.findall('connection')))
+        self.Connection = partialclass(Connection, version=version)
 
     def get_connections(self):
         """Find and return all connections based on file format version."""
-
-        if float(self._dsversion) < 10:
-            connections = self._extract_legacy_connection()
-        else:
-            connections = self._extract_federated_connections()
-        return connections
+        return list(map(self.Connection, self._dsxml.findall('./connection')))
 
 
-class Datasource(object):
+class Datasource(BaseObject):
     """A class representing Tableau Data Sources, embedded in workbook files or
     in TDS files.
 
@@ -133,6 +127,7 @@ class Datasource(object):
             'formatted-name')  # TDS files don't have a name attribute
         self._version = self._datasourceXML.get('version')
         self._caption = self._datasourceXML.get('caption', '')
+        self._inline = True if self._datasourceXML.get('inline', '') == 'true' else False
         self._connection_parser = ConnectionParser(
             self._datasourceXML, version=self._version)
         self._connections = self._connection_parser.get_connections()
@@ -245,3 +240,12 @@ class Datasource(object):
     def _get_column_objects(self):
         return [_column_object_from_column_xml(self._datasourceTree, xml)
                 for xml in self._datasourceTree.findall('.//column')]
+
+    def to_dict(self):
+        base_attrs = ['name', 'version', 'caption']
+        to_dict_list_attrs = ['connections']
+        base = self._to_dict(
+            base_attrs=base_attrs,
+            to_dict_list_attrs=to_dict_list_attrs
+        )
+        return base

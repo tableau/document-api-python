@@ -1,25 +1,41 @@
 import xml.etree.ElementTree as ET
+from tableaudocumentapi import BaseObject, Relation
 from tableaudocumentapi.dbclass import is_valid_dbclass
 
 
-class Connection(object):
-    """A class representing connections inside Data Sources."""
+class RelationParser(object):
+    """Parser for detecting and extracting relations from Connection entities."""
 
-    def __init__(self, connxml):
-        """Connection is usually instantiated by passing in connection elements
-        in a Data Source. If creating a connection from scratch you can call
-        `from_attributes` passing in the connection attributes.
+    def __init__(self, connection_xml, version):
+        self._connxml = connection_xml
+        self._relversion = version
 
-        """
+    def get_relations(self):
+        """Find and return all relations."""
+        relations_xml = self._connxml.findall('./relation')
+        if relations_xml:
+            return list(map(Relation, relations_xml))
+        else:
+            return None
+
+
+class BaseConnection(BaseObject):
+
+    def __init__(self, connxml, version=None):
         self._connectionXML = connxml
+        self._class = connxml.get('class')
         self._dbname = connxml.get('dbname')
         self._server = connxml.get('server')
         self._username = connxml.get('username')
         self._authentication = connxml.get('authentication')
-        self._class = connxml.get('class')
-        self._port = connxml.get('port', None)
-        self._query_band = connxml.get('query-band-spec', None)
-        self._initial_sql = connxml.get('one-time-sql', None)
+        self._port = connxml.get('port')
+        self._channel = connxml.get('channel')
+        self._dataserver_permissions = connxml.get('dataserver-permissions')
+        self._directory = connxml.get('directory')
+        self._server_oauth = connxml.get('server-oauth')
+        self._workgroup_auth_mode = connxml.get('workgroup-auth-mode')
+        self._query_band = connxml.get('query-band-spec')
+        self._initial_sql = connxml.get('one-time-sql')
 
     def __repr__(self):
         return "'<Connection server='{}' dbname='{}' @ {}>'".format(self._server, self._dbname, hex(id(self)))
@@ -39,8 +55,30 @@ class Connection(object):
         xml.port = port
         xml.query_band = query_band
         xml.initial_sql = initial_sql
-
         return xml
+
+    @property
+    def class_(self):
+        """The type of connection (e.g. 'MySQL', 'Postgresql'). A complete list
+        can be found in dbclass.py"""
+        return self._class
+
+    @class_.setter
+    def class_(self, value):
+        """Set the connection's dbclass property.
+
+        Args:
+            value:  New dbclass value. String.
+
+        Returns:
+            Nothing.
+        """
+
+        if not is_valid_dbclass(value):
+            raise AttributeError("'{}' is not a valid database type".format(value))
+
+        self._class = value
+        self._connectionXML.set('class', value)
 
     @property
     def dbname(self):
@@ -107,29 +145,6 @@ class Connection(object):
         return self._authentication
 
     @property
-    def dbclass(self):
-        """The type of connection (e.g. 'MySQL', 'Postgresql'). A complete list
-        can be found in dbclass.py"""
-        return self._class
-
-    @dbclass.setter
-    def dbclass(self, value):
-        """Set the connection's dbclass property.
-
-        Args:
-            value:  New dbclass value. String.
-
-        Returns:
-            Nothing.
-        """
-
-        if not is_valid_dbclass(value):
-            raise AttributeError("'{}' is not a valid database type".format(value))
-
-        self._class = value
-        self._connectionXML.set('class', value)
-
-    @property
     def port(self):
         """Port used to connect to the database."""
         return self._port
@@ -182,6 +197,26 @@ class Connection(object):
             self._connectionXML.set('query-band-spec', value)
 
     @property
+    def channel(self):
+        return self._channel
+
+    @property
+    def dataserver_permissions(self):
+        return self._dataserver_permissions
+
+    @property
+    def directory(self):
+        return self._directory
+
+    @property
+    def server_oauth(self):
+        return self._server_oauth
+
+    @property
+    def workgroup_auth_mode(self):
+        return self._workgroup_auth_mode
+
+    @property
     def initial_sql(self):
         """Initial SQL to be run."""
         return self._initial_sql
@@ -206,3 +241,83 @@ class Connection(object):
                 pass
         else:
             self._connectionXML.set('one-time-sql', value)
+
+    def base_dict(self):
+        base_attrs = [
+            'class_', 'dbname', 'server', 'username',
+            'authentication', 'port', 'channel', 'dataserver_permissions',
+            'directory', 'server_oauth', 'workgroup_auth_mode',
+            'query_band', 'initial_sql'
+        ]
+        base = self._to_dict(
+            base_attrs=base_attrs
+        )
+        return base
+
+
+class Connection(BaseConnection):
+
+    def __init__(self, connxml, version=None):
+        super().__init__(connxml, version=None)
+        self._named_connections = self._extract_named_connections()
+        self._relation_parser = RelationParser(
+            connxml, version=version
+        )
+        self._relations = self._relation_parser.get_relations()
+
+    def _extract_named_connections(self):
+        named_connections = [
+            conn for conn in self._connectionXML.findall('./named-connections/named-connection')
+        ]
+        return {nc.name: nc for nc in list(map(NamedConnection, named_connections))}
+
+    @property
+    def named_connections(self):
+        return self._named_connections
+
+    @property
+    def relations(self):
+        return self._relations
+
+    def to_dict(self):
+        base = super().base_dict()
+        to_dict_list_attrs = ['relations']
+        to_dict_of_dict_attrs = ['named_connections']
+        base.update(
+            self._to_dict(
+                to_dict_list_attrs=to_dict_list_attrs,
+                to_dict_of_dict_attrs=to_dict_of_dict_attrs
+            )
+        )
+        return base
+
+
+class NamedConnection(BaseConnection):
+    """A class representing connections inside Data Sources."""
+
+    def __init__(self, connxml, version=None):
+        """Connection is usually instantiated by passing in connection elements
+        in a Data Source. If creating a connection from scratch you can call
+        `from_attributes` passing in the connection attributes.
+
+        """
+        assert connxml.tag == 'named-connection', "Must be of type named-connection"
+        super().__init__(connxml.find('./connection'), version=version)
+        self._name = connxml.get('name')
+        self._caption = connxml.get('caption')
+
+    @property
+    def name(self):
+        return self._name
+
+    @property
+    def caption(self):
+        return self._caption
+
+    def to_dict(self):
+        base = super().base_dict()
+        base_attrs = ['name', 'caption']
+        base.update(
+            self._to_dict(base_attrs=base_attrs)
+        )
+        return base
