@@ -263,7 +263,7 @@ class Connection(BaseConnection):
         self._relation_parser = RelationParser(
             connxml, version=version
         )
-        self._relations = self._relation_parser.get_relations()
+        self._relation = self._relation_parser.get_relations()
 
     def _extract_named_connections(self):
         named_connections = [
@@ -276,12 +276,12 @@ class Connection(BaseConnection):
         return self._named_connections
 
     @property
-    def relations(self):
-        return self._relations
+    def relation(self):
+        return self._relation
 
     def to_dict(self):
         base = super().base_dict()
-        to_dict_list_attrs = ['relations']
+        to_dict_list_attrs = ['relation']
         to_dict_of_dict_attrs = ['named_connections']
         base.update(
             self._to_dict(

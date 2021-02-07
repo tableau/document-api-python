@@ -68,7 +68,7 @@ class Relation(BaseObject):
         self._table = relxml.get('table')
         self._text = self._extract_text()
         self._clause = self._extract_clause()
-        self._relations = self._extract_relations()
+        self._relation = self._extract_relations()
 
     def _extract_clause(self):
         clxml = self._relationXML.find('./clause')
@@ -117,7 +117,7 @@ class Relation(BaseObject):
 
     @property
     def relation(self):
-        return self._relations
+        return self._relation
 
     def _base_dict(self):
         base_attrs = ['type', 'name', 'connection', 'table', 'text']
