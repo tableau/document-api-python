@@ -1,7 +1,7 @@
 import weakref
 
 
-from tableaudocumentapi import Datasource, xfile
+from tableaudocumentapi import Datasource, Worksheet, xfile
 from tableaudocumentapi.xfile import xml_open
 
 
@@ -103,7 +103,8 @@ class Workbook(object):
 
         for worksheet_element in worksheets_element:
             worksheet_name = worksheet_element.attrib['name']
-            worksheets.append(worksheet_name)  # TODO: A real worksheet object, for now, only name
+            worksheet = Worksheet(worksheet_element)
+            worksheets.append(worksheet)
 
             dependencies = worksheet_element.findall('.//datasource-dependencies')
 
