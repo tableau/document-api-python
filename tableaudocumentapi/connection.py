@@ -29,6 +29,7 @@ class Connection(object):
     @classmethod
     def from_attributes(cls, server, dbname, username, dbclass, port=None, query_band=None,
                         initial_sql=None, authentication='', schema='', service=''):
+
         """Creates a new connection that can be added into a Data Source.
         defaults to `''` which will be treated as 'prompt' by Tableau."""
 
