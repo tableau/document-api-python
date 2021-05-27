@@ -1,3 +1,7 @@
+
+## 07 (26 May 2021)
+* Fix bug in xfile that overwrote the namespace name when saving a document
+
 ## 06 (11 January 2017)
 
 * Initial SQL and query banding support (#123)
