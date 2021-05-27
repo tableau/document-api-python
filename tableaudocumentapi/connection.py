@@ -251,4 +251,3 @@ class Connection(object):
         """
         self._service = value
         self._connectionXML.set('service', value)
-        
