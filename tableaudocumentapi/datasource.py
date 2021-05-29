@@ -9,16 +9,6 @@ from tableaudocumentapi import Field
 from tableaudocumentapi.multilookup_dict import MultiLookupDict
 from tableaudocumentapi.xfile import xml_open
 
-########
-# This is needed in order to determine if something is a string or not.  It is necessary because
-# of differences between python2 (basestring) and python3 (str).  If python2 support is ever
-# dropped, remove this and change the basestring references below to str
-try:
-    basestring
-except NameError:  # pragma: no cover
-    basestring = str
-########
-
 _ColumnObjectReturnTuple = collections.namedtuple('_ColumnObjectReturnTupleType', ['id', 'object'])
 
 
@@ -38,7 +28,7 @@ class FieldDictionary(MultiLookupDict):
     def used_by_sheet(self, name):
         # If we pass in a string, no need to get complicated, just check to see if name is in
         # the field's list of worksheets
-        if isinstance(name, basestring):
+        if isinstance(name, str):
             return [x for x in self.values() if name in x.worksheets]
 
         # if we pass in a list, we need to check to see if any of the names in the list are in

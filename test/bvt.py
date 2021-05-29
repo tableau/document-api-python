@@ -6,6 +6,7 @@ from test.assets.index import *
 from tableaudocumentapi import Workbook, Datasource, Connection, ConnectionParser
 from tableaudocumentapi.xfile import TableauInvalidFileException, TableauVersionNotSupportedException
 
+
 class ConnectionParserTests(unittest.TestCase):
 
     def test_can_extract_legacy_connection(self):
