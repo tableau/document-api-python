@@ -11,11 +11,11 @@ class XFileEdgeTests(unittest.TestCase):
         badzip = zipfile.ZipFile(BAD_ZIP_FILE)
         self.assertIsNone(find_file_in_zip(badzip))
 
-    
     def test_only_find_twbs(self):
         twb_from_twbx_with_cache = zipfile.ZipFile(TWBX_WITH_CACHE_FILES)
         self.assertEqual(find_file_in_zip(twb_from_twbx_with_cache), 'Superstore.twb')
-    
+
+
 class Namespacing(unittest.TestCase):
 
     def assertContainsUserNamespace(self, filename):
@@ -27,23 +27,23 @@ class Namespacing(unittest.TestCase):
                 doc_beginning_excerpt += (in_file.readline().strip())  # first line should be xml tag
                 lineCount += 1
             found = doc_beginning_excerpt.rfind("xmlns:user=")
-            #print(doc_beginning_excerpt[found:found+10])
+            # print(doc_beginning_excerpt[found:found+10])
             self.assertRegex(doc_beginning_excerpt, "xmlns:user=")
-                
+
     def test_save_preserves_namespace_twb(self):
-        filename = COMPLEX_TWB 
+        filename = COMPLEX_TWB
         self.assertContainsUserNamespace(filename)
         wb = Workbook(filename)
         new_name = 'saved-as-twb.twb'
         wb.save_as(new_name)
         self.assertContainsUserNamespace(new_name)
 
-    '''            
+    '''
     def demo_bug_ns_not_preserved_if_not_used(self):
         filename = TABLEAU_10_TDS
         self.assertContainsUserNamespace(filename)
         wb = Datasource.from_file(filename)
-        #wb.save() 
+        #wb.save()
         new_name = 'saved-as-tds.tds'
         wb.save_as(new_name)
         self.assertContainsUserNamespace(new_name) <- throws
@@ -52,8 +52,7 @@ class Namespacing(unittest.TestCase):
     none will be added.
     If there is a namespace but it *is not used* in the document, it will be stripped
 
-    Fix will be something like 
+    Fix will be something like
     https://stackoverflow.com/questions/41937624/elementtree-why-are-my-namespace-declarations-stripped-out
 
     '''
-

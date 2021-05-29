@@ -29,3 +29,6 @@ Features include:
   - Get all fields in use by certain sheets in a workbook
 
 We don't yet support creating files from scratch, adding extracts into workbooks or data sources, or updating field information
+
+
+As of 2021, this SDK no longer supports Python 2.

@@ -5,10 +5,7 @@ import tempfile
 import zipfile
 import xml.etree.ElementTree as ET
 
-try:
-    from distutils2.version import NormalizedVersion as Version
-except ImportError:
-    from distutils.version import LooseVersion as Version
+from distutils.version import LooseVersion as Version
 
 MIN_SUPPORTED_VERSION = Version("9.0")
 
@@ -28,7 +25,7 @@ def xml_open(filename, expected_root=None):
     # Is the file a zip (.twbx or .tdsx)
     if zipfile.is_zipfile(filename):
         tree = get_xml_from_archive(filename)
-    else:   
+    else:
         _register_all_namespaces()
         tree = ET.parse(filename)
 
@@ -55,9 +52,11 @@ def temporary_directory(*args, **kwargs):
     finally:
         shutil.rmtree(d)
 
-def _register_all_namespaces():    
+
+def _register_all_namespaces():
     # TO DO: should look at the file to find namespaces, not hardcode this one
-    ET.register_namespace("user","http://www.tableausoftware.com/xml/user")
+    ET.register_namespace("user", "http://www.tableausoftware.com/xml/user")
+
 
 def find_file_in_zip(zip_file):
     '''Returns the twb/tds file from a Tableau packaged file format. Packaged
@@ -124,9 +123,9 @@ def save_into_archive(xml_tree, filename, new_filename=None):
 
 
 def _save_file(container_file, xml_tree, new_filename=None):
-    
-    _register_all_namespaces() # this shouldn't be necessary, should be done on open
- 
+
+    _register_all_namespaces()  # this shouldn't be necessary, should be done on open
+
     if new_filename is None:
         new_filename = container_file
 
