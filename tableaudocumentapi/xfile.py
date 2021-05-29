@@ -5,10 +5,7 @@ import tempfile
 import zipfile
 import xml.etree.ElementTree as ET
 
-try:
-    from distutils2.version import NormalizedVersion as Version
-except ImportError:
-    from distutils.version import LooseVersion as Version
+from distutils.version import LooseVersion as Version
 
 MIN_SUPPORTED_VERSION = Version("9.0")
 
