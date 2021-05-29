@@ -27,4 +27,3 @@ BAD_ZIP_FILE = os.path.join(TEST_DIR, 'BadZip.zip')
 TWBX_WITH_CACHE_FILES = os.path.join(TEST_DIR, 'Cache.twbx')
 
 COMPLEX_TWB = os.path.join(TEST_DIR, 'filtering.twb')
-
