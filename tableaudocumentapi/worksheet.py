@@ -1,5 +1,5 @@
 import xml.etree.ElementTree as ET
-from tableaudocumentapi import Filter, DatasourceDependancy
+from tableaudocumentapi import Filter, WorksheetField
 
 
 class Worksheet:
@@ -10,7 +10,7 @@ class Worksheet:
         self._worksheet_tree = ET.ElementTree(self._worksheet_xml)
         self._worksheet_root = self._worksheet_tree.getroot()
         self._filters = self._prepare_filters(self._worksheet_root)
-        self._ds_dependancies = self._prepare_ds_dependancies(self._worksheet_root)
+        self._worksheet_fields = self._prepare_fields(self._worksheet_root)
 
         self.name = self._worksheet_xml.get('name')
         
@@ -20,7 +20,7 @@ class Worksheet:
     
     @property
     def fields(self):
-        return self._ds_dependancies
+        return self._worksheet_fields
     
     @staticmethod
     def _prepare_filters(xml_root):
@@ -36,15 +36,16 @@ class Worksheet:
         return filters
     
     @staticmethod
-    def _prepare_ds_dependancies(xml_root):
-        ds_dependancies = []
-        element_list = xml_root.find('.//datasource-dependencies')
-        if element_list is None:
+    def _prepare_fields(xml_root):
+        worksheet_fields = []
+        datasources = xml_root.findall('.//datasource-dependencies')
+        if datasources is None:
             return []
         
-        for elem in element_list:
-            if elem.tag == 'column-instance':
-                ds_dependancy = DatasourceDependancy(elem)
-                ds_dependancies.append(ds_dependancy)
+        for ds in datasources:
+            datasource_name = ds.get('datasource')
+            fields = ds.findall('column-instance')
+            for field in fields:
+                worksheet_fields.append(WorksheetField(field, datasource_name))
         
-        return ds_dependancies
+        return worksheet_fields
