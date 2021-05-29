@@ -2,33 +2,9 @@ import os
 import unittest
 
 import xml.etree.ElementTree as ET
-
+from test.assets.index import *
 from tableaudocumentapi import Workbook, Datasource, Connection, ConnectionParser
 from tableaudocumentapi.xfile import TableauInvalidFileException, TableauVersionNotSupportedException
-
-TEST_DIR = os.path.dirname(__file__)
-
-TABLEAU_82_TWB = os.path.join(TEST_DIR, 'assets', 'TABLEAU_82_TWB.twb')
-
-TABLEAU_93_TWB = os.path.join(TEST_DIR, 'assets', 'TABLEAU_93_TWB.twb')
-
-TABLEAU_93_TDS = os.path.join(TEST_DIR, 'assets', 'TABLEAU_93_TDS.tds')
-
-TABLEAU_10_TDS = os.path.join(TEST_DIR, 'assets', 'TABLEAU_10_TDS.tds')
-
-TABLEAU_10_TWB = os.path.join(TEST_DIR, 'assets', 'TABLEAU_10_TWB.twb')
-
-TABLEAU_CONNECTION_XML = os.path.join(TEST_DIR, 'assets', 'CONNECTION.xml')
-
-TABLEAU_10_TWBX = os.path.join(TEST_DIR, 'assets', 'TABLEAU_10_TWBX.twbx')
-
-TABLEAU_10_TDSX = os.path.join(TEST_DIR, 'assets', 'TABLEAU_10_TDSX.tdsx')
-
-EMPTY_WORKBOOK = os.path.join(TEST_DIR, 'assets', 'empty_workbook.twb')
-
-MULTI_CONNECTION_10 = os.path.join(
-    TEST_DIR, 'assets', 'multiple_connections.twb')
-
 
 class ConnectionParserTests(unittest.TestCase):
 
