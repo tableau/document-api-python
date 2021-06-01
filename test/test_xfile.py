@@ -15,7 +15,6 @@ class XFileEdgeTests(unittest.TestCase):
         twb_from_twbx_with_cache = zipfile.ZipFile(TWBX_WITH_CACHE_FILES)
         self.assertEqual(find_file_in_zip(twb_from_twbx_with_cache), 'Superstore.twb')
 
-
 class Namespacing(unittest.TestCase):
 
     def assertContainsUserNamespace(self, filename):
@@ -38,7 +37,7 @@ class Namespacing(unittest.TestCase):
         wb.save_as(new_name)
         self.assertContainsUserNamespace(new_name)
 
-    '''
+'''
     def demo_bug_ns_not_preserved_if_not_used(self):
         filename = TABLEAU_10_TDS
         self.assertContainsUserNamespace(filename)
@@ -55,4 +54,3 @@ class Namespacing(unittest.TestCase):
     Fix will be something like
     https://stackoverflow.com/questions/41937624/elementtree-why-are-my-namespace-declarations-stripped-out
 
-    '''
