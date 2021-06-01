@@ -53,4 +53,4 @@ class Namespacing(unittest.TestCase):
 
     Fix will be something like
     https://stackoverflow.com/questions/41937624/elementtree-why-are-my-namespace-declarations-stripped-out
-
+'''
