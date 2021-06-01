@@ -5,9 +5,10 @@ name: Python package
 
 on:
   push:
-    branches: [ master ]
+    paths-ignore:
+      - 'docs/**'
   pull_request:
-    branches: [ master ]
+    branches: *
 
 jobs:
   build:
