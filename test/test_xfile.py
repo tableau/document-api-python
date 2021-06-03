@@ -15,6 +15,7 @@ class XFileEdgeTests(unittest.TestCase):
         twb_from_twbx_with_cache = zipfile.ZipFile(TWBX_WITH_CACHE_FILES)
         self.assertEqual(find_file_in_zip(twb_from_twbx_with_cache), 'Superstore.twb')
 
+
 class Namespacing(unittest.TestCase):
 
     def assertContainsUserNamespace(self, filename):
@@ -36,6 +37,7 @@ class Namespacing(unittest.TestCase):
         new_name = 'saved-as-twb.twb'
         wb.save_as(new_name)
         self.assertContainsUserNamespace(new_name)
+
 
 '''
     def demo_bug_ns_not_preserved_if_not_used(self):
