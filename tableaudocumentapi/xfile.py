@@ -125,7 +125,7 @@ def save_into_archive(xml_tree, filename, new_filename=None):
 def _save_file(container_file, xml_tree, new_filename=None):
 
     _register_all_namespaces()  # this shouldn't be necessary, should be done on open
-
+  
     if new_filename is None:
         new_filename = container_file
 

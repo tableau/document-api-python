@@ -5,6 +5,11 @@ import zipfile
 from tableaudocumentapi.xfile import find_file_in_zip
 from tableaudocumentapi import Workbook, Datasource
 
+TWBX_WITH_CACHE_FILES = os.path.join(
+    TEST_ASSET_DIR,
+    'Cache.twbx'
+)
+
 
 class XFileEdgeTests(unittest.TestCase):
     def test_find_file_in_zip_no_xml_file(self):
