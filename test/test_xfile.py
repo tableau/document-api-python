@@ -5,6 +5,16 @@ import zipfile
 from tableaudocumentapi.xfile import find_file_in_zip
 from tableaudocumentapi import Workbook, Datasource
 
+TEST_ASSET_DIR = os.path.join(
+    os.path.dirname(__file__),
+    'assets'
+)
+
+BAD_ZIP_FILE = os.path.join(
+    TEST_ASSET_DIR,
+    'BadZip.zip'
+)
+
 TWBX_WITH_CACHE_FILES = os.path.join(
     TEST_ASSET_DIR,
     'Cache.twbx'
