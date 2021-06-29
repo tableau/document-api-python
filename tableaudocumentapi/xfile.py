@@ -121,6 +121,7 @@ def save_into_archive(xml_tree, filename, new_filename=None):
 
 def _save_file(container_file, xml_tree, new_filename=None):
 
+    ET.register_namespace("user", "http://www.tableausoftware.com/xml/user")
     if new_filename is None:
         new_filename = container_file
 
