@@ -10,9 +10,9 @@ class Workbook(object):
 
     def __init__(self, filename):
         """Open the workbook at `filename`. This will handle packaged and unpacked
-        workbook files automatically. This will also parse Data Sources and Worksheets
+        workbook files automatically. This will also parse Data Sources, Worksheets and Dashboards
         for access.
-
+        
         """
 
         self._filename = filename
@@ -30,6 +30,10 @@ class Workbook(object):
             self._workbookRoot, self._datasource_index
         )
 
+        self._dashboards = self._prepare_dashboards(
+            self._workbookRoot
+        )
+
     @property
     def datasources(self):
         return self._datasources
@@ -42,6 +46,10 @@ class Workbook(object):
     def filename(self):
         return self._filename
 
+    @property
+    def dashboards(self):
+        return self._dashboards
+    
     def save(self):
         """
         Call finalization code and save file.
@@ -116,3 +124,19 @@ class Workbook(object):
                         datasource.fields[column_name].add_used_in(worksheet_name)
 
         return worksheets
+    
+    @staticmethod 
+    def _prepare_dashboards(xml_root):
+        
+        dashboards = []
+        dashboard_elements = xml_root.findall('.//dashboards/dashboard')
+
+        if dashboard_elements is None: 
+            return dashboards
+        
+        for dashboard_element in dashboard_elements:
+            dashboard_name = dashboard_element.attrib['name']
+            dashboards.append(dashboard_name)
+        return dashboards
+
+
