@@ -240,6 +240,10 @@ class Datasource(object):
         return [_column_object_from_column_xml(self._datasourceTree, xml)
                 for xml in self._datasourceTree.findall('.//column')]
 
+
+    def _get_custom_sql(self):
+        return [qry for qry in self._datasourceXML.iter('relation')]
+
     def add_field(self, name, datatype, role, field_type, caption):
         """ Adds a base field object with the given values.
 
