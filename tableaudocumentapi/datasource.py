@@ -240,7 +240,6 @@ class Datasource(object):
         return [_column_object_from_column_xml(self._datasourceTree, xml)
                 for xml in self._datasourceTree.findall('.//column')]
 
-
     def _get_custom_sql(self):
         return [qry for qry in self._datasourceXML.iter('relation')]
 
