@@ -17,6 +17,11 @@ SHAPES_FILE = os.path.join(
     'shapes_test.twb'
 )
 
+DASHBOARDS_FILE = os.path.join(
+    TEST_ASSET_DIR,
+    'filtering.twb'
+)
+
 
 class EphemeralFields(unittest.TestCase):
     def test_ephemeral_fields_do_not_cause_errors(self):
@@ -37,3 +42,12 @@ class Shapes(unittest.TestCase):
     def test_shape_count(self):
         wb = Workbook(SHAPES_FILE)
         self.assertEqual(len(wb.shapes), 4)
+
+
+class Dashboards(unittest.TestCase):
+    def test_dashboards_setup(self):
+        wb = Workbook(DASHBOARDS_FILE)
+        self.assertIsNotNone(wb)
+        self.assertEqual(wb.dashboards, ['setTest'])
+
+
