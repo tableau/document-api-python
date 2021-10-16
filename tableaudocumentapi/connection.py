@@ -208,3 +208,43 @@ class Connection(object):
                 pass
         else:
             self._connectionXML.set('one-time-sql', value)
+
+    @property
+    def schema(self):
+        """Database schema for the connection. Not the table name."""
+        return self._schema
+
+    @schema.setter
+    def schema(self, value):
+        """
+        Set the connection's schema property.
+
+        Args:
+            value:  New name of the database schema. String.
+
+        Returns:
+            Nothing.
+
+        """
+        self._schema = value
+        self._connectionXML.set('schema', value)
+
+    @property
+    def service(self):
+        """Database service for the connection. Not the table name."""
+        return self._service
+
+    @service.setter
+    def service(self, value):
+        """
+        Set the connection's service property.
+
+        Args:
+            value:  New name of the database service. String.
+
+        Returns:
+            Nothing.
+
+        """
+        self._service = value
+        self._connectionXML.set('service', value)
