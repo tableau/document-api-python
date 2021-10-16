@@ -66,7 +66,7 @@ layout: docs
 1. Make a PR as described [here](https://help.github.com/articles/creating-a-pull-request-from-a-fork/) against the 'development' branch.
 
 1. Wait for a review and address any feedback.
-   While we try and stay on top of all issues and PRs it might take a few days for someone to respond. Politely pinging the PR after a few days with no response is OK, we'll try and respond with a timeline as soon as we are able.
+   While we try and stay on top of all issues and PRs, this isn't under active development so it might take a while for someone to respond. Politely pinging the PR after a few days with no response is OK, we'll try and respond with a timeline as soon as we are able.
 
 1. That's it! When the PR has received :rocket:'s from members of the core team they will merge the PR
 
