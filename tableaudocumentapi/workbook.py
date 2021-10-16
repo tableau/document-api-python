@@ -27,8 +27,9 @@ class Workbook(object):
         self._datasource_index = self._prepare_datasource_index(self._datasources)
 
         self._worksheets = self._prepare_worksheets(
-            self._workbookRoot, self._datasource_index
-        )
+            self._workbookRoot, self._datasource_index)
+
+        self._shapes = self._prepare_shapes(self._workbookRoot)
 
     @property
     def datasources(self):
@@ -41,6 +42,10 @@ class Workbook(object):
     @property
     def filename(self):
         return self._filename
+
+    @property
+    def shapes(self):
+        return self._shapes
 
     def save(self):
         """
@@ -116,3 +121,16 @@ class Workbook(object):
                         datasource.fields[column_name].add_used_in(worksheet_name)
 
         return worksheets
+
+    @staticmethod
+    def _prepare_shapes(xml_root):
+        shapes = []
+        worksheets_element = xml_root.find('.//external/shapes')
+        if worksheets_element is None:
+            return shapes
+
+        for worksheet_element in worksheets_element:
+            shape_name = worksheet_element.attrib['name']
+            shapes.append(shape_name)
+
+        return shapes
