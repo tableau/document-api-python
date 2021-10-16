@@ -1,6 +1,7 @@
 import functools
 import xml.etree.ElementTree as ET
 
+from tableaudocumentapi.property_decorators import argument_is_one_of
 
 _ATTRIBUTES = [
     'id',           # Name of the field as specified in the file, usually surrounded by [ ]
@@ -45,12 +46,14 @@ class Field(object):
 
         if column_xml is not None:
             self._initialize_from_column_xml(column_xml)
+            self._xml = column_xml
             # This isn't currently never called because of the way we get the data from the xml,
             # but during the refactor, we might need it.  This is commented out as a reminder
             # if metadata_xml is not None:
             #     self.apply_metadata(metadata_xml)
 
         elif metadata_xml is not None:
+            self._xml = metadata_xml
             self._initialize_from_metadata_xml(metadata_xml)
 
         else:
@@ -62,9 +65,20 @@ class Field(object):
 
     def _initialize_from_metadata_xml(self, xmldata):
         for metadata_name, field_name in _METADATA_TO_FIELD_MAP:
-            self._apply_attribute(xmldata, field_name, lambda x: xmldata.find('.//{}'.format(metadata_name)).text,
+            self._apply_attribute(xmldata, field_name,
+                                  lambda x: getattr(xmldata.find('.//{}'.format(metadata_name)), 'text', None),
                                   read_name=metadata_name)
         self.apply_metadata(xmldata)
+
+    @classmethod
+    def create_field_xml(cls, caption, datatype, role, field_type, name):
+        column = ET.Element('column')
+        column.set('caption', caption)
+        column.set('datatype', datatype)
+        column.set('role', role)
+        column.set('type', field_type)
+        column.set('name', name)
+        return column
 
     ########################################
     # Special Case methods for construction fields from various sources
@@ -117,50 +131,198 @@ class Field(object):
         return self._id
 
     @property
+    def xml(self):
+        """ XML representation of the field. """
+        return self._xml
+
+    ########################################
+    # Attribute getters and setters
+    ########################################
+
+    @property
     def caption(self):
         """ Name of the field as displayed in Tableau unless an aliases is defined """
         return self._caption
+
+    @caption.setter
+    def caption(self, caption):
+        """ Set the caption of a field
+
+            Args:
+                caption:  New caption. String.
+
+            Returns:
+                Nothing.
+        """
+        self._caption = caption
+        self._xml.set('caption', caption)
 
     @property
     def alias(self):
         """ Name of the field as displayed in Tableau if the default name isn't wanted """
         return self._alias
 
+    @alias.setter
+    def alias(self, alias):
+        """ Set the alias of a field
+
+            Args:
+                alias:  New alias. String.
+
+            Returns:
+                Nothing.
+        """
+        self._alias = alias
+        self._xml.set('alias', alias)
+
     @property
     def datatype(self):
         """ Type of the field within Tableau (string, integer, etc) """
         return self._datatype
+
+    @datatype.setter
+    @argument_is_one_of('string', 'integer', 'date', 'boolean')
+    def datatype(self, datatype):
+        """ Set the datatype of a field
+
+            Args:
+                datatype:  New datatype. String.
+
+            Returns:
+                Nothing.
+        """
+        self._datatype = datatype
+        self._xml.set('datatype', datatype)
 
     @property
     def role(self):
         """ Dimension or Measure """
         return self._role
 
+    @role.setter
+    @argument_is_one_of('dimension', 'measure')
+    def role(self, role):
+        """ Set the role of a field
+
+            Args:
+                role:  New role. String.
+
+            Returns:
+                Nothing.
+        """
+        self._role = role
+        self._xml.set('role', role)
+
+    @property
+    def type(self):
+        """ Dimension or Measure """
+        return self._type
+
+    @type.setter
+    @argument_is_one_of('quantitative', 'ordinal', 'nominal')
+    def type(self, field_type):
+        """ Set the type of a field
+
+            Args:
+                field_type:  New type. String.
+
+            Returns:
+                Nothing.
+        """
+        self._type = field_type
+        self._xml.set('type', field_type)
+
+    ########################################
+    # Aliases getter and setter
+    # Those are NOT the 'alias' field of the column,
+    # but instead the key-value aliases in its child elements
+    ########################################
+
+    def add_alias(self, key, value):
+        """ Add an alias for a given display value.
+
+            Args:
+                key:  The data value to map. Example: "1". String.
+                value: The display value for the key. Example: "True". String.
+            Returns:
+                Nothing.
+        """
+
+        # determine whether there already is an aliases-tag
+        aliases = self._xml.find('aliases')
+        # and create it if there isn't
+        if not aliases:
+            aliases = ET.Element('aliases')
+            self._xml.append(aliases)
+
+        # find out if an alias with this key already exists and use it
+        existing_alias = [tag for tag in aliases.findall('alias') if tag.get('key') == key]
+        # if not, create a new ET.Element
+        alias = existing_alias[0] if existing_alias else ET.Element('alias')
+
+        alias.set('key', key)
+        alias.set('value', value)
+        if not existing_alias:
+            aliases.append(alias)
+
+    @property
+    def aliases(self):
+        """ Returns all aliases that are registered under this field.
+
+        Returns:
+            Key-value mappings of all registered aliases. Dict.
+        """
+        aliases_tag = self._xml.find('aliases') or []
+        return {a.get('key', 'None'): a.get('value', 'None') for a in list(aliases_tag)}
+
+    ########################################
+    # Attribute getters
+    ########################################
+
     @property
     def is_quantitative(self):
         """ A dependent value, usually a measure of something
 
         e.g. Profit, Gross Sales """
-        return self._type == 'quantitative'
+        return self.type == 'quantitative'
 
     @property
     def is_ordinal(self):
         """ Is this field a categorical field that has a specific order
 
         e.g. How do you feel? 1 - awful, 2 - ok, 3 - fantastic """
-        return self._type == 'ordinal'
+        return self.type == 'ordinal'
 
     @property
     def is_nominal(self):
         """ Is this field a categorical field that does not have a specific order
 
         e.g. What color is your hair? """
-        return self._type == 'nominal'
+        return self.type == 'nominal'
 
     @property
     def calculation(self):
         """ If this field is a calculated field, this will be the formula """
         return self._calculation
+
+    @calculation.setter
+    def calculation(self, new_calculation):
+        """ Set the calculation of a calculated field.
+
+        Args:
+            new_calculation: The new calculation/formula of the field. String.
+        """
+        if self.calculation is None:
+            calculation = ET.Element('calculation')
+            calculation.set('class', 'tableau')
+            calculation.set('formula', new_calculation)
+            # Append the elements to the respective structure
+            self._xml.append(calculation)
+
+        else:
+            self._xml.find('calculation').set('formula', new_calculation)
+
+        self._calculation = new_calculation
 
     @property
     def default_aggregation(self):

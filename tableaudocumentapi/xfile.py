@@ -5,10 +5,7 @@ import tempfile
 import zipfile
 import xml.etree.ElementTree as ET
 
-try:
-    from distutils2.version import NormalizedVersion as Version
-except ImportError:
-    from distutils.version import LooseVersion as Version
+from distutils.version import LooseVersion as Version
 
 MIN_SUPPORTED_VERSION = Version("9.0")
 
@@ -29,6 +26,7 @@ def xml_open(filename, expected_root=None):
     if zipfile.is_zipfile(filename):
         tree = get_xml_from_archive(filename)
     else:
+        _register_all_namespaces()
         tree = ET.parse(filename)
 
     # Is the file a supported version
@@ -55,6 +53,11 @@ def temporary_directory(*args, **kwargs):
         shutil.rmtree(d)
 
 
+def _register_all_namespaces():
+    # TO DO: should look at the file to find namespaces, not hardcode this one
+    ET.register_namespace("user", "http://www.tableausoftware.com/xml/user")
+
+
 def find_file_in_zip(zip_file):
     '''Returns the twb/tds file from a Tableau packaged file format. Packaged
     files can contain cache entries which are also valid XML, so only look for
@@ -75,7 +78,7 @@ def find_file_in_zip(zip_file):
 
 
 def get_xml_from_archive(filename):
-    with zipfile.ZipFile(filename) as zf:
+    with zipfile.ZipFile(filename, allowZip64=True) as zf:
         with zf.open(find_file_in_zip(zf)) as xml_file:
             xml_tree = ET.parse(xml_file)
 
@@ -107,7 +110,7 @@ def save_into_archive(xml_tree, filename, new_filename=None):
 
     # Extract to temp directory
     with temporary_directory() as temp_path:
-        with zipfile.ZipFile(filename) as zf:
+        with zipfile.ZipFile(filename, allowZip64=True) as zf:
             xml_file = find_file_in_zip(zf)
             zf.extractall(temp_path)
         # Write the new version of the file to the temp directory
@@ -115,13 +118,14 @@ def save_into_archive(xml_tree, filename, new_filename=None):
             temp_path, xml_file), encoding="utf-8", xml_declaration=True)
 
         # Write the new archive with the contents of the temp folder
-        with zipfile.ZipFile(new_filename, "w", compression=zipfile.ZIP_DEFLATED) as new_archive:
+        with zipfile.ZipFile(new_filename, "w", compression=zipfile.ZIP_DEFLATED, allowZip64=True) as new_archive:
             build_archive_file(temp_path, new_archive)
 
 
 def _save_file(container_file, xml_tree, new_filename=None):
 
-    ET.register_namespace("user", "http://www.tableausoftware.com/xml/user")
+    _register_all_namespaces()  # this shouldn't be necessary, should be done on open
+
     if new_filename is None:
         new_filename = container_file
 

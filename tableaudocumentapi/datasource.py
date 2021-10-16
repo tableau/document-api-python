@@ -9,15 +9,6 @@ from tableaudocumentapi import Field
 from tableaudocumentapi.multilookup_dict import MultiLookupDict
 from tableaudocumentapi.xfile import xml_open
 
-########
-# This is needed in order to determine if something is a string or not.  It is necessary because
-# of differences between python2 (basestring) and python3 (str).  If python2 support is ever
-# dropped, remove this and change the basestring references below to str
-try:
-    basestring
-except NameError:  # pragma: no cover
-    basestring = str
-########
 
 _ColumnObjectReturnTuple = collections.namedtuple('_ColumnObjectReturnTupleType', ['id', 'object'])
 
@@ -38,7 +29,7 @@ class FieldDictionary(MultiLookupDict):
     def used_by_sheet(self, name):
         # If we pass in a string, no need to get complicated, just check to see if name is in
         # the field's list of worksheets
-        if isinstance(name, basestring):
+        if isinstance(name, str):
             return [x for x in self.values() if name in x.worksheets]
 
         # if we pass in a list, we need to check to see if any of the names in the list are in
@@ -225,8 +216,11 @@ class Datasource(object):
     @property
     def fields(self):
         if not self._fields:
-            self._fields = self._get_all_fields()
+            self._refresh_fields()
         return self._fields
+
+    def _refresh_fields(self):
+        self._fields = self._get_all_fields()
 
     def _get_all_fields(self):
         # Some columns are represented by `column` tags and others as `metadata-record` tags
@@ -245,3 +239,80 @@ class Datasource(object):
     def _get_column_objects(self):
         return [_column_object_from_column_xml(self._datasourceTree, xml)
                 for xml in self._datasourceTree.findall('.//column')]
+
+    def _get_custom_sql(self):
+        return [qry for qry in self._datasourceXML.iter('relation')]
+
+    def add_field(self, name, datatype, role, field_type, caption):
+        """ Adds a base field object with the given values.
+
+        Args:
+            name: Name of the new Field. String.
+            datatype:  Datatype of the new field. String.
+            role:  Role of the new field. String.
+            field_type:  Type of the new field. String.
+            caption:  Caption of the new field. String.
+
+        Returns:
+            The new field that was created. Field.
+        """
+        # TODO: A better approach would be to create an empty column and then
+        # use the input validation from its "Field"-object-representation to set values.
+        # However, creating an empty column causes errors :(
+
+        # If no caption is specified, create one with the same format Tableau does
+        if not caption:
+            caption = name.replace('[', '').replace(']', '').title()
+
+        # Create the elements
+        column = Field.create_field_xml(caption, datatype, role, field_type, name)
+
+        self._datasourceTree.getroot().append(column)
+
+        # Refresh fields to reflect changes and return the Field object
+        self._refresh_fields()
+        return self.fields[name]
+
+    def remove_field(self, field):
+        """ Remove a given field
+
+        Args:
+            field: The field to remove. ET.Element
+
+        Returns:
+            None
+        """
+        if not field or not isinstance(field, Field):
+            raise ValueError("Need to supply a field to remove element")
+
+        self._datasourceTree.getroot().remove(field.xml)
+        self._refresh_fields()
+
+    ###########
+    # Calculations
+    ###########
+    @property
+    def calculations(self):
+        """ Returns all calculated fields.
+        """
+        return {k: v for k, v in self.fields.items() if v.calculation is not None}
+
+    def add_calculation(self, caption, formula, datatype, role, type):
+        """ Adds a calculated field with the given values.
+
+        Args:
+            caption:  Caption of the new calculation. String.
+            formula:  Formula of the new calculation. String.
+            datatype:  Datatype of the new calculation. String.
+            role:  Role of the new calculation. String.
+            type:  Type of the new calculation. String.
+
+        Returns:
+            The new calculated field that was created. Field.
+        """
+        # Dynamically create the name of the field
+        name = '[Calculation_{}]'.format(str(uuid4().int)[:18])
+        field = self.add_field(name, datatype, role, type, caption)
+        field.calculation = formula
+
+        return field
