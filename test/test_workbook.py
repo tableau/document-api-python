@@ -49,5 +49,3 @@ class Dashboards(unittest.TestCase):
         wb = Workbook(DASHBOARDS_FILE)
         self.assertIsNotNone(wb)
         self.assertEqual(wb.dashboards, ['setTest'])
-
-

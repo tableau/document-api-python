@@ -24,7 +24,7 @@ class Workbook(object):
         self._dashboards = self._prepare_dashboards(self._workbookRoot)
 
         self._datasources = self._prepare_datasources(
-            self._workbookRoot)  
+            self._workbookRoot)
 
         self._datasource_index = self._prepare_datasource_index(self._datasources)
 
@@ -115,10 +115,9 @@ class Workbook(object):
 
         for dash_element in dashboard_elements:
             dash_name = dash_element.attrib['name']
-            dashboards.append(dash_name)  
+            dashboards.append(dash_name)
 
         return dashboards
-
 
     @staticmethod
     def _prepare_worksheets(xml_root, ds_index):
