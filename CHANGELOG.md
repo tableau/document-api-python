@@ -1,3 +1,5 @@
+## 09 (December 2021)
+* Pypi upgraded to Python3
 
 ## 08 (October 2021)
 * See dashboards in a workbook
