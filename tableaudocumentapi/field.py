@@ -215,7 +215,7 @@ class Field(object):
 
     @property
     def type(self):
-        """ Dimension or Measure """
+        """ Type of field (quantitative, ordinal, nominal) """
         return self._type
 
     @type.setter
@@ -336,6 +336,7 @@ class Field(object):
 
     @property
     def worksheets(self):
+        """ Worksheets which uses field. """
         return list(self._worksheets)
 
     ######################################
