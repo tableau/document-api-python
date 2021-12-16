@@ -28,7 +28,7 @@ class Connection(object):
 
     @classmethod
     def from_attributes(cls, server, dbname, username, dbclass, port=None, query_band=None,
-                        initial_sql=None, authentication=''):
+                        initial_sql=None, authentication='', schema='', service=''):
         """Creates a new connection that can be added into a Data Source.
         defaults to `''` which will be treated as 'prompt' by Tableau."""
 
@@ -37,6 +37,8 @@ class Connection(object):
         xml.server = server
         xml.dbname = dbname
         xml.username = username
+        xml.schema = schema
+        xml.service = service
         xml.dbclass = dbclass
         xml.port = port
         xml.query_band = query_band
