@@ -30,7 +30,7 @@ Saves any changes to the workbook to the existing file.
 `Workbook.save_as(self, new_filename):`
 Saves any changes to the workbook to a new file specified by the `new_file` parameter.
 
-**Properities:**
+**Properties:**
 
 `self.worksheets:` Returns a list of worksheets found in the workbook.
 
@@ -56,7 +56,7 @@ The Connection class represents a tableau data connection. It can be from any ty
 
 **Methods:**
 
-**Properities:**
+**Properties:**
 
 `self.server:` Returns a string containing the server.
 

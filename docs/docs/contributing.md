@@ -21,7 +21,7 @@ a feature do not require the CLA.
 
 To submit an issue/bug report, or to request a feature, please submit a [github issue](https://github.com/tableau/document-api-python/issues) to the repo.
 
-If you are submiting a bug report, please provide as much information as you can, including clear and concise repro steps, attaching any necessary
+If you are submitting a bug report, please provide as much information as you can, including clear and concise repro steps, attaching any necessary
 files to assist in the repro.  **Be sure to scrub the files of any potentially sensitive information.  Issues are public.**
 
 For a feature request, please try to describe the scenario you are trying to accomplish that requires the feature.  This will help us understand
