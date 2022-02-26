@@ -20,15 +20,22 @@ class Workbook(object):
         self._workbookTree = xml_open(self._filename, 'workbook')
 
         self._workbookRoot = self._workbookTree.getroot()
-        # prepare our datasource objects
+
+        self._dashboards = self._prepare_dashboards(self._workbookRoot)
+
         self._datasources = self._prepare_datasources(
-            self._workbookRoot)  # self.workbookRoot.find('datasources')
+            self._workbookRoot)
 
         self._datasource_index = self._prepare_datasource_index(self._datasources)
 
         self._worksheets = self._prepare_worksheets(
-            self._workbookRoot, self._datasource_index
-        )
+            self._workbookRoot, self._datasource_index)
+
+        self._shapes = self._prepare_shapes(self._workbookRoot)
+
+    @property
+    def dashboards(self):
+        return self._dashboards
 
     @property
     def datasources(self):
@@ -41,6 +48,10 @@ class Workbook(object):
     @property
     def filename(self):
         return self._filename
+
+    @property
+    def shapes(self):
+        return self._shapes
 
     def save(self):
         """
@@ -95,6 +106,20 @@ class Workbook(object):
         return datasources
 
     @staticmethod
+    def _prepare_dashboards(xml_root):
+        dashboards = []
+
+        dashboard_elements = xml_root.find('.//dashboards')
+        if dashboard_elements is None:
+            return []
+
+        for dash_element in dashboard_elements:
+            dash_name = dash_element.attrib['name']
+            dashboards.append(dash_name)
+
+        return dashboards
+
+    @staticmethod
     def _prepare_worksheets(xml_root, ds_index):
         worksheets = []
         worksheets_element = xml_root.find('.//worksheets')
@@ -116,3 +141,16 @@ class Workbook(object):
                         datasource.fields[column_name].add_used_in(worksheet_name)
 
         return worksheets
+
+    @staticmethod
+    def _prepare_shapes(xml_root):
+        shapes = []
+        worksheets_element = xml_root.find('.//external/shapes')
+        if worksheets_element is None:
+            return shapes
+
+        for worksheet_element in worksheets_element:
+            shape_name = worksheet_element.attrib['name']
+            shapes.append(shape_name)
+
+        return shapes

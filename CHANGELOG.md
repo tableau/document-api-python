@@ -1,3 +1,23 @@
+## 09 (December 2021)
+* Pypi upgraded to Python3
+
+## 08 (October 2021)
+* See dashboards in a workbook
+* Add shapes property
+* Add custom sql
+* Drop python 2, add up through 3.9
+
+
+## 08 (October 2021)
+* See dashboards in a workbook
+* Add shapes property
+* Add custom sql
+* Drop python 2, add up through 3.9
+
+
+## 07 (26 May 2021)
+* Fix bug in xfile that overwrote the namespace name when saving a document
+
 ## 06 (11 January 2017)
 
 * Initial SQL and query banding support (#123)
