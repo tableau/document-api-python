@@ -358,6 +358,7 @@ class Field(object):
     @staticmethod
     def _read_description(xmldata):
         description = xmldata.find('.//desc')
+        # description = xmldata.find('.//run')
         if description is None:
             return None
 
@@ -367,3 +368,4 @@ class Field(object):
             description_string = description_string.decode('utf-8')
 
         return description_string
+        # return description
