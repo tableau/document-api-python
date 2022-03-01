@@ -32,7 +32,8 @@ for count, field in enumerate(sourceTDS.fields.values()):
     #     print("No Description")
 
     # print(type(field.description))
-    print('-' * 80)
+    print('-' * 70)
+
 
 
     # print('{:>4}: {} is a {}'.format(count+1, field.name, field.datatype))
