@@ -30,7 +30,7 @@ Saves any changes to the workbook to the existing file.
 `Workbook.save_as(self, new_filename):`
 Saves any changes to the workbook to a new file specified by the `new_file` parameter.
 
-**Properities:**
+**Properties:**
 
 `self.worksheets:` Returns a list of worksheets found in the workbook.
 
@@ -58,7 +58,7 @@ save_as
 
 add_calculation
 
-**Properities:**
+**Properties:**
 
 `self.name` Returns string with the name of datasource.
 
@@ -66,9 +66,9 @@ add_calculation
 
 `self.caption` Returns string of user defined name of datasource if exists.
 
-`self.connections` Returns list of connections are used in workbook.
+`self.connections` Returns list of connections used in workbook.
 
-`self.fileds` Returns key-value result of field name and their attributes.
+`self.fields` Returns key-value result of field name and their attributes.
 
 `self.calculations` Returns calculated field of the workbook.
 
@@ -85,7 +85,7 @@ The Connection class represents a tableau data connection. It can be from any ty
 
 **Methods:**
 
-**Properities:**
+**Properties:**
 
 `self.server:` Returns a string containing the server.
 
@@ -115,7 +115,7 @@ Represents a field in a datasource
 
 `Field.add_alias(self, key, value)` Add an alias for a given display value.
 
-**Properities:**
+**Properties:**
 
 `self.name` Returns a string providing a nice name for the field which is derived from the alias, caption, or the id.
 

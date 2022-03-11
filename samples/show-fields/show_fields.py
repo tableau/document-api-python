@@ -6,7 +6,7 @@ from tableaudocumentapi import Datasource
 ############################################################
 # Step 2)  Open the .tds we want to inspect
 ############################################################
-sourceTDS = Datasource.from_file('world.tds')
+sourceTDS = Datasource.from_file('new-world.tds')
 
 ############################################################
 # Step 3)  Print out all of the fields and what type they are
@@ -15,7 +15,7 @@ print('----------------------------------------------------------')
 print('--- {} total fields in this datasource'.format(len(sourceTDS.fields)))
 print('----------------------------------------------------------')
 for count, field in enumerate(sourceTDS.fields.values()):
-    print('{:>4}: {} is a {}'.format(count+1, field.name, field.datatype))
+    print('{:>4}: {} is a {} (hidden={})'.format(count+1, field.name, field.datatype, field.hidden))
     blank_line = False
     if field.calculation:
         print('      the formula is {}'.format(field.calculation))
