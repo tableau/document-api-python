@@ -184,14 +184,17 @@ class Datasource(object):
 
     @property
     def name(self):
+        """ Name of the datasource. """
         return self._name
 
     @property
     def version(self):
+        """ Version of the datasource. """
         return self._version
 
     @property
     def caption(self):
+        """ User defined name for the datasourse. """
         return self._caption
 
     @caption.setter
@@ -206,6 +209,7 @@ class Datasource(object):
 
     @property
     def connections(self):
+        """ List of connections are used in workbook. """
         return self._connections
 
     def clear_repository_location(self):
@@ -215,6 +219,7 @@ class Datasource(object):
 
     @property
     def fields(self):
+        """ Key-value result of field's names and its attributes. Dict. """
         if not self._fields:
             self._refresh_fields()
         return self._fields
