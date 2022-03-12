@@ -55,6 +55,18 @@
             <_.fcp.ObjectModelEncapsulateLegacy.true...object-id>[TestData_44D2C885FAEF453C846AC2CCD3577055]</_.fcp.ObjectModelEncapsulateLegacy.true...object-id>
           </metadata-record>
           <metadata-record class='column'>
+          <remote-name>SPAM</remote-name>
+          <remote-type>1</remote-type>
+          <remote-alias>SPAM</remote-alias>
+          <ordinal>19</ordinal>
+          <aggregation>Count</aggregation>
+          <contains-null>true</contains-null>
+          <attributes>
+            <attribute datatype='string' name='DebugRemoteType'>&quot;xml&quot;</attribute>
+            <attribute datatype='string' name='DebugWireType'>&quot;SQL_C_DEFAULT&quot;</attribute>
+          </attributes>
+        </metadata-record>
+          <metadata-record class='column'>
             <remote-name>Account Number</remote-name>
             <remote-type>5</remote-type>
             <local-name>[Account Number]</local-name>
