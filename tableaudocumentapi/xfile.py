@@ -38,6 +38,8 @@ def xml_open(filename, expected_root=None):
 
     # Does the root tag match the object type (workbook or data source)
     if expected_root and (expected_root != tree_root.tag):
+        if expected_root == 'workbook' and tree_root.tag == 'datasource':
+            return # A .twbx can contain .tds files if it contains custom geocoding.
         raise TableauInvalidFileException(
             "'{}'' is not a valid '{}' file".format(filename, expected_root))
 

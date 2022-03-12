@@ -12,6 +12,10 @@ sourceTDS = Datasource.from_file('world.tds')
 # Step 3)  Print out all of the fields and what type they are
 ############################################################
 print('----------------------------------------------------------')
+print('-- Info for our .tds:')
+print('--   name:\t{0}'.format(sourceTDS.name))
+print('--   version:\t{0}'.format(sourceTDS.version))
+print('----------------------------------------------------------')
 print('--- {} total fields in this datasource'.format(len(sourceTDS.fields)))
 print('----------------------------------------------------------')
 for count, field in enumerate(sourceTDS.fields.values()):
