@@ -147,15 +147,19 @@ class Field(object):
     def __str__(self):
         """ String representation of the field (only includes usable attributes) """
         # TODO: this should just loop through the ATTRIBUTES so it doesn't need touching for new ones
-        output = "------ FIELD {} ({}/{}/{}): {}(type), {}(datatype), {}(role), {}(aggregation)".format(
-            self.name, self.caption, self.alias, self.id, self.type, self.datatype, self.role, self.default_aggregation)
+        output = "------ FIELD {}: {}(type), {}(datatype), {}(role), {}(aggregation)".format(
+            self.name, self.type, self.datatype, self.role, self.default_aggregation)
         return output
 
     def detailed_str(self):
+        calc = ""
         if self.calculation:
             calc = "\ncalc: `{}`".format(self.calculation)
         else:
             calc = ""
+        return "------FIELD {} ({}/{}/{})\n{}(type), {}(datatype), {}(role), {}(aggregation)\n`{}`"\
+            .format(self.name, self.caption, self.alias, self.id, self.type, self.datatype, self.role,
+                    self.default_aggregation, self.description, calc)
 
     ########################################
     # Attribute getters and setters
