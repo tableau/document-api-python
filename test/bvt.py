@@ -2,32 +2,9 @@ import os
 import unittest
 
 import xml.etree.ElementTree as ET
-
+from test.assets.index import *
 from tableaudocumentapi import Workbook, Datasource, Connection, ConnectionParser
 from tableaudocumentapi.xfile import TableauInvalidFileException, TableauVersionNotSupportedException
-
-TEST_DIR = os.path.dirname(__file__)
-
-TABLEAU_82_TWB = os.path.join(TEST_DIR, 'assets', 'TABLEAU_82_TWB.twb')
-
-TABLEAU_93_TWB = os.path.join(TEST_DIR, 'assets', 'TABLEAU_93_TWB.twb')
-
-TABLEAU_93_TDS = os.path.join(TEST_DIR, 'assets', 'TABLEAU_93_TDS.tds')
-
-TABLEAU_10_TDS = os.path.join(TEST_DIR, 'assets', 'TABLEAU_10_TDS.tds')
-
-TABLEAU_10_TWB = os.path.join(TEST_DIR, 'assets', 'TABLEAU_10_TWB.twb')
-
-TABLEAU_CONNECTION_XML = os.path.join(TEST_DIR, 'assets', 'CONNECTION.xml')
-
-TABLEAU_10_TWBX = os.path.join(TEST_DIR, 'assets', 'TABLEAU_10_TWBX.twbx')
-
-TABLEAU_10_TDSX = os.path.join(TEST_DIR, 'assets', 'TABLEAU_10_TDSX.tdsx')
-
-EMPTY_WORKBOOK = os.path.join(TEST_DIR, 'assets', 'empty_workbook.twb')
-
-MULTI_CONNECTION_10 = os.path.join(
-    TEST_DIR, 'assets', 'multiple_connections.twb')
 
 
 class ConnectionParserTests(unittest.TestCase):
@@ -60,6 +37,8 @@ class ConnectionModelTests(unittest.TestCase):
         self.assertEqual(conn.dbclass, 'sqlserver')
         self.assertEqual(conn.authentication, 'sspi')
         self.assertEqual(conn.port, '1433')
+        self.assertEqual(conn.initial_sql, '')
+        self.assertEqual(conn.query_band, '')
 
     def test_can_write_attributes_to_connection(self):
         conn = Connection(self.connection)
@@ -67,16 +46,32 @@ class ConnectionModelTests(unittest.TestCase):
         conn.server = 'mssql2014'
         conn.username = 'bob'
         conn.port = '1337'
+        conn.initial_sql = "insert values (1, 'winning') into schema.table"
+        conn.query_band = 'TableauReport=<workbookname>'
         self.assertEqual(conn.dbname, 'BubblesInMyDrink')
         self.assertEqual(conn.username, 'bob')
         self.assertEqual(conn.server, 'mssql2014')
         self.assertEqual(conn.port, '1337')
+        self.assertEqual(conn.initial_sql, "insert values (1, 'winning') into schema.table")
+        self.assertEqual(conn.query_band, 'TableauReport=<workbookname>')
 
     def test_can_delete_port_from_connection(self):
         conn = Connection(self.connection)
         conn.port = None
         self.assertEqual(conn.port, None)
         self.assertIsNone(conn._connectionXML.get('port'))
+
+    def test_can_delete_initial_sql_from_connection(self):
+        conn = Connection(self.connection)
+        conn.initial_sql = None
+        self.assertEqual(conn.initial_sql, None)
+        self.assertIsNone(conn._connectionXML.get('initial_sql'))
+
+    def test_can_delete_query_band_from_connection(self):
+        conn = Connection(self.connection)
+        conn.query_band = None
+        self.assertEqual(conn.query_band, None)
+        self.assertIsNone(conn._connectionXML.get('query_band'))
 
     def test_bad_dbclass_rasies_attribute_error(self):
         conn = Connection(self.connection)
@@ -392,6 +387,7 @@ class SupportedWorkbookVersions(unittest.TestCase):
     def test_82_workbook_throws_exception(self):
         with self.assertRaises(TableauVersionNotSupportedException):
             wb = Workbook(TABLEAU_82_TWB)
+
 
 if __name__ == '__main__':
     unittest.main()

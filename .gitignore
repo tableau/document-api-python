@@ -34,6 +34,8 @@ var/
 pip-log.txt
 pip-delete-this-directory.txt
 
+Gemfile.lock
+
 # Unit test / coverage reports
 htmlcov/
 .tox/
@@ -64,6 +66,12 @@ target/
 #Other things
 .DS_Store
 .idea
+
+#Editor things
+*.sublime-project
+*.sublime-workspace
+settings.json
+tasks.json
 
 #Jekyll
 docs/_site

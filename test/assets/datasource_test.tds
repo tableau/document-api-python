@@ -71,6 +71,19 @@
           <attribute datatype='string' name='DebugWireType'>&quot;SQL_C_SLONG&quot;</attribute>
         </attributes>
       </metadata-record>
+      <metadata-record class='column'>
+        <remote-name>z</remote-name>
+        <remote-type>1</remote-type>
+        <local-name>[z]</local-name>
+        <parent-name>[z]</parent-name>
+        <remote-alias>z</remote-alias>
+
+        <contains-null>true</contains-null>
+        <attributes>
+          <attribute datatype='string' name='DebugRemoteType'>&quot;SQL_INTEGER&quot;</attribute>
+          <attribute datatype='string' name='DebugWireType'>&quot;SQL_C_SLONG&quot;</attribute>
+        </attributes>
+      </metadata-record>
     </metadata-records>
   </connection>
   <aliases enabled='yes' />

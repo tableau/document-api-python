@@ -1,8 +1,3 @@
-###############################################################################
-#
-# Datasource - A class for writing datasources to Tableau files
-#
-###############################################################################
 import collections
 import itertools
 import xml.etree.ElementTree as ET
@@ -14,15 +9,6 @@ from tableaudocumentapi import Field, Folder
 from tableaudocumentapi.multilookup_dict import MultiLookupDict
 from tableaudocumentapi.xfile import xml_open
 
-########
-# This is needed in order to determine if something is a string or not.  It is necessary because
-# of differences between python2 (basestring) and python3 (str).  If python2 support is every
-# dropped, remove this and change the basestring references below to str
-try:
-    basestring
-except NameError:  # pragma: no cover
-    basestring = str
-########
 
 _ColumnObjectReturnTuple = collections.namedtuple('_ColumnObjectReturnTupleType', ['id', 'object'])
 
@@ -35,7 +21,7 @@ def _get_metadata_xml_for_field(root_xml, field_name):
 
 
 def _is_used_by_worksheet(names, field):
-    return any((y for y in names if y in field.worksheets))
+    return any(y for y in names if y in field.worksheets)
 
 
 class FieldDictionary(MultiLookupDict):
@@ -43,7 +29,7 @@ class FieldDictionary(MultiLookupDict):
     def used_by_sheet(self, name):
         # If we pass in a string, no need to get complicated, just check to see if name is in
         # the field's list of worksheets
-        if isinstance(name, basestring):
+        if isinstance(name, str):
             return [x for x in self.values() if name in x.worksheets]
 
         # if we pass in a list, we need to check to see if any of the names in the list are in
@@ -87,13 +73,14 @@ def base36encode(number):
     return sign + base36
 
 
-def make_unique_name(dbclass):
+def _make_unique_name(dbclass):
     rand_part = base36encode(uuid4().int)
     name = dbclass + '.' + rand_part
     return name
 
 
 class ConnectionParser(object):
+    """Parser for detecting and extracting connections from differing Tableau file formats."""
 
     def __init__(self, datasource_xml, version):
         self._dsxml = datasource_xml
@@ -101,6 +88,8 @@ class ConnectionParser(object):
 
     def _extract_federated_connections(self):
         connections = list(map(Connection, self._dsxml.findall('.//named-connections/named-connection/*')))
+        # 'sqlproxy' connections (Tableau Server Connections) are not embedded into named-connection elements
+        # extract them manually for now
         connections.extend(map(Connection, self._dsxml.findall("./connection[@class='sqlproxy']")))
         return connections
 
@@ -108,6 +97,8 @@ class ConnectionParser(object):
         return list(map(Connection, self._dsxml.findall('connection')))
 
     def get_connections(self):
+        """Find and return all connections based on file format version."""
+
         if float(self._dsversion) < 10:
             connections = self._extract_legacy_connection()
         else:
@@ -116,16 +107,11 @@ class ConnectionParser(object):
 
 
 class Datasource(object):
-    """
-    A class for writing datasources to Tableau files.
+    """A class representing Tableau Data Sources, embedded in workbook files or
+    in TDS files.
 
     """
 
-    ###########################################################################
-    #
-    # Public API.
-    #
-    ###########################################################################
     def __init__(self, dsxml, filename=None):
         """
         Constructor.  Default is to create datasource from xml.
@@ -146,13 +132,15 @@ class Datasource(object):
 
     @classmethod
     def from_file(cls, filename):
-        """Initialize datasource from file (.tds)"""
+        """Initialize datasource from file (.tds ot .tdsx)"""
 
-        dsxml = xml_open(filename, cls.__name__.lower()).getroot()
+        dsxml = xml_open(filename, 'datasource').getroot()
         return cls(dsxml, filename)
 
     @classmethod
     def from_connections(cls, caption, connections):
+        """Create a new Data Source give a list of Connections."""
+
         root = ET.Element('datasource', caption=caption, version='10.0', inline='true')
         outer_connection = ET.SubElement(root, 'connection')
         outer_connection.set('class', 'federated')
@@ -160,7 +148,7 @@ class Datasource(object):
         for conn in connections:
             nc = ET.SubElement(named_conns,
                                'named-connection',
-                               name=make_unique_name(conn.dbclass),
+                               name=_make_unique_name(conn.dbclass),
                                caption=conn.server)
             nc.append(conn._connectionXML)
         return cls(root)
@@ -195,16 +183,10 @@ class Datasource(object):
 
         xfile._save_file(self._filename, self._datasourceTree, new_filename)
 
-    ###########
-    # name
-    ###########
     @property
     def name(self):
         return self._name
 
-    ###########
-    # version
-    ###########
     @property
     def version(self):
         return self._version
@@ -223,9 +205,6 @@ class Datasource(object):
         del self._datasourceXML.attrib['caption']
         self._caption = ''
 
-    ###########
-    # connections
-    ###########
     @property
     def connections(self):
         return self._connections
@@ -235,16 +214,18 @@ class Datasource(object):
         if tag is not None:
             self._datasourceXML.remove(tag)
 
-    ###########
-    # fields
-    ###########
     @property
     def fields(self):
         if not self._fields:
-            self._fields = self._get_all_fields()
+            self._refresh_fields()
         return self._fields
 
+    def _refresh_fields(self):
+        self._fields = self._get_all_fields()
+
     def _get_all_fields(self):
+        # Some columns are represented by `column` tags and others as `metadata-record` tags
+        # Find them all and chain them into one dictionary
         column_field_objects = self._get_column_objects()
         existing_column_fields = [x.id for x in column_field_objects]
         metadata_only_field_objects = (x for x in self._get_metadata_objects() if x.id not in existing_column_fields)
@@ -290,3 +271,80 @@ class Datasource(object):
         self._datasourceXML.append(folder.xml)
         self._refresh_folders()
         return folder
+      
+    def _get_custom_sql(self):
+        return [qry for qry in self._datasourceXML.iter('relation')]
+
+    def add_field(self, name, datatype, role, field_type, caption):
+        """ Adds a base field object with the given values.
+
+        Args:
+            name: Name of the new Field. String.
+            datatype:  Datatype of the new field. String.
+            role:  Role of the new field. String.
+            field_type:  Type of the new field. String.
+            caption:  Caption of the new field. String.
+
+        Returns:
+            The new field that was created. Field.
+        """
+        # TODO: A better approach would be to create an empty column and then
+        # use the input validation from its "Field"-object-representation to set values.
+        # However, creating an empty column causes errors :(
+
+        # If no caption is specified, create one with the same format Tableau does
+        if not caption:
+            caption = name.replace('[', '').replace(']', '').title()
+
+        # Create the elements
+        column = Field.create_field_xml(caption, datatype, role, field_type, name)
+
+        self._datasourceTree.getroot().append(column)
+
+        # Refresh fields to reflect changes and return the Field object
+        self._refresh_fields()
+        return self.fields[name]
+
+    def remove_field(self, field):
+        """ Remove a given field
+
+        Args:
+            field: The field to remove. ET.Element
+
+        Returns:
+            None
+        """
+        if not field or not isinstance(field, Field):
+            raise ValueError("Need to supply a field to remove element")
+
+        self._datasourceTree.getroot().remove(field.xml)
+        self._refresh_fields()
+
+    ###########
+    # Calculations
+    ###########
+    @property
+    def calculations(self):
+        """ Returns all calculated fields.
+        """
+        return {k: v for k, v in self.fields.items() if v.calculation is not None}
+
+    def add_calculation(self, caption, formula, datatype, role, type):
+        """ Adds a calculated field with the given values.
+
+        Args:
+            caption:  Caption of the new calculation. String.
+            formula:  Formula of the new calculation. String.
+            datatype:  Datatype of the new calculation. String.
+            role:  Role of the new calculation. String.
+            type:  Type of the new calculation. String.
+
+        Returns:
+            The new calculated field that was created. Field.
+        """
+        # Dynamically create the name of the field
+        name = '[Calculation_{}]'.format(str(uuid4().int)[:18])
+        field = self.add_field(name, datatype, role, type, caption)
+        field.calculation = formula
+
+        return field

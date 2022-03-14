@@ -30,7 +30,7 @@ Saves any changes to the workbook to the existing file.
 `Workbook.save_as(self, new_filename):`
 Saves any changes to the workbook to a new file specified by the `new_file` parameter.
 
-**Properities:**
+**Properties:**
 
 `self.worksheets:` Returns a list of worksheets found in the workbook.
 
@@ -47,6 +47,30 @@ class Datasource(dsxml, filename=None)
 ```python
 class Connection(connxml)
 ```
+
+The Connection class represents a tableau data connection. It can be from any type of connection found in `dbclass.py` via `is_valid_dbclass`
+
+**Params:**
+
+**Raises:**
+
+**Methods:**
+
+**Properties:**
+
+`self.server:` Returns a string containing the server.
+
+`self.dbname:` Returns a string containing the database name.
+
+`self.username:` Returns a string containing the username.
+
+`self.dbclass:` Returns a string containing the database class.
+
+`self.port:` Returns a string containing the port.
+
+`self.query_band:` Returns a string containing the query band.
+
+`self.initial_sql:` Returns a string containing the initial sql.
 
 ## Fields
 ```python
