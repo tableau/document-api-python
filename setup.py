@@ -9,5 +9,6 @@ setup(
     packages=['tableaudocumentapi'],
     license='MIT',
     description='A Python module for working with Tableau files.',
-    test_suite='test'
+    test_suite='test',
+    install_requires=['lxml']
 )

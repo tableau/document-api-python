@@ -2,7 +2,7 @@ import unittest
 import os.path
 
 from tableaudocumentapi import Datasource
-import xml.etree.ElementTree as ET
+from lxml import etree as ET
 
 
 TEST_ASSET_DIR = os.path.join(

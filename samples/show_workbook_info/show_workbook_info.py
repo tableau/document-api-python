@@ -2,7 +2,7 @@
 # Step 1)  Use Datasource object from the Document API
 ############################################################
 from tableaudocumentapi import Workbook
-import xml.etree.ElementTree as ET
+from lxml import etree as ET
 
 ############################################################
 # Step 2)  Open the .tds we want to explore
