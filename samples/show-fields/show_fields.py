@@ -28,10 +28,11 @@ for sourceTDS in datasources:
             blank_line = True
         if field.default_aggregation:
             print('{:>4}: `{}` is a `{}`, default aggregation is `{}`'.format(count+1, field.name, field.datatype,
-                                                                        field.default_aggregation))
+                                                                              field.default_aggregation))
 
         if field.description:
-            print('{:>4}: `{}` is a `{}`, description is `{}`'.format(count+1, field.name, field.datatype, field.description))
+            print('{:>4}: `{}` is a `{}`, description is `{}`'.format(count+1, field.name, field.datatype,
+                                                                      field.description))
 
         if blank_line:
             print('')
