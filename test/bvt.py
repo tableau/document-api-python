@@ -1,7 +1,7 @@
 import os
 import unittest
 
-import xml.etree.ElementTree as ET
+from lxml import etree as ET
 from test.assets.index import *
 from tableaudocumentapi import Workbook, Datasource, Connection, ConnectionParser
 from tableaudocumentapi.xfile import TableauInvalidFileException, TableauVersionNotSupportedException
@@ -160,7 +160,7 @@ class DatasourceModelTests(unittest.TestCase):
         with open(self.tds_file.name) as f:
             first_line = f.readline().strip()  # first line should be xml tag
             self.assertEqual(
-                first_line, "<?xml version='1.0' encoding='utf-8'?>")
+                first_line, "<?xml version='1.0' encoding='UTF-8'?>")
 
 
 class DatasourceModelV10Tests(unittest.TestCase):
@@ -323,7 +323,7 @@ class WorkbookModelV10Tests(unittest.TestCase):
         with open(self.workbook_file.name) as f:
             first_line = f.readline().strip()  # first line should be xml tag
             self.assertEqual(
-                first_line, "<?xml version='1.0' encoding='utf-8'?>")
+                first_line, "<?xml version='1.0' encoding='UTF-8'?>")
 
 
 class WorkbookModelV10TWBXTests(unittest.TestCase):

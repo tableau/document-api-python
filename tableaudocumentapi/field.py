@@ -1,5 +1,6 @@
 import functools
-import xml.etree.ElementTree as ET
+from lxml import etree as ET
+from xml.dom import minidom
 
 from tableaudocumentapi.property_decorators import argument_is_one_of
 
@@ -47,7 +48,7 @@ class Field(object):
         if column_xml is not None:
             self._initialize_from_column_xml(column_xml)
             self._xml = column_xml
-            # This isn't currently never called because of the way we get the data from the xml,
+            # This isn't currently called because of the way we get the data from the xml,
             # but during the refactor, we might need it.  This is commented out as a reminder
             # if metadata_xml is not None:
             #     self.apply_metadata(metadata_xml)
@@ -134,6 +135,31 @@ class Field(object):
     def xml(self):
         """ XML representation of the field. """
         return self._xml
+
+    def pretty_xml(self):
+        """Return a pretty-printed XML string for the Element.
+        """
+        rough_string = ET.tostring(self._xml, 'utf-8')
+        prepared_string = minidom.parseString(rough_string)
+        print_string = prepared_string.toprettyxml(indent="  ", newl="")
+        return print_string.lstrip('<?xml version="1.0" ?>')
+
+    def __str__(self):
+        """ String representation of the field (only includes usable attributes) """
+        # TODO: this should just loop through the ATTRIBUTES so it doesn't need touching for new ones
+        output = "------ FIELD {}: {}(type), {}(datatype), {}(role), {}(aggregation)".format(
+            self.name, self.type, self.datatype, self.role, self.default_aggregation)
+        return output
+
+    def detailed_str(self):
+        calc = ""
+        if self.calculation:
+            calc = "\ncalc: `{}`".format(self.calculation)
+        else:
+            calc = ""
+        return "------FIELD {} ({}/{}/{})\n{}(type), {}(datatype), {}(role), {}(aggregation)\n`{}`"\
+            .format(self.name, self.caption, self.alias, self.id, self.type, self.datatype, self.role,
+                    self.default_aggregation, self.description, calc)
 
     ########################################
     # Attribute getters and setters
@@ -251,7 +277,7 @@ class Field(object):
         # determine whether there already is an aliases-tag
         aliases = self._xml.find('aliases')
         # and create it if there isn't
-        if not aliases:
+        if not aliases:  # ignore the FutureWarning, does not apply to our usage
             aliases = ET.Element('aliases')
             self._xml.append(aliases)
 
@@ -272,7 +298,7 @@ class Field(object):
         Returns:
             Key-value mappings of all registered aliases. Dict.
         """
-        aliases_tag = self._xml.find('aliases') or []
+        aliases_tag = self._xml.find('aliases') or []    # ignore the FutureWarning, does not apply to our usage
         return {a.get('key', 'None'): a.get('value', 'None') for a in list(aliases_tag)}
 
     ########################################

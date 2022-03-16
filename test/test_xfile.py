@@ -53,21 +53,10 @@ class Namespacing(unittest.TestCase):
         wb.save_as(new_name)
         self.assertContainsUserNamespace(new_name)
 
-    '''
     def demo_bug_ns_not_preserved_if_not_used(self):
         filename = TABLEAU_10_TDS
         self.assertContainsUserNamespace(filename)
         wb = Datasource.from_file(filename)
-        #wb.save()
         new_name = 'saved-as-tds.tds'
         wb.save_as(new_name)
-        self.assertContainsUserNamespace(new_name) <- throws
-
-    If there is no namespace in the document when you begin working with it,
-    none will be added.
-    If there is a namespace but it *is not used* in the document, it will be stripped
-
-    Fix will be something like
-    https://stackoverflow.com/questions/41937624/elementtree-why-are-my-namespace-declarations-stripped-out
-
-    '''
+        self.assertContainsUserNamespace(new_name)
