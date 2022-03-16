@@ -1,5 +1,5 @@
 import functools
-import xml.etree.ElementTree as ET
+from lxml import etree as ET
 from xml.dom import minidom
 
 from tableaudocumentapi.property_decorators import argument_is_one_of
@@ -277,7 +277,7 @@ class Field(object):
         # determine whether there already is an aliases-tag
         aliases = self._xml.find('aliases')
         # and create it if there isn't
-        if not aliases:
+        if not aliases:  # ignore the FutureWarning, does not apply to our usage
             aliases = ET.Element('aliases')
             self._xml.append(aliases)
 
@@ -298,7 +298,7 @@ class Field(object):
         Returns:
             Key-value mappings of all registered aliases. Dict.
         """
-        aliases_tag = self._xml.find('aliases') or []
+        aliases_tag = self._xml.find('aliases') or []    # ignore the FutureWarning, does not apply to our usage
         return {a.get('key', 'None'): a.get('value', 'None') for a in list(aliases_tag)}
 
     ########################################
