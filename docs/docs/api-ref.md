@@ -58,7 +58,7 @@ save_as
 
 add_calculation
 
-**Properities:**
+**Properties:**
 
 `self.name` Returns string with the name of datasource.
 
@@ -66,9 +66,9 @@ add_calculation
 
 `self.caption` Returns string of user defined name of datasource if exists.
 
-`self.connections` Returns list of connections are used in workbook.
+`self.connections` Returns list of connections used in workbook.
 
-`self.fileds` Returns key-value result of field name and their attributes.
+`self.fields` Returns key-value result of field name and their attributes.
 
 `self.calculations` Returns calculated field of the workbook.
 
@@ -115,7 +115,7 @@ Represents a field in a datasource
 
 `Field.add_alias(self, key, value)` Add an alias for a given display value.
 
-**Properities:**
+**Properties:**
 
 `self.name` Returns a string providing a nice name for the field which is derived from the alias, caption, or the id.
 

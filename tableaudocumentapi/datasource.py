@@ -248,7 +248,7 @@ class Datasource(object):
     def _get_custom_sql(self):
         return [qry for qry in self._datasourceXML.iter('relation')]
 
-    def add_field(self, name, datatype, role, field_type, caption):
+    def add_field(self, name, datatype, role, field_type, caption, hidden):
         """ Adds a base field object with the given values.
 
         Args:
@@ -270,7 +270,7 @@ class Datasource(object):
             caption = name.replace('[', '').replace(']', '').title()
 
         # Create the elements
-        column = Field.create_field_xml(caption, datatype, role, field_type, name)
+        column = Field.create_field_xml(caption, datatype, hidden, role, field_type, name)
 
         self._datasourceTree.getroot().append(column)
 
@@ -302,22 +302,23 @@ class Datasource(object):
         """
         return {k: v for k, v in self.fields.items() if v.calculation is not None}
 
-    def add_calculation(self, caption, formula, datatype, role, type):
+    def add_calculation(self, caption, formula, datatype, role, type, hidden):
         """ Adds a calculated field with the given values.
 
         Args:
             caption:  Caption of the new calculation. String.
             formula:  Formula of the new calculation. String.
-            datatype:  Datatype of the new calculation. String.
-            role:  Role of the new calculation. String.
-            type:  Type of the new calculation. String.
+            datatype:  Datatype of the new calculation (string, integer, etc). String.
+            role:  Role of the new calculation (Dimension or Measure). String.
+            type:  Type of the new calculation (quantitative, ordinal, nominal). String.
+            hidden:  Whether the new calculation is hidden. Boolean
 
         Returns:
             The new calculated field that was created. Field.
         """
         # Dynamically create the name of the field
         name = '[Calculation_{}]'.format(str(uuid4().int)[:18])
-        field = self.add_field(name, datatype, role, type, caption)
+        field = self.add_field(name, datatype, role, type, caption, hidden)
         field.calculation = formula
 
         return field

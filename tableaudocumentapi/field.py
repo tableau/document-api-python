@@ -13,6 +13,7 @@ _ATTRIBUTES = [
     'alias',        # Name of the field as displayed in Tableau if the default name isn't wanted
     'calculation',  # If this field is a calculated field, this will be the formula
     'description',  # If this field has a description, this will be the description (including formatting tags)
+    'hidden',       # If this field has been hidden
 ]
 
 _METADATA_ATTRIBUTES = [
@@ -72,10 +73,11 @@ class Field(object):
         self.apply_metadata(xmldata)
 
     @classmethod
-    def create_field_xml(cls, caption, datatype, role, field_type, name):
+    def create_field_xml(cls, caption, datatype, hidden, role, field_type, name):
         column = ET.Element('column')
         column.set('caption', caption)
         column.set('datatype', datatype)
+        column.set('hidden', hidden)
         column.set('role', role)
         column.set('type', field_type)
         column.set('name', name)
@@ -219,6 +221,25 @@ class Field(object):
         """
         self._datatype = datatype
         self._xml.set('datatype', datatype)
+
+    @property
+    def hidden(self):
+        """ If the column is Hidden ('true', 'false') """
+        return self._hidden
+
+    @hidden.setter
+    @argument_is_one_of('true', 'false')
+    def hidden(self, hidden):
+        """ Set the hidden property of a field
+
+            Args:
+                hidden:  New hidden. String.
+
+            Returns:
+                Nothing.
+        """
+        self._hidden = hidden
+        self._xml.set('hidden', hidden)
 
     @property
     def role(self):
