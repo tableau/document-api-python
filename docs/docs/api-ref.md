@@ -38,10 +38,39 @@ Saves any changes to the workbook to a new file specified by the `new_file` para
 
 `self.filename:` Returns the filename of the workbook.
 
+`self.shapes` Returns a list of strings with the names of shapes found in the workbook.
+
 ## Datasources
 ```python
 class Datasource(dsxml, filename=None)
 ```
+A class representing Tableau Data Sources, embedded in workbook files or in TDS files.
+
+**Params:**
+
+**Raises:**
+
+**Methods:**
+
+save
+
+save_as
+
+add_calculation
+
+**Properities:**
+
+`self.name` Returns string with the name of datasource.
+
+`self.version` Returns string of daatasource's version.
+
+`self.caption` Returns string of user defined name of datasource if exists.
+
+`self.connections` Returns list of connections are used in workbook.
+
+`self.fileds` Returns key-value result of field name and their attributes.
+
+`self.calculations` Returns calculated field of the workbook.
 
 ## Connections
 ```python
@@ -74,5 +103,48 @@ The Connection class represents a tableau data connection. It can be from any ty
 
 ## Fields
 ```python
-class Workbook(column_xml=None, metadata_xml=None)
+class Field(column_xml=None, metadata_xml=None)
 ```
+
+Represents a field in a datasource
+
+**Raises:**
+
+**Methods:**
+`Field.create_field_xml()` Create field from scratch.
+
+`Field.add_alias(self, key, value)` Add an alias for a given display value.
+
+**Properities:**
+
+`self.name` Returns a string providing a nice name for the field which is derived from the alias, caption, or the id.
+
+`self.id` Returns a string with name of the field as specified in the file, usually surrounded by [ ].
+
+`self.xml` Returns a ElementTree object which represents an XML of the field.
+
+`self.caption` Returns a string with the name of the field as displayed in Tableau unless an aliases is defined.
+
+`self.alias` Returns a string with the name of the field as displayed in Tableau if the default name isn't wanted.
+
+`self.datatype` Returns a string with the type of the field within Tableau (string, integer, etc).
+
+`self.role` Returns a string which identify field as a Dimension or Measure.
+
+`self.type` Returns a string with type of field (quantitative, ordinal, nominal).
+
+`self.aliases` Returns Key-value mappings of all aliases that are registered under this field.
+
+`self.is_quantitative` Returns a boolean if field is quantitative.
+
+`self.is_ordinal` Returns a boolean if field is categorical that has a specific order.
+
+`self.is_nominal` Returns a boolean if field is categorical that does not have a specific order.
+
+`self.calculation` Returns a string with the formula if this field is a calculated field.
+
+`self.default_aggregation` Returns a string with he default type of aggregation on the field (e.g Sum, Avg).
+
+`self.description` Returns a string with contents of the <desc> tag on a field.
+
+`self.worksheets` Returns a list of strings with the worksheet's names uses this field.

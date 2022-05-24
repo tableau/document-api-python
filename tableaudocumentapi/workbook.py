@@ -1,8 +1,7 @@
 import weakref
 
-
 from tableaudocumentapi import Datasource, xfile
-from tableaudocumentapi.xfile import xml_open
+from tableaudocumentapi.xfile import xml_open, TableauInvalidFileException
 
 
 class Workbook(object):
@@ -18,6 +17,8 @@ class Workbook(object):
         self._filename = filename
 
         self._workbookTree = xml_open(self._filename, 'workbook')
+        if not self._workbookTree:
+            raise TableauInvalidFileException("Workbook file must have a workbook element at root")
 
         self._workbookRoot = self._workbookTree.getroot()
 

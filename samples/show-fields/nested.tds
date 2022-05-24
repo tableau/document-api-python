@@ -1,0 +1,780 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<datasource xmlns:user="http://www.tableausoftware.com/xml/user" formatted-name="federated.1df63xu0j2dvhd1e3sooz18pbrcc" inline="true" source-platform="win" version="18.1">
+  <document-format-change-manifest>
+    <_.fcp.ObjectModelEncapsulateLegacy.true...ObjectModelEncapsulateLegacy/>
+    <_.fcp.ObjectModelTableType.true...ObjectModelTableType/>
+    <_.fcp.SchemaViewerObjectModel.true...SchemaViewerObjectModel/>
+  </document-format-change-manifest>
+  <connection class="federated">
+    <named-connections>
+      <named-connection caption="b5dpm3ihhu.database.windows.net" name="sqlserver.1nzmabo1alszdd1dqm0c11g0qr0m">
+        <connection authentication="sqlserver" class="sqlserver" dbname="EmptyDB" odbc-native-protocol="yes" one-time-sql="" server="b5dpm3ihhu.database.windows.net" username="ctest" workgroup-auth-mode="prompt"/>
+      </named-connection>
+    </named-connections>
+    <_.fcp.ObjectModelEncapsulateLegacy.false...relation connection="sqlserver.1nzmabo1alszdd1dqm0c11g0qr0m" name="TestData" table="[dbo].[TestData]" type="table"/>
+    <_.fcp.ObjectModelEncapsulateLegacy.true...relation connection="sqlserver.1nzmabo1alszdd1dqm0c11g0qr0m" name="TestData" table="[dbo].[TestData]" type="table"/>
+    <metadata-records>
+      <metadata-record class="column">
+        <remote-name>Account Account Name</remote-name>
+        <remote-type>130</remote-type>
+        <local-name>[Account Account Name]</local-name>
+        <parent-name>[TestData]</parent-name>
+        <remote-alias>Account Account Name</remote-alias>
+        <ordinal>1</ordinal>
+        <local-type>string</local-type>
+        <aggregation>Count</aggregation>
+        <width>255</width>
+        <contains-null>true</contains-null>
+        <padded-semantics>true</padded-semantics>
+        <collation flag="2147483649" name="LEN_RUS_S2_VWIN"/>
+        <attributes>
+          <attribute datatype="string" name="DebugRemoteType">"SQL_WVARCHAR"</attribute>
+          <attribute datatype="string" name="DebugWireType">"SQL_C_WCHAR"</attribute>
+          <attribute datatype="string" name="TypeIsVarchar">"true"</attribute>
+        </attributes>
+        <_.fcp.ObjectModelEncapsulateLegacy.true...object-id>[TestData_44D2C885FAEF453C846AC2CCD3577055]</_.fcp.ObjectModelEncapsulateLegacy.true...object-id>
+      </metadata-record>
+      <metadata-record class="column">
+        <remote-name>Account Number</remote-name>
+        <remote-type>5</remote-type>
+        <local-name>[Account Number]</local-name>
+        <parent-name>[TestData]</parent-name>
+        <remote-alias>Account Number</remote-alias>
+        <ordinal>2</ordinal>
+        <local-type>real</local-type>
+        <aggregation>Sum</aggregation>
+        <precision>15</precision>
+        <contains-null>true</contains-null>
+        <attributes>
+          <attribute datatype="string" name="DebugRemoteType">"SQL_FLOAT"</attribute>
+          <attribute datatype="string" name="DebugWireType">"SQL_C_DOUBLE"</attribute>
+        </attributes>
+        <_.fcp.ObjectModelEncapsulateLegacy.true...object-id>[TestData_44D2C885FAEF453C846AC2CCD3577055]</_.fcp.ObjectModelEncapsulateLegacy.true...object-id>
+      </metadata-record>
+      <metadata-record class="column">
+        <remote-name>Account Number Burst Out Account</remote-name>
+        <remote-type>130</remote-type>
+        <local-name>[Account Number Burst Out Account]</local-name>
+        <parent-name>[TestData]</parent-name>
+        <remote-alias>Account Number Burst Out Account</remote-alias>
+        <ordinal>3</ordinal>
+        <local-type>string</local-type>
+        <aggregation>Count</aggregation>
+        <width>255</width>
+        <contains-null>true</contains-null>
+        <padded-semantics>true</padded-semantics>
+        <collation flag="2147483649" name="LEN_RUS_S2_VWIN"/>
+        <attributes>
+          <attribute datatype="string" name="DebugRemoteType">"SQL_WVARCHAR"</attribute>
+          <attribute datatype="string" name="DebugWireType">"SQL_C_WCHAR"</attribute>
+          <attribute datatype="string" name="TypeIsVarchar">"true"</attribute>
+        </attributes>
+        <_.fcp.ObjectModelEncapsulateLegacy.true...object-id>[TestData_44D2C885FAEF453C846AC2CCD3577055]</_.fcp.ObjectModelEncapsulateLegacy.true...object-id>
+      </metadata-record>
+      <metadata-record class="column">
+        <remote-name>Acct Name</remote-name>
+        <remote-type>130</remote-type>
+        <local-name>[Acct Name]</local-name>
+        <parent-name>[TestData]</parent-name>
+        <remote-alias>Acct Name</remote-alias>
+        <ordinal>4</ordinal>
+        <local-type>string</local-type>
+        <aggregation>Count</aggregation>
+        <width>255</width>
+        <contains-null>true</contains-null>
+        <padded-semantics>true</padded-semantics>
+        <collation flag="2147483649" name="LEN_RUS_S2_VWIN"/>
+        <attributes>
+          <attribute datatype="string" name="DebugRemoteType">"SQL_WVARCHAR"</attribute>
+          <attribute datatype="string" name="DebugWireType">"SQL_C_WCHAR"</attribute>
+          <attribute datatype="string" name="TypeIsVarchar">"true"</attribute>
+        </attributes>
+        <_.fcp.ObjectModelEncapsulateLegacy.true...object-id>[TestData_44D2C885FAEF453C846AC2CCD3577055]</_.fcp.ObjectModelEncapsulateLegacy.true...object-id>
+      </metadata-record>
+      <metadata-record class="column">
+        <remote-name>Burst Out</remote-name>
+        <remote-type>130</remote-type>
+        <local-name>[Burst Out]</local-name>
+        <parent-name>[TestData]</parent-name>
+        <remote-alias>Burst Out</remote-alias>
+        <ordinal>5</ordinal>
+        <local-type>string</local-type>
+        <aggregation>Count</aggregation>
+        <width>255</width>
+        <contains-null>true</contains-null>
+        <padded-semantics>true</padded-semantics>
+        <collation flag="2147483649" name="LEN_RUS_S2_VWIN"/>
+        <attributes>
+          <attribute datatype="string" name="DebugRemoteType">"SQL_WVARCHAR"</attribute>
+          <attribute datatype="string" name="DebugWireType">"SQL_C_WCHAR"</attribute>
+          <attribute datatype="string" name="TypeIsVarchar">"true"</attribute>
+        </attributes>
+        <_.fcp.ObjectModelEncapsulateLegacy.true...object-id>[TestData_44D2C885FAEF453C846AC2CCD3577055]</_.fcp.ObjectModelEncapsulateLegacy.true...object-id>
+      </metadata-record>
+      <metadata-record class="column">
+        <remote-name>Burst Out Join</remote-name>
+        <remote-type>130</remote-type>
+        <local-name>[Burst Out Join]</local-name>
+        <parent-name>[TestData]</parent-name>
+        <remote-alias>Burst Out Join</remote-alias>
+        <ordinal>6</ordinal>
+        <local-type>string</local-type>
+        <aggregation>Count</aggregation>
+        <width>255</width>
+        <contains-null>true</contains-null>
+        <padded-semantics>true</padded-semantics>
+        <collation flag="2147483649" name="LEN_RUS_S2_VWIN"/>
+        <attributes>
+          <attribute datatype="string" name="DebugRemoteType">"SQL_WVARCHAR"</attribute>
+          <attribute datatype="string" name="DebugWireType">"SQL_C_WCHAR"</attribute>
+          <attribute datatype="string" name="TypeIsVarchar">"true"</attribute>
+        </attributes>
+        <_.fcp.ObjectModelEncapsulateLegacy.true...object-id>[TestData_44D2C885FAEF453C846AC2CCD3577055]</_.fcp.ObjectModelEncapsulateLegacy.true...object-id>
+      </metadata-record>
+      <metadata-record class="column">
+        <remote-name>Burst Out Set list</remote-name>
+        <remote-type>5</remote-type>
+        <local-name>[Burst Out Set list]</local-name>
+        <parent-name>[TestData]</parent-name>
+        <remote-alias>Burst Out Set list</remote-alias>
+        <ordinal>7</ordinal>
+        <local-type>real</local-type>
+        <aggregation>Sum</aggregation>
+        <precision>15</precision>
+        <contains-null>true</contains-null>
+        <attributes>
+          <attribute datatype="string" name="DebugRemoteType">"SQL_FLOAT"</attribute>
+          <attribute datatype="string" name="DebugWireType">"SQL_C_DOUBLE"</attribute>
+        </attributes>
+        <_.fcp.ObjectModelEncapsulateLegacy.true...object-id>[TestData_44D2C885FAEF453C846AC2CCD3577055]</_.fcp.ObjectModelEncapsulateLegacy.true...object-id>
+      </metadata-record>
+      <metadata-record class="column">
+        <remote-name>Burst Out View</remote-name>
+        <remote-type>5</remote-type>
+        <local-name>[Burst Out View]</local-name>
+        <parent-name>[TestData]</parent-name>
+        <remote-alias>Burst Out View</remote-alias>
+        <ordinal>8</ordinal>
+        <local-type>real</local-type>
+        <aggregation>Sum</aggregation>
+        <precision>15</precision>
+        <contains-null>true</contains-null>
+        <attributes>
+          <attribute datatype="string" name="DebugRemoteType">"SQL_FLOAT"</attribute>
+          <attribute datatype="string" name="DebugWireType">"SQL_C_DOUBLE"</attribute>
+        </attributes>
+        <_.fcp.ObjectModelEncapsulateLegacy.true...object-id>[TestData_44D2C885FAEF453C846AC2CCD3577055]</_.fcp.ObjectModelEncapsulateLegacy.true...object-id>
+      </metadata-record>
+      <metadata-record class="column">
+        <remote-name>Count JE Number</remote-name>
+        <remote-type>5</remote-type>
+        <local-name>[Count JE Number]</local-name>
+        <parent-name>[TestData]</parent-name>
+        <remote-alias>Count JE Number</remote-alias>
+        <ordinal>9</ordinal>
+        <local-type>real</local-type>
+        <aggregation>Sum</aggregation>
+        <precision>15</precision>
+        <contains-null>true</contains-null>
+        <attributes>
+          <attribute datatype="string" name="DebugRemoteType">"SQL_FLOAT"</attribute>
+          <attribute datatype="string" name="DebugWireType">"SQL_C_DOUBLE"</attribute>
+        </attributes>
+        <_.fcp.ObjectModelEncapsulateLegacy.true...object-id>[TestData_44D2C885FAEF453C846AC2CCD3577055]</_.fcp.ObjectModelEncapsulateLegacy.true...object-id>
+      </metadata-record>
+      <metadata-record class="column">
+        <remote-name>Entity ID</remote-name>
+        <remote-type>130</remote-type>
+        <local-name>[Entity ID]</local-name>
+        <parent-name>[TestData]</parent-name>
+        <remote-alias>Entity ID</remote-alias>
+        <ordinal>10</ordinal>
+        <local-type>string</local-type>
+        <aggregation>Count</aggregation>
+        <width>255</width>
+        <contains-null>true</contains-null>
+        <padded-semantics>true</padded-semantics>
+        <collation flag="2147483649" name="LEN_RUS_S2_VWIN"/>
+        <attributes>
+          <attribute datatype="string" name="DebugRemoteType">"SQL_WVARCHAR"</attribute>
+          <attribute datatype="string" name="DebugWireType">"SQL_C_WCHAR"</attribute>
+          <attribute datatype="string" name="TypeIsVarchar">"true"</attribute>
+        </attributes>
+        <_.fcp.ObjectModelEncapsulateLegacy.true...object-id>[TestData_44D2C885FAEF453C846AC2CCD3577055]</_.fcp.ObjectModelEncapsulateLegacy.true...object-id>
+      </metadata-record>
+      <metadata-record class="column">
+        <remote-name>Filter</remote-name>
+        <remote-type>5</remote-type>
+        <local-name>[Filter]</local-name>
+        <parent-name>[TestData]</parent-name>
+        <remote-alias>Filter</remote-alias>
+        <ordinal>11</ordinal>
+        <local-type>real</local-type>
+        <aggregation>Sum</aggregation>
+        <precision>15</precision>
+        <contains-null>true</contains-null>
+        <attributes>
+          <attribute datatype="string" name="DebugRemoteType">"SQL_FLOAT"</attribute>
+          <attribute datatype="string" name="DebugWireType">"SQL_C_DOUBLE"</attribute>
+        </attributes>
+        <_.fcp.ObjectModelEncapsulateLegacy.true...object-id>[TestData_44D2C885FAEF453C846AC2CCD3577055]</_.fcp.ObjectModelEncapsulateLegacy.true...object-id>
+      </metadata-record>
+      <metadata-record class="column">
+        <remote-name>Fiscal Year</remote-name>
+        <remote-type>130</remote-type>
+        <local-name>[Fiscal Year]</local-name>
+        <parent-name>[TestData]</parent-name>
+        <remote-alias>Fiscal Year</remote-alias>
+        <ordinal>12</ordinal>
+        <local-type>string</local-type>
+        <aggregation>Count</aggregation>
+        <width>255</width>
+        <contains-null>true</contains-null>
+        <padded-semantics>true</padded-semantics>
+        <collation flag="2147483649" name="LEN_RUS_S2_VWIN"/>
+        <attributes>
+          <attribute datatype="string" name="DebugRemoteType">"SQL_WVARCHAR"</attribute>
+          <attribute datatype="string" name="DebugWireType">"SQL_C_WCHAR"</attribute>
+          <attribute datatype="string" name="TypeIsVarchar">"true"</attribute>
+        </attributes>
+        <_.fcp.ObjectModelEncapsulateLegacy.true...object-id>[TestData_44D2C885FAEF453C846AC2CCD3577055]</_.fcp.ObjectModelEncapsulateLegacy.true...object-id>
+      </metadata-record>
+      <metadata-record class="column">
+        <remote-name>Flag</remote-name>
+        <remote-type>11</remote-type>
+        <local-name>[Flag]</local-name>
+        <parent-name>[TestData]</parent-name>
+        <remote-alias>Flag</remote-alias>
+        <ordinal>13</ordinal>
+        <local-type>boolean</local-type>
+        <aggregation>Count</aggregation>
+        <contains-null>false</contains-null>
+        <attributes>
+          <attribute datatype="string" name="DebugRemoteType">"SQL_BIT"</attribute>
+          <attribute datatype="string" name="DebugWireType">"SQL_C_BIT"</attribute>
+        </attributes>
+        <_.fcp.ObjectModelEncapsulateLegacy.true...object-id>[TestData_44D2C885FAEF453C846AC2CCD3577055]</_.fcp.ObjectModelEncapsulateLegacy.true...object-id>
+      </metadata-record>
+      <metadata-record class="column">
+        <remote-name>Flag__copy_</remote-name>
+        <remote-type>11</remote-type>
+        <local-name>[Flag__copy_]</local-name>
+        <parent-name>[TestData]</parent-name>
+        <remote-alias>Flag__copy_</remote-alias>
+        <ordinal>14</ordinal>
+        <local-type>boolean</local-type>
+        <aggregation>Count</aggregation>
+        <contains-null>false</contains-null>
+        <attributes>
+          <attribute datatype="string" name="DebugRemoteType">"SQL_BIT"</attribute>
+          <attribute datatype="string" name="DebugWireType">"SQL_C_BIT"</attribute>
+        </attributes>
+        <_.fcp.ObjectModelEncapsulateLegacy.true...object-id>[TestData_44D2C885FAEF453C846AC2CCD3577055]</_.fcp.ObjectModelEncapsulateLegacy.true...object-id>
+      </metadata-record>
+      <metadata-record class="column">
+        <remote-name>FS Line</remote-name>
+        <remote-type>5</remote-type>
+        <local-name>[FS Line]</local-name>
+        <parent-name>[TestData]</parent-name>
+        <remote-alias>FS Line</remote-alias>
+        <ordinal>15</ordinal>
+        <local-type>real</local-type>
+        <aggregation>Sum</aggregation>
+        <precision>15</precision>
+        <contains-null>true</contains-null>
+        <attributes>
+          <attribute datatype="string" name="DebugRemoteType">"SQL_FLOAT"</attribute>
+          <attribute datatype="string" name="DebugWireType">"SQL_C_DOUBLE"</attribute>
+        </attributes>
+        <_.fcp.ObjectModelEncapsulateLegacy.true...object-id>[TestData_44D2C885FAEF453C846AC2CCD3577055]</_.fcp.ObjectModelEncapsulateLegacy.true...object-id>
+      </metadata-record>
+      <metadata-record class="column">
+        <remote-name>FS Line Burst Out Account</remote-name>
+        <remote-type>130</remote-type>
+        <local-name>[FS Line Burst Out Account]</local-name>
+        <parent-name>[TestData]</parent-name>
+        <remote-alias>FS Line Burst Out Account</remote-alias>
+        <ordinal>16</ordinal>
+        <local-type>string</local-type>
+        <aggregation>Count</aggregation>
+        <width>255</width>
+        <contains-null>true</contains-null>
+        <padded-semantics>true</padded-semantics>
+        <collation flag="2147483649" name="LEN_RUS_S2_VWIN"/>
+        <attributes>
+          <attribute datatype="string" name="DebugRemoteType">"SQL_WVARCHAR"</attribute>
+          <attribute datatype="string" name="DebugWireType">"SQL_C_WCHAR"</attribute>
+          <attribute datatype="string" name="TypeIsVarchar">"true"</attribute>
+        </attributes>
+        <_.fcp.ObjectModelEncapsulateLegacy.true...object-id>[TestData_44D2C885FAEF453C846AC2CCD3577055]</_.fcp.ObjectModelEncapsulateLegacy.true...object-id>
+      </metadata-record>
+      <metadata-record class="column">
+        <remote-name>Group By</remote-name>
+        <remote-type>5</remote-type>
+        <local-name>[Group By]</local-name>
+        <parent-name>[TestData]</parent-name>
+        <remote-alias>Group By</remote-alias>
+        <ordinal>17</ordinal>
+        <local-type>real</local-type>
+        <aggregation>Sum</aggregation>
+        <precision>15</precision>
+        <contains-null>true</contains-null>
+        <attributes>
+          <attribute datatype="string" name="DebugRemoteType">"SQL_FLOAT"</attribute>
+          <attribute datatype="string" name="DebugWireType">"SQL_C_DOUBLE"</attribute>
+        </attributes>
+        <_.fcp.ObjectModelEncapsulateLegacy.true...object-id>[TestData_44D2C885FAEF453C846AC2CCD3577055]</_.fcp.ObjectModelEncapsulateLegacy.true...object-id>
+      </metadata-record>
+      <metadata-record class="column">
+        <remote-name>Image</remote-name>
+        <remote-type>130</remote-type>
+        <local-name>[Image]</local-name>
+        <parent-name>[TestData]</parent-name>
+        <remote-alias>Image</remote-alias>
+        <ordinal>18</ordinal>
+        <local-type>string</local-type>
+        <aggregation>Count</aggregation>
+        <width>255</width>
+        <contains-null>true</contains-null>
+        <padded-semantics>true</padded-semantics>
+        <collation flag="2147483649" name="LEN_RUS_S2_VWIN"/>
+        <attributes>
+          <attribute datatype="string" name="DebugRemoteType">"SQL_WVARCHAR"</attribute>
+          <attribute datatype="string" name="DebugWireType">"SQL_C_WCHAR"</attribute>
+          <attribute datatype="string" name="TypeIsVarchar">"true"</attribute>
+        </attributes>
+        <_.fcp.ObjectModelEncapsulateLegacy.true...object-id>[TestData_44D2C885FAEF453C846AC2CCD3577055]</_.fcp.ObjectModelEncapsulateLegacy.true...object-id>
+      </metadata-record>
+      <metadata-record class="column">
+        <remote-name>Note Line</remote-name>
+        <remote-type>5</remote-type>
+        <local-name>[Note Line]</local-name>
+        <parent-name>[TestData]</parent-name>
+        <remote-alias>Note Line</remote-alias>
+        <ordinal>19</ordinal>
+        <local-type>real</local-type>
+        <aggregation>Sum</aggregation>
+        <precision>15</precision>
+        <contains-null>true</contains-null>
+        <attributes>
+          <attribute datatype="string" name="DebugRemoteType">"SQL_FLOAT"</attribute>
+          <attribute datatype="string" name="DebugWireType">"SQL_C_DOUBLE"</attribute>
+        </attributes>
+        <_.fcp.ObjectModelEncapsulateLegacy.true...object-id>[TestData_44D2C885FAEF453C846AC2CCD3577055]</_.fcp.ObjectModelEncapsulateLegacy.true...object-id>
+      </metadata-record>
+      <metadata-record class="column">
+        <remote-name>Note Line Burst Out Account</remote-name>
+        <remote-type>130</remote-type>
+        <local-name>[Note Line Burst Out Account]</local-name>
+        <parent-name>[TestData]</parent-name>
+        <remote-alias>Note Line Burst Out Account</remote-alias>
+        <ordinal>20</ordinal>
+        <local-type>string</local-type>
+        <aggregation>Count</aggregation>
+        <width>255</width>
+        <contains-null>true</contains-null>
+        <padded-semantics>true</padded-semantics>
+        <collation flag="2147483649" name="LEN_RUS_S2_VWIN"/>
+        <attributes>
+          <attribute datatype="string" name="DebugRemoteType">"SQL_WVARCHAR"</attribute>
+          <attribute datatype="string" name="DebugWireType">"SQL_C_WCHAR"</attribute>
+          <attribute datatype="string" name="TypeIsVarchar">"true"</attribute>
+        </attributes>
+        <_.fcp.ObjectModelEncapsulateLegacy.true...object-id>[TestData_44D2C885FAEF453C846AC2CCD3577055]</_.fcp.ObjectModelEncapsulateLegacy.true...object-id>
+      </metadata-record>
+      <metadata-record class="column">
+        <remote-name>Selection</remote-name>
+        <remote-type>5</remote-type>
+        <local-name>[Selection]</local-name>
+        <parent-name>[TestData]</parent-name>
+        <remote-alias>Selection</remote-alias>
+        <ordinal>21</ordinal>
+        <local-type>real</local-type>
+        <aggregation>Sum</aggregation>
+        <precision>15</precision>
+        <contains-null>true</contains-null>
+        <attributes>
+          <attribute datatype="string" name="DebugRemoteType">"SQL_FLOAT"</attribute>
+          <attribute datatype="string" name="DebugWireType">"SQL_C_DOUBLE"</attribute>
+        </attributes>
+        <_.fcp.ObjectModelEncapsulateLegacy.true...object-id>[TestData_44D2C885FAEF453C846AC2CCD3577055]</_.fcp.ObjectModelEncapsulateLegacy.true...object-id>
+      </metadata-record>
+      <metadata-record class="column">
+        <remote-name>show</remote-name>
+        <remote-type>130</remote-type>
+        <local-name>[show]</local-name>
+        <parent-name>[TestData]</parent-name>
+        <remote-alias>show</remote-alias>
+        <ordinal>22</ordinal>
+        <local-type>string</local-type>
+        <aggregation>Count</aggregation>
+        <width>255</width>
+        <contains-null>true</contains-null>
+        <padded-semantics>true</padded-semantics>
+        <collation flag="2147483649" name="LEN_RUS_S2_VWIN"/>
+        <attributes>
+          <attribute datatype="string" name="DebugRemoteType">"SQL_WVARCHAR"</attribute>
+          <attribute datatype="string" name="DebugWireType">"SQL_C_WCHAR"</attribute>
+          <attribute datatype="string" name="TypeIsVarchar">"true"</attribute>
+        </attributes>
+        <_.fcp.ObjectModelEncapsulateLegacy.true...object-id>[TestData_44D2C885FAEF453C846AC2CCD3577055]</_.fcp.ObjectModelEncapsulateLegacy.true...object-id>
+      </metadata-record>
+      <metadata-record class="column">
+        <remote-name>Show Cycle Based</remote-name>
+        <remote-type>130</remote-type>
+        <local-name>[Show Cycle Based]</local-name>
+        <parent-name>[TestData]</parent-name>
+        <remote-alias>Show Cycle Based</remote-alias>
+        <ordinal>23</ordinal>
+        <local-type>string</local-type>
+        <aggregation>Count</aggregation>
+        <width>255</width>
+        <contains-null>true</contains-null>
+        <padded-semantics>true</padded-semantics>
+        <collation flag="2147483649" name="LEN_RUS_S2_VWIN"/>
+        <attributes>
+          <attribute datatype="string" name="DebugRemoteType">"SQL_WVARCHAR"</attribute>
+          <attribute datatype="string" name="DebugWireType">"SQL_C_WCHAR"</attribute>
+          <attribute datatype="string" name="TypeIsVarchar">"true"</attribute>
+        </attributes>
+        <_.fcp.ObjectModelEncapsulateLegacy.true...object-id>[TestData_44D2C885FAEF453C846AC2CCD3577055]</_.fcp.ObjectModelEncapsulateLegacy.true...object-id>
+      </metadata-record>
+      <metadata-record class="column">
+        <remote-name>Sub Class</remote-name>
+        <remote-type>5</remote-type>
+        <local-name>[Sub Class]</local-name>
+        <parent-name>[TestData]</parent-name>
+        <remote-alias>Sub Class</remote-alias>
+        <ordinal>24</ordinal>
+        <local-type>real</local-type>
+        <aggregation>Sum</aggregation>
+        <precision>15</precision>
+        <contains-null>true</contains-null>
+        <attributes>
+          <attribute datatype="string" name="DebugRemoteType">"SQL_FLOAT"</attribute>
+          <attribute datatype="string" name="DebugWireType">"SQL_C_DOUBLE"</attribute>
+        </attributes>
+        <_.fcp.ObjectModelEncapsulateLegacy.true...object-id>[TestData_44D2C885FAEF453C846AC2CCD3577055]</_.fcp.ObjectModelEncapsulateLegacy.true...object-id>
+      </metadata-record>
+      <metadata-record class="column">
+        <remote-name>SubClass Burst Out Account</remote-name>
+        <remote-type>130</remote-type>
+        <local-name>[SubClass Burst Out Account]</local-name>
+        <parent-name>[TestData]</parent-name>
+        <remote-alias>SubClass Burst Out Account</remote-alias>
+        <ordinal>25</ordinal>
+        <local-type>string</local-type>
+        <aggregation>Count</aggregation>
+        <width>255</width>
+        <contains-null>true</contains-null>
+        <padded-semantics>true</padded-semantics>
+        <collation flag="2147483649" name="LEN_RUS_S2_VWIN"/>
+        <attributes>
+          <attribute datatype="string" name="DebugRemoteType">"SQL_WVARCHAR"</attribute>
+          <attribute datatype="string" name="DebugWireType">"SQL_C_WCHAR"</attribute>
+          <attribute datatype="string" name="TypeIsVarchar">"true"</attribute>
+        </attributes>
+        <_.fcp.ObjectModelEncapsulateLegacy.true...object-id>[TestData_44D2C885FAEF453C846AC2CCD3577055]</_.fcp.ObjectModelEncapsulateLegacy.true...object-id>
+      </metadata-record>
+      <metadata-record class="column">
+        <remote-name>Type</remote-name>
+        <remote-type>130</remote-type>
+        <local-name>[Type]</local-name>
+        <parent-name>[TestData]</parent-name>
+        <remote-alias>Type</remote-alias>
+        <ordinal>26</ordinal>
+        <local-type>string</local-type>
+        <aggregation>Count</aggregation>
+        <width>255</width>
+        <contains-null>true</contains-null>
+        <padded-semantics>true</padded-semantics>
+        <collation flag="2147483649" name="LEN_RUS_S2_VWIN"/>
+        <attributes>
+          <attribute datatype="string" name="DebugRemoteType">"SQL_WVARCHAR"</attribute>
+          <attribute datatype="string" name="DebugWireType">"SQL_C_WCHAR"</attribute>
+          <attribute datatype="string" name="TypeIsVarchar">"true"</attribute>
+        </attributes>
+        <_.fcp.ObjectModelEncapsulateLegacy.true...object-id>[TestData_44D2C885FAEF453C846AC2CCD3577055]</_.fcp.ObjectModelEncapsulateLegacy.true...object-id>
+      </metadata-record>
+      <metadata-record class="column">
+        <remote-name>Amount</remote-name>
+        <remote-type>130</remote-type>
+        <local-name>[Amount]</local-name>
+        <parent-name>[TestData]</parent-name>
+        <remote-alias>Amount</remote-alias>
+        <ordinal>27</ordinal>
+        <local-type>string</local-type>
+        <aggregation>Count</aggregation>
+        <width>255</width>
+        <contains-null>true</contains-null>
+        <padded-semantics>true</padded-semantics>
+        <collation flag="2147483649" name="LEN_RUS_S2_VWIN"/>
+        <attributes>
+          <attribute datatype="string" name="DebugRemoteType">"SQL_WVARCHAR"</attribute>
+          <attribute datatype="string" name="DebugWireType">"SQL_C_WCHAR"</attribute>
+          <attribute datatype="string" name="TypeIsVarchar">"true"</attribute>
+        </attributes>
+        <_.fcp.ObjectModelEncapsulateLegacy.true...object-id>[TestData_44D2C885FAEF453C846AC2CCD3577055]</_.fcp.ObjectModelEncapsulateLegacy.true...object-id>
+      </metadata-record>
+      <metadata-record class="column">
+        <remote-name>Amount1</remote-name>
+        <remote-type>130</remote-type>
+        <local-name>[Amount1]</local-name>
+        <parent-name>[TestData]</parent-name>
+        <remote-alias>Amount1</remote-alias>
+        <ordinal>28</ordinal>
+        <local-type>string</local-type>
+        <aggregation>Count</aggregation>
+        <width>255</width>
+        <contains-null>true</contains-null>
+        <padded-semantics>true</padded-semantics>
+        <collation flag="2147483649" name="LEN_RUS_S2_VWIN"/>
+        <attributes>
+          <attribute datatype="string" name="DebugRemoteType">"SQL_WVARCHAR"</attribute>
+          <attribute datatype="string" name="DebugWireType">"SQL_C_WCHAR"</attribute>
+          <attribute datatype="string" name="TypeIsVarchar">"true"</attribute>
+        </attributes>
+        <_.fcp.ObjectModelEncapsulateLegacy.true...object-id>[TestData_44D2C885FAEF453C846AC2CCD3577055]</_.fcp.ObjectModelEncapsulateLegacy.true...object-id>
+      </metadata-record>
+      <metadata-record class="column">
+        <remote-name>Count of Amount Calculation</remote-name>
+        <remote-type>5</remote-type>
+        <local-name>[Count of Amount Calculation]</local-name>
+        <parent-name>[TestData]</parent-name>
+        <remote-alias>Count of Amount Calculation</remote-alias>
+        <ordinal>29</ordinal>
+        <local-type>real</local-type>
+        <aggregation>Sum</aggregation>
+        <precision>15</precision>
+        <contains-null>true</contains-null>
+        <attributes>
+          <attribute datatype="string" name="DebugRemoteType">"SQL_FLOAT"</attribute>
+          <attribute datatype="string" name="DebugWireType">"SQL_C_DOUBLE"</attribute>
+        </attributes>
+        <_.fcp.ObjectModelEncapsulateLegacy.true...object-id>[TestData_44D2C885FAEF453C846AC2CCD3577055]</_.fcp.ObjectModelEncapsulateLegacy.true...object-id>
+      </metadata-record>
+      <metadata-record class="column">
+        <remote-name>Number of Records</remote-name>
+        <remote-type>5</remote-type>
+        <local-name>[Number of Records]</local-name>
+        <parent-name>[TestData]</parent-name>
+        <remote-alias>Number of Records</remote-alias>
+        <ordinal>30</ordinal>
+        <local-type>real</local-type>
+        <aggregation>Sum</aggregation>
+        <precision>15</precision>
+        <contains-null>true</contains-null>
+        <attributes>
+          <attribute datatype="string" name="DebugRemoteType">"SQL_FLOAT"</attribute>
+          <attribute datatype="string" name="DebugWireType">"SQL_C_DOUBLE"</attribute>
+        </attributes>
+        <_.fcp.ObjectModelEncapsulateLegacy.true...object-id>[TestData_44D2C885FAEF453C846AC2CCD3577055]</_.fcp.ObjectModelEncapsulateLegacy.true...object-id>
+      </metadata-record>
+      <metadata-record class="column">
+        <remote-name>Number of Records1</remote-name>
+        <remote-type>5</remote-type>
+        <local-name>[Number of Records1]</local-name>
+        <parent-name>[TestData]</parent-name>
+        <remote-alias>Number of Records1</remote-alias>
+        <ordinal>31</ordinal>
+        <local-type>real</local-type>
+        <aggregation>Sum</aggregation>
+        <precision>15</precision>
+        <contains-null>true</contains-null>
+        <attributes>
+          <attribute datatype="string" name="DebugRemoteType">"SQL_FLOAT"</attribute>
+          <attribute datatype="string" name="DebugWireType">"SQL_C_DOUBLE"</attribute>
+        </attributes>
+        <_.fcp.ObjectModelEncapsulateLegacy.true...object-id>[TestData_44D2C885FAEF453C846AC2CCD3577055]</_.fcp.ObjectModelEncapsulateLegacy.true...object-id>
+      </metadata-record>
+      <metadata-record class="column">
+        <remote-name>Select Burst Out</remote-name>
+        <remote-type>5</remote-type>
+        <local-name>[Select Burst Out]</local-name>
+        <parent-name>[TestData]</parent-name>
+        <remote-alias>Select Burst Out</remote-alias>
+        <ordinal>32</ordinal>
+        <local-type>real</local-type>
+        <aggregation>Sum</aggregation>
+        <precision>15</precision>
+        <contains-null>true</contains-null>
+        <attributes>
+          <attribute datatype="string" name="DebugRemoteType">"SQL_FLOAT"</attribute>
+          <attribute datatype="string" name="DebugWireType">"SQL_C_DOUBLE"</attribute>
+        </attributes>
+        <_.fcp.ObjectModelEncapsulateLegacy.true...object-id>[TestData_44D2C885FAEF453C846AC2CCD3577055]</_.fcp.ObjectModelEncapsulateLegacy.true...object-id>
+      </metadata-record>
+      <metadata-record class="column">
+        <remote-name>Select Transaction Analysis view</remote-name>
+        <remote-type>5</remote-type>
+        <local-name>[Select Transaction Analysis view]</local-name>
+        <parent-name>[TestData]</parent-name>
+        <remote-alias>Select Transaction Analysis view</remote-alias>
+        <ordinal>33</ordinal>
+        <local-type>real</local-type>
+        <aggregation>Sum</aggregation>
+        <precision>15</precision>
+        <contains-null>true</contains-null>
+        <attributes>
+          <attribute datatype="string" name="DebugRemoteType">"SQL_FLOAT"</attribute>
+          <attribute datatype="string" name="DebugWireType">"SQL_C_DOUBLE"</attribute>
+        </attributes>
+        <_.fcp.ObjectModelEncapsulateLegacy.true...object-id>[TestData_44D2C885FAEF453C846AC2CCD3577055]</_.fcp.ObjectModelEncapsulateLegacy.true...object-id>
+      </metadata-record>
+      <metadata-record class="column">
+        <remote-name>Sum Cy</remote-name>
+        <remote-type>5</remote-type>
+        <local-name>[Sum Cy]</local-name>
+        <parent-name>[TestData]</parent-name>
+        <remote-alias>Sum Cy</remote-alias>
+        <ordinal>34</ordinal>
+        <local-type>real</local-type>
+        <aggregation>Sum</aggregation>
+        <precision>15</precision>
+        <contains-null>true</contains-null>
+        <attributes>
+          <attribute datatype="string" name="DebugRemoteType">"SQL_FLOAT"</attribute>
+          <attribute datatype="string" name="DebugWireType">"SQL_C_DOUBLE"</attribute>
+        </attributes>
+        <_.fcp.ObjectModelEncapsulateLegacy.true...object-id>[TestData_44D2C885FAEF453C846AC2CCD3577055]</_.fcp.ObjectModelEncapsulateLegacy.true...object-id>
+      </metadata-record>
+      <metadata-record class="column">
+        <remote-name>Sum Py1</remote-name>
+        <remote-type>5</remote-type>
+        <local-name>[Sum Py1]</local-name>
+        <parent-name>[TestData]</parent-name>
+        <remote-alias>Sum Py1</remote-alias>
+        <ordinal>35</ordinal>
+        <local-type>real</local-type>
+        <aggregation>Sum</aggregation>
+        <precision>15</precision>
+        <contains-null>true</contains-null>
+        <attributes>
+          <attribute datatype="string" name="DebugRemoteType">"SQL_FLOAT"</attribute>
+          <attribute datatype="string" name="DebugWireType">"SQL_C_DOUBLE"</attribute>
+        </attributes>
+        <_.fcp.ObjectModelEncapsulateLegacy.true...object-id>[TestData_44D2C885FAEF453C846AC2CCD3577055]</_.fcp.ObjectModelEncapsulateLegacy.true...object-id>
+      </metadata-record>
+      <metadata-record class="column">
+        <remote-name>Sum Py2</remote-name>
+        <remote-type>5</remote-type>
+        <local-name>[Sum Py2]</local-name>
+        <parent-name>[TestData]</parent-name>
+        <remote-alias>Sum Py2</remote-alias>
+        <ordinal>36</ordinal>
+        <local-type>real</local-type>
+        <aggregation>Sum</aggregation>
+        <precision>15</precision>
+        <contains-null>true</contains-null>
+        <attributes>
+          <attribute datatype="string" name="DebugRemoteType">"SQL_FLOAT"</attribute>
+          <attribute datatype="string" name="DebugWireType">"SQL_C_DOUBLE"</attribute>
+        </attributes>
+        <_.fcp.ObjectModelEncapsulateLegacy.true...object-id>[TestData_44D2C885FAEF453C846AC2CCD3577055]</_.fcp.ObjectModelEncapsulateLegacy.true...object-id>
+      </metadata-record>
+      <metadata-record class="column">
+        <remote-name>Sum Py3</remote-name>
+        <remote-type>5</remote-type>
+        <local-name>[Sum Py3]</local-name>
+        <parent-name>[TestData]</parent-name>
+        <remote-alias>Sum Py3</remote-alias>
+        <ordinal>37</ordinal>
+        <local-type>real</local-type>
+        <aggregation>Sum</aggregation>
+        <precision>15</precision>
+        <contains-null>true</contains-null>
+        <attributes>
+          <attribute datatype="string" name="DebugRemoteType">"SQL_FLOAT"</attribute>
+          <attribute datatype="string" name="DebugWireType">"SQL_C_DOUBLE"</attribute>
+        </attributes>
+        <_.fcp.ObjectModelEncapsulateLegacy.true...object-id>[TestData_44D2C885FAEF453C846AC2CCD3577055]</_.fcp.ObjectModelEncapsulateLegacy.true...object-id>
+      </metadata-record>
+      <metadata-record class="column">
+        <remote-name>Sum Py4</remote-name>
+        <remote-type>5</remote-type>
+        <local-name>[Sum Py4]</local-name>
+        <parent-name>[TestData]</parent-name>
+        <remote-alias>Sum Py4</remote-alias>
+        <ordinal>38</ordinal>
+        <local-type>real</local-type>
+        <aggregation>Sum</aggregation>
+        <precision>15</precision>
+        <contains-null>true</contains-null>
+        <attributes>
+          <attribute datatype="string" name="DebugRemoteType">"SQL_FLOAT"</attribute>
+          <attribute datatype="string" name="DebugWireType">"SQL_C_DOUBLE"</attribute>
+        </attributes>
+        <_.fcp.ObjectModelEncapsulateLegacy.true...object-id>[TestData_44D2C885FAEF453C846AC2CCD3577055]</_.fcp.ObjectModelEncapsulateLegacy.true...object-id>
+      </metadata-record>
+      <metadata-record class="column">
+        <remote-name>Total Credits</remote-name>
+        <remote-type>5</remote-type>
+        <local-name>[Total Credits]</local-name>
+        <parent-name>[TestData]</parent-name>
+        <remote-alias>Total Credits</remote-alias>
+        <ordinal>39</ordinal>
+        <local-type>real</local-type>
+        <aggregation>Sum</aggregation>
+        <precision>15</precision>
+        <contains-null>true</contains-null>
+        <attributes>
+          <attribute datatype="string" name="DebugRemoteType">"SQL_FLOAT"</attribute>
+          <attribute datatype="string" name="DebugWireType">"SQL_C_DOUBLE"</attribute>
+        </attributes>
+        <_.fcp.ObjectModelEncapsulateLegacy.true...object-id>[TestData_44D2C885FAEF453C846AC2CCD3577055]</_.fcp.ObjectModelEncapsulateLegacy.true...object-id>
+      </metadata-record>
+      <metadata-record class="column">
+        <remote-name>Total Debits</remote-name>
+        <remote-type>5</remote-type>
+        <local-name>[Total Debits]</local-name>
+        <parent-name>[TestData]</parent-name>
+        <remote-alias>Total Debits</remote-alias>
+        <ordinal>40</ordinal>
+        <local-type>real</local-type>
+        <aggregation>Sum</aggregation>
+        <precision>15</precision>
+        <contains-null>true</contains-null>
+        <attributes>
+          <attribute datatype="string" name="DebugRemoteType">"SQL_FLOAT"</attribute>
+          <attribute datatype="string" name="DebugWireType">"SQL_C_DOUBLE"</attribute>
+        </attributes>
+        <_.fcp.ObjectModelEncapsulateLegacy.true...object-id>[TestData_44D2C885FAEF453C846AC2CCD3577055]</_.fcp.ObjectModelEncapsulateLegacy.true...object-id>
+      </metadata-record>
+    </metadata-records>
+  </connection>
+  <aliases enabled="yes"/>
+  <column datatype="real" name="[Account Number]" role="dimension" type="ordinal"/>
+  <column datatype="string" datatype-customized="true" name="[Burst Out Set list]" role="dimension" type="nominal"/>
+  <column caption="REPLACED YOU" datatype="string" name="[Calculation_2467128183716855808]" role="dimension" type="nominal">
+    <calculation class="tableau" formula="[Acct Name]"/>
+  </column>
+  <column caption="REPLACED YOU" datatype="string" name="[Calculation_2467128183716900865]" role="dimension" type="nominal">
+    <calculation class="tableau" formula="[Calculation_2467128183716855808]"/>
+  </column>
+  <column caption="REPLACED YOU" datatype="string" name="[Calculation_2467128183746195458]" role="dimension" type="nominal">
+    <calculation class="tableau" formula="STR([Burst Out Join]) + str([Calculation_2467128183716900865] )"/>
+  </column>
+  <column caption="REPLACED YOU" datatype="string" name="[Calculation_88946136969252864]" role="dimension" type="nominal">
+    <calculation class="tableau" formula="IF [BurstoutSet] THEN &quot;Selected&quot; ELSE &quot;Not Selected&quot; END"/>
+  </column>
+  <column datatype="real" name="[Number of Records]" role="measure" type="quantitative" user:auto-column="numrec"/>
+  <_.fcp.ObjectModelTableType.true...column caption="TestData" datatype="table" name="[__tableau_internal_object_id__].[TestData_44D2C885FAEF453C846AC2CCD3577055]" role="measure" type="quantitative"/>
+  <column caption="Show" datatype="string" name="[show]" role="dimension" type="nominal"/>
+  <column-instance column="[Burst Out Set list]" derivation="None" name="[none:Burst Out Set list:nk]" pivot="key" type="nominal"/>
+  <group caption="BurstoutSet" name="[BurstoutSet]" name-style="unqualified" user:ui-builder="filter-group">
+    <groupfilter function="member" level="[none:Burst Out Set list:nk]" member="&quot;6112&quot;" user:ui-domain="database" user:ui-enumeration="inclusive" user:ui-marker="enumerate"/>
+  </group>
+  <layout _.fcp.SchemaViewerObjectModel.false...dim-percentage="0.5" _.fcp.SchemaViewerObjectModel.false...measure-percentage="0.4" _.fcp.SchemaViewerObjectModel.true...common-percentage="1" _.fcp.SchemaViewerObjectModel.true...user-set-layout-v2="true" dim-ordering="alphabetic" measure-ordering="alphabetic" show-structure="true"/>
+  <semantic-values>
+    <semantic-value key="[Country].[Name]" value="&quot;United States&quot;"/>
+  </semantic-values>
+  <_.fcp.ObjectModelEncapsulateLegacy.true...object-graph>
+    <objects>
+      <object caption="TestData" id="TestData_44D2C885FAEF453C846AC2CCD3577055">
+        <properties context="">
+          <relation connection="sqlserver.1nzmabo1alszdd1dqm0c11g0qr0m" name="TestData" table="[dbo].[TestData]" type="table"/>
+        </properties>
+      </object>
+    </objects>
+  </_.fcp.ObjectModelEncapsulateLegacy.true...object-graph>
+</datasource>
