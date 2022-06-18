@@ -73,8 +73,6 @@ class Field(object):
             print(metadata_name, field_name)
         self.apply_metadata(xmldata)
 
-
-
     @classmethod
     def create_field_xml(cls, caption, datatype, hidden, role, field_type, name):
         column = ET.Element('column')
