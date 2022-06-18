@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-
+pip install wheel
 set -e
 
 rm -rf dist

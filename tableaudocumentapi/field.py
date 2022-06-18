@@ -13,6 +13,7 @@ _ATTRIBUTES = [
     'alias',        # Name of the field as displayed in Tableau if the default name isn't wanted
     'calculation',  # If this field is a calculated field, this will be the formula
     'description',  # If this field has a description, this will be the description (including formatting tags)
+    'hidden',       # If this field has been hidden
 ]
 
 _METADATA_ATTRIBUTES = [
@@ -69,13 +70,15 @@ class Field(object):
             self._apply_attribute(xmldata, field_name,
                                   lambda x: getattr(xmldata.find('.//{}'.format(metadata_name)), 'text', None),
                                   read_name=metadata_name)
+            print(metadata_name, field_name)
         self.apply_metadata(xmldata)
 
     @classmethod
-    def create_field_xml(cls, caption, datatype, role, field_type, name):
+    def create_field_xml(cls, caption, datatype, hidden, role, field_type, name):
         column = ET.Element('column')
         column.set('caption', caption)
         column.set('datatype', datatype)
+        column.set('hidden', hidden)
         column.set('role', role)
         column.set('type', field_type)
         column.set('name', name)
@@ -146,20 +149,16 @@ class Field(object):
 
     def __str__(self):
         """ String representation of the field (only includes usable attributes) """
-        # TODO: this should just loop through the ATTRIBUTES so it doesn't need touching for new ones
-        output = "------ FIELD {}: {}(type), {}(datatype), {}(role), {}(aggregation)".format(
-            self.name, self.type, self.datatype, self.role, self.default_aggregation)
+        # TODO: ideally this should just loop through the ATTRIBUTES so it doesn't need touching for new ones
+        output = "------ FIELD {} ({}/{}/{}): {}(type), {}(datatype), {}(role), {}(aggregation)".format(
+            self.name, self.caption, self.alias, self.id, self.type, self.datatype, self.role, self.default_aggregation)
         return output
 
     def detailed_str(self):
-        calc = ""
         if self.calculation:
             calc = "\ncalc: `{}`".format(self.calculation)
         else:
             calc = ""
-        return "------FIELD {} ({}/{}/{})\n{}(type), {}(datatype), {}(role), {}(aggregation)\n`{}`"\
-            .format(self.name, self.caption, self.alias, self.id, self.type, self.datatype, self.role,
-                    self.default_aggregation, self.description, calc)
 
     ########################################
     # Attribute getters and setters
@@ -219,6 +218,25 @@ class Field(object):
         """
         self._datatype = datatype
         self._xml.set('datatype', datatype)
+
+    @property
+    def hidden(self):
+        """ If the column is Hidden ('true', 'false') """
+        return self._hidden
+
+    @hidden.setter
+    @argument_is_one_of('true', 'false')
+    def hidden(self, hidden):
+        """ Set the hidden property of a field
+
+            Args:
+                hidden:  New hidden. String.
+
+            Returns:
+                Nothing.
+        """
+        self._hidden = hidden
+        self._xml.set('hidden', hidden)
 
     @property
     def role(self):

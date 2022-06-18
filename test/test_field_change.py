@@ -181,7 +181,7 @@ class TestFieldChange(unittest.TestCase):
     def test_calculation_new(self):
         """ Test if creating a new calculation works.
         """
-        args = 'TestCalc', '12*34', 'integer', 'measure', 'quantitative'
+        args = 'TestCalc', '12*34', 'integer', 'measure', 'quantitative', 'False'
         original_len = len(self.tds.calculations)
         self.tds.add_calculation(*args)
         self.assertEqual(len(self.tds.calculations), original_len + 1)
@@ -189,7 +189,7 @@ class TestFieldChange(unittest.TestCase):
     def test_calculation_remove(self):
         """ Test if deleting a calculation works.
         """
-        args = 'TestCalc2', '12*34', 'integer', 'measure', 'quantitative'
+        args = 'TestCalc2', '12*34', 'integer', 'measure', 'quantitative', 'True'
 
         original_len = len(self.tds.calculations)
         calc = self.tds.add_calculation(*args)

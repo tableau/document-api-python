@@ -28,7 +28,7 @@ class Connection(object):
 
     @classmethod
     def from_attributes(cls, server, dbname, username, dbclass, port=None, query_band=None,
-                        initial_sql=None, authentication=''):
+                        initial_sql=None, authentication='', schema='', service=''):
         """Creates a new connection that can be added into a Data Source.
         defaults to `''` which will be treated as 'prompt' by Tableau."""
 
@@ -37,6 +37,8 @@ class Connection(object):
         xml.server = server
         xml.dbname = dbname
         xml.username = username
+        xml.schema = schema
+        xml.service = service
         xml.dbclass = dbclass
         xml.port = port
         xml.query_band = query_band
@@ -208,3 +210,43 @@ class Connection(object):
                 pass
         else:
             self._connectionXML.set('one-time-sql', value)
+
+    @property
+    def schema(self):
+        """Database schema for the connection. Not the table name."""
+        return self._schema
+
+    @schema.setter
+    def schema(self, value):
+        """
+        Set the connection's schema property.
+
+        Args:
+            value:  New name of the database schema. String.
+
+        Returns:
+            Nothing.
+
+        """
+        self._schema = value
+        self._connectionXML.set('schema', value)
+
+    @property
+    def service(self):
+        """Database service for the connection. Not the table name."""
+        return self._service
+
+    @service.setter
+    def service(self, value):
+        """
+        Set the connection's service property.
+
+        Args:
+            value:  New name of the database service. String.
+
+        Returns:
+            Nothing.
+
+        """
+        self._service = value
+        self._connectionXML.set('service', value)
