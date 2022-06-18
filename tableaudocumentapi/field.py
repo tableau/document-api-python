@@ -70,7 +70,10 @@ class Field(object):
             self._apply_attribute(xmldata, field_name,
                                   lambda x: getattr(xmldata.find('.//{}'.format(metadata_name)), 'text', None),
                                   read_name=metadata_name)
+            print(metadata_name, field_name)
         self.apply_metadata(xmldata)
+
+
 
     @classmethod
     def create_field_xml(cls, caption, datatype, hidden, role, field_type, name):
@@ -148,20 +151,16 @@ class Field(object):
 
     def __str__(self):
         """ String representation of the field (only includes usable attributes) """
-        # TODO: this should just loop through the ATTRIBUTES so it doesn't need touching for new ones
-        output = "------ FIELD {}: {}(type), {}(datatype), {}(role), {}(aggregation)".format(
-            self.name, self.type, self.datatype, self.role, self.default_aggregation)
+        # TODO: ideally this should just loop through the ATTRIBUTES so it doesn't need touching for new ones
+        output = "------ FIELD {} ({}/{}/{}): {}(type), {}(datatype), {}(role), {}(aggregation)".format(
+            self.name, self.caption, self.alias, self.id, self.type, self.datatype, self.role, self.default_aggregation)
         return output
 
     def detailed_str(self):
-        calc = ""
         if self.calculation:
             calc = "\ncalc: `{}`".format(self.calculation)
         else:
             calc = ""
-        return "------FIELD {} ({}/{}/{})\n{}(type), {}(datatype), {}(role), {}(aggregation)\n`{}`"\
-            .format(self.name, self.caption, self.alias, self.id, self.type, self.datatype, self.role,
-                    self.default_aggregation, self.description, calc)
 
     ########################################
     # Attribute getters and setters
