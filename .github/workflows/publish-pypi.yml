@@ -7,7 +7,7 @@ on:
 
 jobs:
 
-  build:
+  build-then-publish:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -25,32 +25,20 @@ jobs:
         if [ -f  requirements.txt ]; then pip install -r requirements.txt; fi
     - name: Package
       run: | 
+        python setup.py build
         python setup.py sdist
         python setup.py bdist_wheel
-        
-
-  test-deploy:
-    if: github.ref_type == 'tag' && contains(github.ref_name, 'test')
-    needs: build
-    environment:
-      name: test-pypi
-    runs-on: ubuntu-latest
-    steps:
-    - name: Publish 📦 to Test PyPI
-      uses: pypa/gh-action-pypi-publish@master
+    - name: Publish distribution 📦 to Test PyPI
+      if: github.ref_type == 'tag' && contains(github.ref_name, 'test')
+      uses: pypa/gh-action-pypi-publish@release/v1  # license BSD-2
       with:
-        password: ${{ secrets.TEST_PYPI_TOKEN }}
+        password: ${{ secrets.TEST_PYPI_API_TOKEN }}
         repository_url: https://test.pypi.org/legacy/
-
-
-  production-deploy:
-    needs: build
-    environment:
-      name: pypi
-    runs-on: ubuntu-latest
-    steps:
-    - name: Publish 📦 to Real PyPI
-      uses: pypa/gh-action-pypi-publish@master
+    - name: Publish distribution 📦 to PyPI
+      if: ${{ github.ref == 'refs/heads/master' && inputs.is_draft }}
+    - uses: pypa/gh-action-pypi-publish@release/v1  # license BSD-2
       with:
         password: ${{ secrets.PYPI_API_TOKEN }}
-        repository_url: https://pypi.org/legacy/
+
+
+        
