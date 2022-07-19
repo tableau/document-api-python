@@ -1,4 +1,7 @@
 
+## 010 (June 2022)
+* Add service/schema attributes
+
 ## 091 (March 2022)
 * Add attribute for hidden field
 
