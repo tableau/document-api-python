@@ -16,7 +16,7 @@ def assertContainsUserNamespace(filename):
             lineCount += 1
     found = doc_beginning_excerpt.rfind("xmlns:user=")
     print(doc_beginning_excerpt[found:found+10])
-    assert(found >= 0)
+    assert (found >= 0)
 
 
 ############################################################
