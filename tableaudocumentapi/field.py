@@ -14,6 +14,7 @@ _ATTRIBUTES = [
     'calculation',  # If this field is a calculated field, this will be the formula
     'description',  # If this field has a description, this will be the description (including formatting tags)
     'hidden',       # If this field has been hidden
+    'value',        # If this field is a parameter field, this will be the value 
 ]
 
 _METADATA_ATTRIBUTES = [
@@ -367,6 +368,31 @@ class Field(object):
             self._xml.find('calculation').set('formula', new_calculation)
 
         self._calculation = new_calculation
+
+    @property
+    def value(self):
+        """ If this field is a parameter field, this will be the value """
+        return self._value
+
+    @value.setter
+    def value(self, new_value):
+        """ Set the value of a parameter field.
+
+        Args:
+            new_value: The new value/formula of the field. String.
+        """
+        if self.value is None:
+            value = ET.Element('calculation')
+            value.set('class', 'tableau')
+            value.set('formula', new_value)
+            # Append the elements to the respective structure
+            self._xml.append(value)
+
+        else:
+            self._xml.find('calculation').set('formula', new_value)
+
+        self._value = new_value
+        self._xml.set('value', new_value)
 
     @property
     def default_aggregation(self):
