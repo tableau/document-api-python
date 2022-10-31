@@ -71,7 +71,7 @@ class Field(object):
             self._apply_attribute(xmldata, field_name,
                                   lambda x: getattr(xmldata.find('.//{}'.format(metadata_name)), 'text', None),
                                   read_name=metadata_name)
-            print(metadata_name, field_name)
+            # print(metadata_name, field_name)
         self.apply_metadata(xmldata)
 
     @classmethod
