@@ -1,3 +1,5 @@
+## 011 (November 2022)
+* Remove extraneous debug print statements
 
 ## 010 (June 2022)
 * Add service/schema attributes
@@ -6,7 +8,7 @@
 * Add attribute for hidden field
 
 ## 09 (December 2021)
-* Pypi upgraded to Python3
+* PyPI upgraded to Python3
 
 ## 08 (October 2021)
 * See dashboards in a workbook
