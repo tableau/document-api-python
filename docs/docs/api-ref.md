@@ -34,11 +34,34 @@ Saves any changes to the workbook to a new file specified by the `new_file` para
 
 `self.worksheets:` Returns a list of worksheets found in the workbook.
 
+`self.worksheet_items:` Returns a list of Worksheet objects found in the workbook.
+
 `self.datasources:` Returns a list of Datasource objects found in the workbook.
 
 `self.filename:` Returns the filename of the workbook.
 
 `self.shapes` Returns a list of strings with the names of shapes found in the workbook.
+
+## Worksheets
+```python
+class Worksheet(wsxml):
+```
+
+The Worksheet class represents the worksheets found in a Tableau Workbook. The library will access key attributes of each worksheet it finds.
+
+**Properties:**
+
+`self.name`: Returns the name of the worksheet.
+
+`self.datasources`: Returns list of the Datasource objects that are used in the worksheet.
+
+`self.fields`: Returns list of Field objects that are used somewhere within the sheet.
+
+`self.rows`: Returns list of Field objects present on the rows shelf. Certain items will return a string value, such as "Measure Names" which is not a field.
+
+`self.cols`: Returns list of Field objects present on the columns shelf. Certain items will return a string value, such as "Measure Names" which is not a field.
+
+`self.filter_fields`: Returns list of Field objects that are present on the Filter pane. Certain items will return a string value, such as Filter Actions.
 
 ## Datasources
 ```python
