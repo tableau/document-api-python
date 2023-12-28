@@ -151,6 +151,7 @@ class Worksheet(object):
     @property
     def filter_fields(self):
         return self._filter_fields
+    
 class Workbook(object):
     """A class for writing Tableau workbook files."""
 
