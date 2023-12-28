@@ -1,9 +1,156 @@
 import weakref
+import re
 
-from tableaudocumentapi import Datasource, xfile
+from tableaudocumentapi import Datasource, Field, xfile
 from tableaudocumentapi.xfile import xml_open, TableauInvalidFileException
 
+def _remove_brackets(text):
+    return text.lstrip("[").rstrip("]")
 
+def _clean_columns(marks):
+    """
+    Extract rows/cols data that is stored such as [datasource].[column]
+    We use a regex to find multiple marks and another regex to extract the field name
+
+    We return a dictionary of datasource: [fields] so we can map them to field items
+    """
+    if marks is None:
+        return None
+    # find all [datasource].[column] strings by positive lookahead of ), space, or string end
+    # some will have three parts so we need to use a lookahead to ensure we capture the entire object
+    matching_marks = re.findall(r"(\[.*?\])(?=\)|\s|$)",str(marks))
+    datasource_fields = {}
+    for mark in matching_marks:
+        # split column into datasource and field display
+        column = mark.split("].[")
+        datasource = _remove_brackets(column[0])
+        # initialize dictionary entry
+        if datasource not in datasource_fields:
+            datasource_fields[datasource] = []
+        # the field is always the last item in the list
+        field_display = _remove_brackets(column[-1])
+        # use ordinal (ok), quantitative (qk), nominal (nk), or string end as lookahead
+        field_match = re.match(r".*?(?<=:)([^:]+)(?=:ok|:qk|:nk|$)", field_display)
+        # if no match, eg. Measure Names, just return the string
+        if field_match:
+            field = field_match.groups(1)[0]
+        else:
+            field = field_display
+        datasource_fields[datasource].append(field)
+    return datasource_fields
+
+def _ds_fields_to_tems(ds_fields, ds_index):
+    fields = []
+    for ds, field_ids in ds_fields.items():
+        fields_dict = ds_index[ds].fields
+        for field_id in field_ids:
+            # many field ids include brackets, so we need to check for these as well
+            field_id_brackets = f"[{field_id}]"
+            if field_id in fields_dict:
+                field = fields_dict.get(field_id)
+            elif field_id_brackets in fields_dict:
+                field = fields_dict.get(field_id_brackets)
+            else:
+                field = field_id
+            fields.append(field)
+    return fields
+
+class Worksheet(object):
+    """
+    A class to parse key attributes of a worksheet.
+    """
+
+    def __init__(self, worksheet_element, ds_index):
+        self._worksheetRoot = worksheet_element
+        self.name = worksheet_element.attrib['name']
+        self._datasource_index = ds_index
+        self._datasources = self._prepare_datasources(self._worksheetRoot, self._datasource_index)
+        self._fields = self._prepare_datasource_dependencies(self._worksheetRoot)
+        self._rows = self._prepare_rows(self._worksheetRoot, self._datasource_index)
+        self._cols = self._prepare_cols(self._worksheetRoot, self._datasource_index)
+        self._filter_fields = self._prepare_filter_fields(self._worksheetRoot, self._datasource_index)
+
+    def __repr__(self):
+        name = self.name
+        datasources = ", ".join([ds.caption or ds.name for ds in self._datasources])
+        fields = ", ".join([f.name for f in self._fields])
+        return f"name: {name}, datasources: {datasources}, fields: {fields}"
+    
+    def __iter__(self):
+        keys = self.__dict__.keys()
+        filtered_keys = [key for key in keys if key != "_worksheetRoot"]
+        for key in filtered_keys:
+            yield key.lstrip("_"), getattr(self, key)
+
+    @staticmethod
+    def _prepare_filter_fields(worksheet_element, ds_index):
+        filters = []
+        slices_list = worksheet_element.find(".//slices")
+        if slices_list is None:
+            return filters
+        slices = [column.text for column in slices_list]
+        # combine slices into single string to use same function as rows/cols
+        ds_fields = _clean_columns(" ".join(slices))
+        if ds_fields == None or len(ds_fields) == 0:
+            return None
+        fields = _ds_fields_to_tems(ds_fields, ds_index)
+        return fields
+    
+    @staticmethod
+    def _prepare_datasources(worksheet_element, ds_index):
+        worksheet_datasources = worksheet_element.find(".//datasources")
+        datasource_names = [ds.attrib["name"] for ds in worksheet_datasources]
+        datasource_list = [ds_index[name] for name in datasource_names]
+        return datasource_list
+    
+    @property
+    def datasources(self):
+        return self._datasources
+    
+    @staticmethod
+    def _prepare_datasource_dependencies(worksheet_element):
+        dependencies = worksheet_element.findall('.//datasource-dependencies')
+        for dependency in dependencies:
+            columns = dependency.findall('.//column')
+            return [Field.from_column_xml(column) for column in columns]
+    
+    @property
+    def fields(self):
+        return self._prepare_datasource_dependencies
+    
+    @property
+    def fields_list(self):
+        return [field.caption for field in self._fields]
+    
+    @staticmethod
+    def _prepare_rows(worksheet_element, ds_index):
+        rows = worksheet_element.find('.//rows')
+        ds_fields = _clean_columns(rows.text)
+        if ds_fields == None or len(ds_fields) == 0:
+            return None
+        fields = _ds_fields_to_tems(ds_fields, ds_index)
+        return fields
+    
+    @staticmethod
+    def _prepare_cols(worksheet_element, ds_index):
+        cols = worksheet_element.find('.//cols')
+        ds_fields = _clean_columns(cols.text)
+        if ds_fields == None or len(ds_fields) == 0:
+            return None
+        fields = _ds_fields_to_tems(ds_fields, ds_index)
+        return fields
+    
+    @property
+    def rows(self):
+        return self._rows
+
+    @property
+    def cols(self):
+        return self._cols
+    
+    @property
+    def filter_fields(self):
+        return self._filter_fields
 class Workbook(object):
     """A class for writing Tableau workbook files."""
 
@@ -31,6 +178,8 @@ class Workbook(object):
 
         self._worksheets = self._prepare_worksheets(
             self._workbookRoot, self._datasource_index)
+        
+        self._worksheet_items = self._prepare_worksheet_items(self._workbookRoot, self._datasource_index)
 
         self._shapes = self._prepare_shapes(self._workbookRoot)
 
@@ -45,6 +194,10 @@ class Workbook(object):
     @property
     def worksheets(self):
         return self._worksheets
+    
+    @property
+    def worksheet_items(self):
+        return self._worksheet_items
 
     @property
     def filename(self):
@@ -142,7 +295,16 @@ class Workbook(object):
                         datasource.fields[column_name].add_used_in(worksheet_name)
 
         return worksheets
-
+    
+    @staticmethod
+    def _prepare_worksheet_items(xml_root, ds_index):
+        worksheets = []
+        worksheets_element = xml_root.find('.//worksheets')
+        if worksheets_element is None:
+            return worksheets
+        worksheets = [Worksheet(worksheet_element, ds_index) for worksheet_element in worksheets_element]
+        return worksheets
+    
     @staticmethod
     def _prepare_shapes(xml_root):
         shapes = []
