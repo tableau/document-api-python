@@ -49,3 +49,11 @@ class Dashboards(unittest.TestCase):
         wb = Workbook(DASHBOARDS_FILE)
         self.assertIsNotNone(wb)
         self.assertEqual(wb.dashboards, ['setTest'])
+
+class Worksheets(unittest.TestCase):
+    def test_worksheets_setup(self):
+        wb = Workbook(DASHBOARDS_FILE)
+        self.assertEqual(len(wb.worksheet_items), 2)
+        worksheet_names = [ws.name for ws in wb.worksheet_items]
+        worksheet_names.sort()
+        self.assertEqual(worksheet_names[0], 'Sheet 1')
