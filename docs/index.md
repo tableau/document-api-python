@@ -13,7 +13,7 @@ layout: home
 # Document API Overview
 This repo contains Python source and example files for the Tableau Document API.
 
-The Document API provides a supported way to programmatically make updates to Tableau workbook and data source files. If you've been making changes to these file types by directly updating the XML--that is, by XML hacking--this SDK is for you.
+The Document API provides an *unsupported* way to programmatically make updates to Tableau workbook and data source files. If you've been making changes to these file types by directly updating the XML--that is, by XML hacking--this SDK is for you.
 
 Features include:
 
@@ -32,6 +32,6 @@ Features include:
     - Get all fields in a data source
     - Get all fields in use by certain sheets in a workbook
 
-For Hyper files, take a look a the [Tableau Hyper API](https://help.tableau.com/current/api/hyper_api/en-us/index.html).
+For Hyper files, take a look a the [Tableau Hyper API](https://tableau.github.io/hyper-db/docs/).
 
 We don't yet support creating files from scratch, adding extracts into workbooks or data sources, or updating field information.
