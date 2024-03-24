@@ -40,6 +40,8 @@ Saves any changes to the workbook to a new file specified by the `new_file` para
 
 `self.shapes` Returns a list of strings with the names of shapes found in the workbook.
 
+`self.dashboards:` Returns a list of strings with the names of the dashboards found in the workbook  
+
 ## Datasources
 ```python
 class Datasource(dsxml, filename=None)
