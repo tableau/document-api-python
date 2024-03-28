@@ -1,0 +1,109 @@
+<?xml version='1.0' encoding='utf-8' ?>
+
+<!-- build 10000.16.0812.0001                               -->
+<datasource formatted-name='test_base' inline='true' source-platform='win' version='10.0' xmlns:user='http://www.tableausoftware.com/xml/user'>
+    <connection class='federated'>
+        <named-connections>
+            <named-connection caption='my.server.com' name='postgres.0slpt5u1crlvd816iez320cauqo3'>
+                <connection authentication='username-password' class='postgres' dbname='my_db' odbc-native-protocol='yes' port='5432' server='my.server.com' username='my_db_user'/>
+            </named-connection>
+        </named-connections>
+        <relation connection='postgres.0slpt5u1crlvd816iez320cauqo3' name='my_data' table='[public].[my_data]' type='table'/>
+        <metadata-records>
+            <metadata-record class='column'>
+                <remote-name>name</remote-name>
+                <remote-type>130</remote-type>
+                <local-name>[name]</local-name>
+                <parent-name>[my_data]</parent-name>
+                <remote-alias>name</remote-alias>
+                <ordinal>1</ordinal>
+                <local-type>string</local-type>
+                <aggregation>Count</aggregation>
+                <width>8190</width>
+                <contains-null>true</contains-null>
+                <cast-to-local-type>true</cast-to-local-type>
+                <collation flag='0' name='LEN_RUS'/>
+                <attributes>
+                    <attribute datatype='string' name='DebugRemoteType'>&quot;SQL_WLONGVARCHAR&quot;</attribute>
+                    <attribute datatype='string' name='DebugWireType'>&quot;SQL_C_WCHAR&quot;</attribute>
+                </attributes>
+            </metadata-record>
+            <metadata-record class='column'>
+                <remote-name>typ</remote-name>
+                <remote-type>130</remote-type>
+                <local-name>[typ]</local-name>
+                <parent-name>[my_data]</parent-name>
+                <remote-alias>typ</remote-alias>
+                <ordinal>2</ordinal>
+                <local-type>string</local-type>
+                <aggregation>Count</aggregation>
+                <width>8190</width>
+                <contains-null>true</contains-null>
+                <cast-to-local-type>true</cast-to-local-type>
+                <collation flag='0' name='LEN_RUS'/>
+                <attributes>
+                    <attribute datatype='string' name='DebugRemoteType'>&quot;SQL_WLONGVARCHAR&quot;</attribute>
+                    <attribute datatype='string' name='DebugWireType'>&quot;SQL_C_WCHAR&quot;</attribute>
+                </attributes>
+            </metadata-record>
+            <metadata-record class='column'>
+                <remote-name>amount</remote-name>
+                <remote-type>3</remote-type>
+                <local-name>[amount]</local-name>
+                <parent-name>[my_data]</parent-name>
+                <remote-alias>amount</remote-alias>
+                <ordinal>3</ordinal>
+                <local-type>integer</local-type>
+                <aggregation>Sum</aggregation>
+                <precision>10</precision>
+                <contains-null>true</contains-null>
+                <attributes>
+                    <attribute datatype='string' name='DebugRemoteType'>&quot;SQL_INTEGER&quot;</attribute>
+                    <attribute datatype='string' name='DebugWireType'>&quot;SQL_C_SLONG&quot;</attribute>
+                </attributes>
+            </metadata-record>
+            <metadata-record class='column'>
+                <remote-name>price</remote-name>
+                <remote-type>5</remote-type>
+                <local-name>[price]</local-name>
+                <parent-name>[my_data]</parent-name>
+                <remote-alias>price</remote-alias>
+                <ordinal>4</ordinal>
+                <local-type>real</local-type>
+                <aggregation>Sum</aggregation>
+                <precision>17</precision>
+                <contains-null>true</contains-null>
+                <attributes>
+                    <attribute datatype='string' name='DebugRemoteType'>&quot;SQL_FLOAT&quot;</attribute>
+                    <attribute datatype='string' name='DebugWireType'>&quot;SQL_C_DOUBLE&quot;</attribute>
+                </attributes>
+            </metadata-record>
+        </metadata-records>
+    </connection>
+    <aliases enabled='yes'/>
+    <column caption='Calculation One' datatype='integer' name='[Calculation_357754699576291328]' role='measure' type='quantitative'>
+        <calculation class='tableau' formula='[amount] * 100'/>
+    </column>
+    <column datatype='integer' name='[Number of Records]' role='measure' type='quantitative' user:auto-column='numrec'>
+        <calculation class='tableau' formula='1'/>
+    </column>
+    <column caption='The Amount' datatype='integer' name='[amount]' role='dimension' type='quantitative'/>
+    <column caption='The Name' datatype='string' name='[name]' role='dimension' type='nominal'/>
+    <column caption='The Price' datatype='real' name='[price]' role='measure' type='quantitative'/>
+    <column caption='The Type' datatype='string' name='[typ]' role='dimension' type='nominal'>
+        <aliases>
+            <alias key='&quot;mein typ&quot;' value='mein typ alias'/>
+        </aliases>
+    </column>
+    <folder name="MyTestFolder" role="dimensions">
+        <folder-item name="[price]" type="field"/>
+    </folder>
+    <folder name="MySecondTestFolder" role="dimensions">
+        <folder-item name="[name]" type="field"/>
+    </folder>
+    <layout dim-ordering='alphabetic' dim-percentage='0.48449' measure-ordering='alphabetic' measure-percentage='0.51551' show-aliased-fields='true' show-structure='true'/>
+    <semantic-values>
+        <semantic-value key='[Country].[Name]' value='&quot;Germany&quot;'/>
+    </semantic-values>
+    <date-options start-of-week='monday'/>
+</datasource>

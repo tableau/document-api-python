@@ -1,4 +1,5 @@
 from .field import Field
+from .folder import Folder, FolderItem
 from .connection import Connection
 from .datasource import Datasource, ConnectionParser
 from .workbook import Workbook

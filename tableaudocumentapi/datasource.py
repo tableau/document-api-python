@@ -5,7 +5,7 @@ import xml.sax.saxutils as sax
 from uuid import uuid4
 
 from tableaudocumentapi import Connection, xfile
-from tableaudocumentapi import Field
+from tableaudocumentapi import Field, Folder
 from tableaudocumentapi.multilookup_dict import MultiLookupDict
 from tableaudocumentapi.xfile import xml_open
 
@@ -128,6 +128,7 @@ class Datasource(object):
             self._datasourceXML, version=self._version)
         self._connections = self._connection_parser.get_connections()
         self._fields = None
+        self._folders = None
 
     @classmethod
     def from_file(cls, filename):
@@ -245,6 +246,37 @@ class Datasource(object):
         return [_column_object_from_column_xml(self._datasourceTree, xml)
                 for xml in self._datasourceTree.findall('.//column')]
 
+    ###########
+    # folders
+    ###########
+    @property
+    def folders(self):
+        if not self._folders:
+            self._refresh_folders()
+        return self._folders
+
+    def _refresh_folders(self):
+        folders = Folder.all_folders_from_datasource(self)
+        self._folders = {f.name: f for f in folders}
+
+    def add_folder(self, name, role):
+        """ Adds a new, empty folder to the datasource and returns it.
+
+        Will fail if another folder of the same name already exists,
+        or if no valid role (dimensions or measures) is provided.
+        """
+
+        if name in self.folders.keys():
+            raise ValueError('Folder names must be unique')
+
+        # Create the folder object
+        parent_datasource = self  # The parent of the new folder is the current datasource
+        folder = Folder.from_name_and_role(name, role, parent_datasource)
+        # Add the folder xml to the datasources xml
+        self._datasourceXML.append(folder.xml)
+        self._refresh_folders()
+        return folder
+      
     def _get_custom_sql(self):
         return [qry for qry in self._datasourceXML.iter('relation')]
 
