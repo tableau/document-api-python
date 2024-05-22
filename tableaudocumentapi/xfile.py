@@ -5,7 +5,7 @@ import tempfile
 import zipfile
 from lxml import etree as ET
 
-from distutils.version import LooseVersion as Version
+from packaging.version import Version
 
 MIN_SUPPORTED_VERSION = Version("9.0")
 
