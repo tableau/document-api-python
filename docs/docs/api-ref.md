@@ -68,7 +68,7 @@ A class representing Tableau Data Sources, embedded in workbook files or in TDS 
 
 `self.name` Returns string with the name of datasource.
 
-`self.version` Returns string of daatasource's version.
+`self.version` Returns string of datasource's version.
 
 `self.caption` Returns string of user defined name of datasource if exists.
 
