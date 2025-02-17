@@ -1,0 +1,18 @@
+load("@rules_python//python:defs.bzl", "py_library")
+
+py_library(
+    name = "tableaudocumentapi",
+    srcs = [
+        "__init__.py",
+        "connection.py",
+        "datasource.py",
+        "dbclass.py",
+        "field.py",
+        "multilookup_dict.py",
+        "property_decorators.py",
+        "workbook.py",
+        "xfile.py",
+    ],
+    visibility = ["//:__subpackages__"],
+    deps = ["@pypi//lxml"],
+)
