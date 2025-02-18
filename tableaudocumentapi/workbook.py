@@ -1,5 +1,7 @@
 import weakref
 
+from lxml.etree import Element
+
 from tableaudocumentapi import Datasource, xfile
 from tableaudocumentapi.xfile import xml_open, TableauInvalidFileException
 
@@ -155,3 +157,56 @@ class Workbook(object):
             shapes.append(shape_name)
 
         return shapes
+
+    def __get_section(self, name):
+        """Get main section from document."""
+        for elt in self._workbookRoot:
+            if elt.tag == name:
+                return elt
+        raise KeyError(name)
+
+    def remove_worksheet_by_name(self, name: str) -> Element:
+        """Remove worksheet identified by 'name',
+
+        Returns: removed worksheet
+
+        Raises: KeyError if worksheet not in document
+        """
+        worksheets = self.__get_section("worksheets")
+        worksheet = None
+        for elt in worksheets:
+            if elt.attrib['name'] == name:
+                worksheet = elt
+                break
+        else:
+            raise KeyError(f"worksheet {name} is not in document")
+        worksheets.remove(worksheet)
+        assert worksheet not in worksheets
+        # Note: now worksheets property is invalid.
+        self._remove_window(name)
+        self._remove_viewpoint(name)
+        return worksheet
+
+    def _remove_window(self, name: str) -> None:
+        """Remove window if found."""
+        windows = self.__get_section("windows")
+        window = None
+        for elt in windows:
+            if elt.attrib["name"] == name:
+                window = elt
+                break
+        else:
+            return
+        windows.remove(window)
+        return
+
+    def _remove_viewpoint(self, name) -> None:
+        """remove viewpoint from dashboard if found"""
+        windows = self.__get_section("windows")
+        for window in windows:
+            if window.tag == 'window' and window.attrib['class'] == 'dashboard':
+                for viewpoints in window:
+                    if viewpoints.tag == 'viewpoints':
+                        for viewpoint in viewpoints:
+                            if viewpoint.tag == 'viewpoint' and viewpoint.attrib['name'] == name:
+                                viewpoints.remove(viewpoint)

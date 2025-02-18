@@ -64,7 +64,15 @@ gazelle(
 
 py_library(
     name = "document-api-python",
-    srcs = ["bin/remove-sheet/remove_sheet.py"],
+    srcs = [
+        "samples/preserve-namespaces/preserve-namespaces.py",
+        "samples/replicate-workbook/replicate_workbook.py",
+        "samples/show-fields/show_fields.py",
+        "samples/show_workbook_info/show_workbook_info.py",
+    ],
     visibility = ["//:__subpackages__"],
-    deps = ["//tableaudocumentapi"],
+    deps = [
+        "//tableaudocumentapi",
+        "@pypi//lxml",
+    ],
 )
