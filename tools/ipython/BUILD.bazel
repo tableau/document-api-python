@@ -5,6 +5,6 @@ py_console_script_binary(
     name = "ipython",
     pkg = "@pypi//ipython:pkg",
     deps = [
-        "//tableaudocumentapi"
+        "//tableaudocumentapi",
     ],
 )
