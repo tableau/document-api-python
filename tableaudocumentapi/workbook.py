@@ -165,6 +165,26 @@ class Workbook(object):
                 return elt
         raise KeyError(name)
 
+    def remove_dashboard_by_name(self, name: str) -> Element:
+        """Remove dashboard identified by 'name',
+
+        Returns: removed dashboard
+
+        Raises: KeyError if dashboard not in document
+        """
+        dashboards = self.__get_section("dashboards")
+        dashboard = None
+        for elt in dashboards:
+            if elt.attrib['name'] == name:
+                dashboard = elt
+                break
+        else:
+            raise KeyError(f"dashboard {name} is not in document")
+        dashboards.remove(dashboard)
+        assert dashboard not in dashboards
+        self._remove_window(name)
+        return dashboard
+
     def remove_worksheet_by_name(self, name: str) -> Element:
         """Remove worksheet identified by 'name',
 
