@@ -61,6 +61,8 @@ gazelle(
 
 # gazelle:python_ignore_files setup.py
 # gazelle:resolve py lxml.etree @pypi//lxml
+# gazelle:python_binary_naming_convention $package_name$
+# gazelle:python_library_naming_convention $package_name$
 
 py_library(
     name = "document-api-python",
