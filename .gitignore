@@ -72,6 +72,7 @@ target/
 *.sublime-workspace
 settings.json
 tasks.json
+*~
 
 #Jekyll
 docs/_site
