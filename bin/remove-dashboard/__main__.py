@@ -13,7 +13,7 @@ for dashboard in twb.dashboards:
 db0_name = twb.dashboards[0]
 print(f"removing dashboard {db0_name}\n")
 
-# twb.remove_dashboard_by_name(db0_name)
+twb.remove_dashboard_by_name(db0_name)
 
 print("\nafter deleting dashboard from workbook\n")
 for dashboard in twb.dashboards:
