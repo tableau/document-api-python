@@ -1,6 +1,5 @@
 load("@bazel_gazelle//:def.bzl", "gazelle")
 load("@pypi//:requirements.bzl", "all_whl_requirements")
-load("@rules_python//python:defs.bzl", "py_library")
 load("@rules_python//python:pip.bzl", "compile_pip_requirements")
 load("@rules_python_gazelle_plugin//manifest:defs.bzl", "gazelle_python_manifest")
 load("@rules_python_gazelle_plugin//modules_mapping:def.bzl", "modules_mapping")
@@ -59,22 +58,8 @@ gazelle(
     gazelle = "@rules_python_gazelle_plugin//python:gazelle_binary",
 )
 
+# gazelle:exclude samples
 # gazelle:python_ignore_files setup.py
 # gazelle:resolve py lxml.etree @pypi//lxml
 # gazelle:python_binary_naming_convention $package_name$
 # gazelle:python_library_naming_convention $package_name$
-
-py_library(
-    name = "document-api-python",
-    srcs = [
-        "samples/preserve-namespaces/preserve-namespaces.py",
-        "samples/replicate-workbook/replicate_workbook.py",
-        "samples/show-fields/show_fields.py",
-        "samples/show_workbook_info/show_workbook_info.py",
-    ],
-    visibility = ["//:__subpackages__"],
-    deps = [
-        "//tableaudocumentapi",
-        "@pypi//lxml",
-    ],
-)
