@@ -1,0 +1,68 @@
+load("@rules_python//python:defs.bzl", "py_binary", "py_library", "py_test")
+
+py_binary(
+    name = "bvt",
+    srcs = ["bvt.py"],
+    visibility = ["//:__subpackages__"],
+    deps = [
+        "//tableaudocumentapi",
+        "//test/assets",
+        "@pypi//lxml",
+    ],
+)
+
+py_library(
+    name = "test",
+    srcs = [
+        "__init__.py",
+        "bvt.py",
+    ],
+    visibility = ["//:__subpackages__"],
+    deps = [
+        "//tableaudocumentapi",
+        "//test/assets",
+        "@pypi//lxml",
+    ],
+)
+
+py_test(
+    name = "test_datasource",
+    srcs = ["test_datasource.py"],
+    deps = ["//tableaudocumentapi"],
+)
+
+py_test(
+    name = "test_field",
+    srcs = ["test_field.py"],
+    deps = ["//tableaudocumentapi"],
+)
+
+py_test(
+    name = "test_field_change",
+    srcs = ["test_field_change.py"],
+    deps = [
+        "//tableaudocumentapi",
+        "@pypi//lxml",
+    ],
+)
+
+py_test(
+    name = "test_multidict",
+    srcs = ["test_multidict.py"],
+    deps = ["//tableaudocumentapi"],
+)
+
+py_test(
+    name = "test_workbook",
+    srcs = ["test_workbook.py"],
+    deps = ["//tableaudocumentapi"],
+)
+
+py_test(
+    name = "test_xfile",
+    srcs = ["test_xfile.py"],
+    deps = [
+        "//tableaudocumentapi",
+        "//test/assets",
+    ],
+)
