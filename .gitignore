@@ -3,6 +3,10 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+
+# bazel
+bazel-*
+
 # C extensions
 *.so
 
@@ -66,6 +70,7 @@ target/
 #Other things
 .DS_Store
 .idea
+.python-version
 
 #Editor things
 *.sublime-project
