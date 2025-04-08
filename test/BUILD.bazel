@@ -66,3 +66,14 @@ py_test(
         "//test/assets",
     ],
 )
+
+py_test(
+    name = "test_nutanix",
+    srcs = ["test_nutanix.py", "runner.py"],
+    main = "runner.py",
+    deps = [
+        "//tableaudocumentapi",
+        "@pypi//ward",
+    ],
+    data = ["//test/assets:workbooks"]
+)

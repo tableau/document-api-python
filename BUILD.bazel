@@ -1,15 +1,16 @@
 load("@bazel_gazelle//:def.bzl", "gazelle")
 load("@pypi//:requirements.bzl", "all_whl_requirements")
-load("@rules_python//python:pip.bzl", "compile_pip_requirements")
 load("@rules_python//python:packaging.bzl", "py_package", "py_wheel")
+load("@rules_python//python:pip.bzl", "compile_pip_requirements")
 load("@rules_python_gazelle_plugin//manifest:defs.bzl", "gazelle_python_manifest")
 load("@rules_python_gazelle_plugin//modules_mapping:def.bzl", "modules_mapping")
 
 compile_pip_requirements(
     name = "requirements",
     srcs = ["pyproject.toml"],
-    requirements_darwin="requirements_darwin.txt",
-    requirements_linux="requirements_linux.txt",
+    requirements_darwin = "requirements_darwin.txt",
+    requirements_linux = "requirements_linux.txt",
+    requirements_txt = "requirements.txt",
 )
 
 # This rule fetches the metadata for python packages we depend on. That data is
@@ -63,10 +64,8 @@ gazelle(
 
 # gazelle:exclude samples
 # gazelle:python_ignore_files setup.py
-# gazelle:resolve py lxml.etree @pypi//lxml
 # gazelle:python_binary_naming_convention $package_name$
 # gazelle:python_library_naming_convention $package_name$
-
 
 # Publishing
 
@@ -74,9 +73,9 @@ py_wheel(
     name = "wheel",
     distribution = "tableaudocumentapi_ntnx",
     homepage = "https://github.com/nutanix-corp/ng-common-utilities/tree/tableaudocumentapi_ntnx/tableaudocumentapi_ntnx",
-    version = '0.11.1',
-    deps = ["//tableaudocumentapi:tableaudocumentapi"],
     requires = [
-        "lxml"
+        "lxml",
     ],
+    version = "0.11.1",
+    deps = ["//tableaudocumentapi"],
 )

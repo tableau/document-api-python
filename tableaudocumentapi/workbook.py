@@ -185,6 +185,23 @@ class Workbook(object):
         self._remove_window(name)
         return dashboard
 
+    def worksheet_names(self, hidden=False):
+        """Get names of worksheets
+
+        By default the names of hidden worksheets are not returned. Use hidden=True to see all worksheets.
+        """
+        windows = {}
+        for elt in self.__get_section("windows"):
+            windows[elt.attrib["name"]] = elt
+        names = []
+        for name in self._worksheets:
+            window = windows[name]
+            hidden = window.attrib.get("hidden")
+            if hidden and hidden == 'true':
+                continue
+            names.append(name)
+        return names
+
     def remove_worksheet_by_name(self, name: str) -> Element:
         """Remove worksheet identified by 'name',
 

@@ -4,7 +4,62 @@
 #   bazel run //:gazelle_python_manifest.update
 
 manifest:
-  modules_mapping: {}
+  modules_mapping:
+    IPython: ipython
+    asttokens: asttokens
+    backports: backports.tarfile
+    certifi: certifi
+    charset_normalizer: charset_normalizer
+    click: click
+    click_completion: click_completion
+    click_default_group: click_default_group
+    cucumber_tag_expressions: cucumber_tag_expressions
+    ddc459050edb75a05942__mypyc: tomli
+    decorator: decorator
+    docutils: docutils
+    executing: executing
+    id: id
+    idna: idna
+    importlib_metadata: importlib_metadata
+    ipython_pygments_lexers: ipython_pygments_lexers
+    jaraco.classes: jaraco.classes
+    jaraco.context: jaraco.context
+    jaraco.functools: jaraco.functools
+    jedi: jedi
+    jinja2: jinja2
+    keyring: keyring
+    lxml: lxml
+    markdown_it: markdown_it_py
+    markupsafe: MarkupSafe
+    matplotlib_inline: matplotlib_inline
+    mdurl: mdurl
+    more_itertools: more_itertools
+    nh3: nh3
+    packaging: packaging
+    parso: parso
+    pexpect: pexpect
+    pluggy: pluggy
+    pprintpp: pprintpp
+    prompt_toolkit: prompt_toolkit
+    ptyprocess: ptyprocess
+    pure_eval: pure_eval
+    pygments: pygments
+    readme_renderer: readme_renderer
+    requests: requests
+    requests_toolbelt: requests_toolbelt
+    rfc3986: rfc3986
+    rich: rich
+    shellingham: shellingham
+    six: six
+    stack_data: stack_data
+    tomli: tomli
+    traitlets: traitlets
+    twine: twine
+    typing_extensions: typing_extensions
+    urllib3: urllib3
+    ward: ward
+    wcwidth: wcwidth
+    zipp: zipp
   pip_repository:
     name: pypi
-integrity: 745d8c975f02ab21130991aa2f26519c2a9c68235981f021380ed5e1945d0d73
+integrity: e80d37e224056e922a98d7fc2db08be95496f95137ebadc6df4a2f9d4123b0a2

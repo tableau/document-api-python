@@ -8,3 +8,10 @@ py_library(
     ],
     visibility = ["//:__subpackages__"],
 )
+
+
+filegroup(
+    name="workbooks",
+    srcs = glob(["*.twb", "*.twbx"]),
+    visibility = ["//:__subpackages__"]
+)
