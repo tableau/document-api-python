@@ -1,5 +1,5 @@
 import weakref
-
+from tableaudocumentapi.dashboard import Dashboard
 from tableaudocumentapi import Datasource, xfile
 from tableaudocumentapi.xfile import xml_open, TableauInvalidFileException
 
@@ -23,7 +23,8 @@ class Workbook(object):
         self._workbookRoot = self._workbookTree.getroot()
 
         self._dashboards = self._prepare_dashboards(self._workbookRoot)
-
+        self._dashboard_objects = self._prepare_dashboard_objects(self._workbookRoot)
+                                
         self._datasources = self._prepare_datasources(
             self._workbookRoot)
 
@@ -32,11 +33,16 @@ class Workbook(object):
         self._worksheets = self._prepare_worksheets(
             self._workbookRoot, self._datasource_index)
 
+    
         self._shapes = self._prepare_shapes(self._workbookRoot)
 
     @property
     def dashboards(self):
         return self._dashboards
+
+    @property
+    def dashboard_objects(self):
+        return self._dashboard_objects
 
     @property
     def datasources(self):
@@ -45,6 +51,7 @@ class Workbook(object):
     @property
     def worksheets(self):
         return self._worksheets
+    
 
     @property
     def filename(self):
@@ -119,6 +126,21 @@ class Workbook(object):
             dashboards.append(dash_name)
 
         return dashboards
+    
+    @staticmethod
+    def _prepare_dashboard_objects(xml_root):
+        dashboard_objects = []
+
+        # loop through our dashboards and append
+        dashboard_elements = xml_root.find('dashboards')
+        if dashboard_elements is None:
+            return []
+
+        for dashboard in dashboard_elements:
+            db = Dashboard(dashboard)
+            dashboard_objects.append(db)
+
+        return dashboard_objects
 
     @staticmethod
     def _prepare_worksheets(xml_root, ds_index):
@@ -142,6 +164,7 @@ class Workbook(object):
                         datasource.fields[column_name].add_used_in(worksheet_name)
 
         return worksheets
+
 
     @staticmethod
     def _prepare_shapes(xml_root):
