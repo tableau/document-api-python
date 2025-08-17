@@ -1,3 +1,4 @@
+from tableaudocumentapi.datasource_dependency import DatasourceDependency
 class Dashboard(object):
     """ A class representing a Tableau Dashboard in a workbook file. """
     
@@ -25,7 +26,7 @@ class Dashboard(object):
     
     @property
     def datasource_dependencies(self):
-        """ Return the datasource dependencies """
+        """ Return the dashboard datasource dependencies """
         return self._datasource_dependences
     
     
@@ -42,37 +43,4 @@ class Dashboard(object):
             if dependency.get("datasource"):
                 datasource_dependencies.append(DatasourceDependency(dependency))
         return datasource_dependencies
-        
-class DatasourceDependency(object):
-    """ A class representing a datasource dependency in a dashboard or worksheet"""
-    def __init__(self, dependency_xml):
-        """ Initialize DatasourceDependency from XML Element
-        
-        Args:
-            dependency_xml: XML element representing the datasource dependency
-        """
-        self._xml = dependency_xml
-        self._datasource = dependency_xml.attrib['datasource']
-        self._columns = self._parse_columns()
-        
-    @property
-    def xml(self):
-        """Return xml of the datsource dependency """
-        return self._xml
-    
-    @property
-    def datasource(self):
-        """Return datasource name of the dependency """
-        return self._datasource
-    
-    @property
-    def xml(self):
-        """Return columns of the datsource dependency """
-        return self._columns
-    
-    def _parse_columns(self):
-        columns = []
-        for column in self._xml.findall('column'):
-            columns.append(column.attrib['name'])
-        return columns
         

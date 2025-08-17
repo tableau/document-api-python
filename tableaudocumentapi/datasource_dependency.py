@@ -21,7 +21,7 @@ class DatasourceDependency(object):
         return self._datasource
     
     @property
-    def xml(self):
+    def columns(self):
         """Return columns of the datsource dependency """
         return self._columns
     

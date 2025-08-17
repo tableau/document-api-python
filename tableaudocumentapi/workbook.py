@@ -1,5 +1,6 @@
 import weakref
 from tableaudocumentapi.dashboard import Dashboard
+from tableaudocumentapi.worksheet import Worksheet
 from tableaudocumentapi import Datasource, xfile
 from tableaudocumentapi.xfile import xml_open, TableauInvalidFileException
 
@@ -23,6 +24,7 @@ class Workbook(object):
         self._workbookRoot = self._workbookTree.getroot()
 
         self._dashboards = self._prepare_dashboards(self._workbookRoot)
+        
         self._dashboard_objects = self._prepare_dashboard_objects(self._workbookRoot)
                                 
         self._datasources = self._prepare_datasources(
@@ -32,6 +34,8 @@ class Workbook(object):
 
         self._worksheets = self._prepare_worksheets(
             self._workbookRoot, self._datasource_index)
+        
+        self._worksheet_objects = self._prepare_worksheet_objects(self._workbookRoot)
 
     
         self._shapes = self._prepare_shapes(self._workbookRoot)
@@ -52,6 +56,9 @@ class Workbook(object):
     def worksheets(self):
         return self._worksheets
     
+    @property
+    def worksheet_objects(self):
+        return self._worksheet_objects
 
     @property
     def filename(self):
@@ -165,6 +172,20 @@ class Workbook(object):
 
         return worksheets
 
+    @staticmethod
+    def _prepare_worksheet_objects(xml_root):
+        worksheet_objects = []
+
+        # loop through our worksheets and append
+        worksheet_elements = xml_root.find('worksheets')
+        if worksheet_elements is None:
+            return []
+
+        for worksheet in worksheet_elements:
+            wsheet = Worksheet(worksheet)
+            worksheet_objects.append(wsheet)
+
+        return worksheet_objects
 
     @staticmethod
     def _prepare_shapes(xml_root):
