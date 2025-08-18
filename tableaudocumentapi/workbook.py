@@ -1,6 +1,7 @@
 import weakref
 from tableaudocumentapi.dashboard import Dashboard
 from tableaudocumentapi.worksheet import Worksheet
+from tableaudocumentapi.query import Query
 from tableaudocumentapi import Datasource, xfile
 from tableaudocumentapi.xfile import xml_open, TableauInvalidFileException
 
@@ -37,8 +38,9 @@ class Workbook(object):
         
         self._worksheet_objects = self._prepare_worksheet_objects(self._workbookRoot)
 
-    
         self._shapes = self._prepare_shapes(self._workbookRoot)
+        
+        self._query = Query(self)
 
     @property
     def dashboards(self):
@@ -67,6 +69,10 @@ class Workbook(object):
     @property
     def shapes(self):
         return self._shapes
+    
+    @property
+    def query(self):
+        return self._query
 
     def save(self):
         """
