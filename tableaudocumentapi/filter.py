@@ -8,7 +8,7 @@ class Filter(object):
         """
         self._xml = filter_xml 
         self._filter_class = filter_xml.attrib['class']
-        self._columns = filter_xml.attrib['column']
+        self._column = self._between_colons(filter_xml.attrib['column'])
         
     @property
     def xml(self):
@@ -17,11 +17,16 @@ class Filter(object):
     
     @property
     def filter_class(self):
-        """Return class attribute of the filter"""
+        """Return class attribute of the filter""" 
         return self._filter_class
     
     @property
-    def columns(self):
-        """Return columns of the datsource dependency """
-        return self._columns
+    def column(self):
+        """Return columns of the filter """
+        return self._column
     
+    @staticmethod
+    def _between_colons(text):
+        parts = text.split(":")
+        return parts[1] if len(parts) > 2 else text
+

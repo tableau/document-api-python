@@ -33,7 +33,10 @@ class Dashboard(object):
     # /workbook/windows/window[2]
     def _parse_worksheets(self):
         worksheets = []
-        # Todo - Implement worksheet getting functionality in twb_parser or vizDiff
+        for _ in self.xml.find('zones').findall(".//zone"):
+            if 'name' in _.attrib:
+                worksheets.append(_.attrib['name'])
+        return worksheets       
         
     # /workbook/dashboards/dashboard/datasource-dependencies
     def _parse_datasource_dependencies(self):

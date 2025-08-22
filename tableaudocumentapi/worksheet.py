@@ -42,7 +42,7 @@ class Worksheet(object):
     @property
     def cols(self):
         """Return the worksheet rows"""
-        return self.cols
+        return self._cols
     
     @property
     def id(self):

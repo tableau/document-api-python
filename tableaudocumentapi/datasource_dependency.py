@@ -26,8 +26,8 @@ class DatasourceDependency(object):
         return self._columns
     
     def _parse_columns(self):
-        columns = []
+        columns = {}
         for column in self._xml.findall('column'):
-            columns.append(column)
+            columns[column.attrib['name'][1:-1]]= dict(column.attrib)
         return columns
         

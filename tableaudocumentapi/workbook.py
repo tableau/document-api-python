@@ -142,16 +142,16 @@ class Workbook(object):
     
     @staticmethod
     def _prepare_dashboard_objects(xml_root):
-        dashboard_objects = []
+        dashboard_objects = {}
 
         # loop through our dashboards and append
         dashboard_elements = xml_root.find('dashboards')
         if dashboard_elements is None:
-            return []
+            return {}
 
         for dashboard in dashboard_elements:
             db = Dashboard(dashboard)
-            dashboard_objects.append(db)
+            dashboard_objects[db.name] = db
 
         return dashboard_objects
 
@@ -180,16 +180,16 @@ class Workbook(object):
 
     @staticmethod
     def _prepare_worksheet_objects(xml_root):
-        worksheet_objects = []
+        worksheet_objects = {}
 
-        # loop through our worksheets and append
+        # loop through our worksheets and add to worksheets dict
         worksheet_elements = xml_root.find('worksheets')
         if worksheet_elements is None:
             return []
 
         for worksheet in worksheet_elements:
             wsheet = Worksheet(worksheet)
-            worksheet_objects.append(wsheet)
+            worksheet_objects[wsheet.name] = wsheet
 
         return worksheet_objects
 
