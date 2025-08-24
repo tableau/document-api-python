@@ -2,6 +2,8 @@ import weakref
 from tableaudocumentapi.dashboard import Dashboard
 from tableaudocumentapi.worksheet import Worksheet
 from tableaudocumentapi.query import Query
+from tableaudocumentapi.datasource_dependency import DatasourceDependency
+from tableaudocumentapi.filter import Filter
 from tableaudocumentapi import Datasource, xfile
 from tableaudocumentapi.xfile import xml_open, TableauInvalidFileException
 
