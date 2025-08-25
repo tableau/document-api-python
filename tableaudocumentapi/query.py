@@ -12,7 +12,6 @@ class Query(object):
         for this_worksheet in self._workbook.worksheet_objects:
             worksheet_dashboard_map[this_worksheet] = []
             for dashboard, worksheets_in_dashboard in self._workbook.dashboard_objects.items():
-                import pdb; pdb.set_trace()
                 if this_worksheet in worksheets_in_dashboard.worksheets:
                     worksheet_dashboard_map[this_worksheet].append(dashboard)
         return worksheet_dashboard_map
@@ -22,10 +21,8 @@ class Query(object):
     def get_workbook_dependencies(self):
         workbook_dependencies = []
         for worksheet in self._workbook.worksheet_objects.values():
-            # import pdb; pdb.set_trace()
             for dependency in worksheet.datasource_dependencies:
                 for column in dependency.columns.values():
-                    # import pdb; pdb.set_trace()
                     workbook_dependencies.append({
                         "Workbook":self._workbook.filename,
                         "Dashboard":self._worksheet_dashboard_map.get(worksheet.name),

@@ -7,7 +7,7 @@ class Dashboard(object):
         self._xml = dashboard_xml
         self._name = dashboard_xml.attrib['name']
         self._worksheets = self._parse_worksheets()
-        self._datasource_dependences = self._parse_datasource_dependencies()
+        self._datasource_dependencies = self._parse_datasource_dependencies()
         
     @property
     def xml(self):
@@ -21,25 +21,24 @@ class Dashboard(object):
     
     @property
     def worksheets(self):
-        """Return the worksheets contained in the dashboard"""
+        """Return the worksheets """
         return self._worksheets
     
     @property
     def datasource_dependencies(self):
         """ Return the dashboard datasource dependencies """
-        return self._datasource_dependences
+        return self._datasource_dependencies
     
-    
-    # /workbook/windows/window[2]
     def _parse_worksheets(self):
+        """Function that will parse all the worksheets under dashboard """
         worksheets = []
-        for _ in self.xml.find('zones').findall(".//zone"):
-            if 'name' in _.attrib:
-                worksheets.append(_.attrib['name'])
+        for zone in self.xml.find('zones').findall(".//zone"):
+            if 'name' in zone.attrib:
+                worksheets.append(zone.attrib['name'])
         return worksheets       
         
-    # /workbook/dashboards/dashboard/datasource-dependencies
     def _parse_datasource_dependencies(self):
+        """Get all the datasource dependencies under the dashboard"""
         datasource_dependencies = []
         datasource_dependency_elements = self._xml.findall('datasource-dependencies')
         for dependency in datasource_dependency_elements:

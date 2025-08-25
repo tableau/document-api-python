@@ -1,3 +1,4 @@
+from traitlets import default
 from tableaudocumentapi.datasource_dependency import DatasourceDependency
 from tableaudocumentapi.filter import Filter
 
@@ -41,12 +42,12 @@ class Worksheet(object):
     
     @property
     def cols(self):
-        """Return the worksheet rows"""
+        """Return the worksheet cols"""
         return self._cols
     
     @property
     def id(self):
-        """Return the worksheet rows"""
+        """Return the worksheet id"""
         return self._id
     
     def _parse_datasource_dependencies(self):
@@ -66,13 +67,15 @@ class Worksheet(object):
             filters.append(Filter(filter))
         return filters    
     
-    def _parse_rows_cols(self, type):
+    def _parse_rows_cols(self, row_or_col):
         """Function that will parse the rows and columns in the worksheet"""
+        if row_or_col not in ["rows", "cols"]:
+            raise ValueError("row_or_col must be 'rows' or 'cols'")
+        
         element_list = []
-        if type == "rows":
-            if self._xml.find('table/rows').text:
-                element_list = self._xml.find('table/rows').text[1:-1].split(' / ')
-        else:
-            if self._xml.find('table/cols').text:
-                element_list = self._xml.find('table/cols').text[1:-1].split(' / ')
+        path = f"table/{row_or_col}"
+        text = self._xml.findtext(path, default='').strip()
+        
+        if text:
+            element_list = text.split(' / ')
         return element_list
