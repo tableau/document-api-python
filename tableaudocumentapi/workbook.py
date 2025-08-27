@@ -186,7 +186,7 @@ class Workbook(object):
         # loop through our worksheets and add to worksheets dict
         worksheet_elements = xml_root.find('worksheets')
         if worksheet_elements is None:
-            return []
+            return {}
 
         for worksheet in worksheet_elements:
             wsheet = Worksheet(worksheet)

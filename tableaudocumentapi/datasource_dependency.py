@@ -7,8 +7,9 @@ class DatasourceDependency(object):
             dependency_xml: XML element representing the datasource dependency
         """
         self._xml = dependency_xml
-        self._datasource = dependency_xml.attrib['datasource']
+        self._datasource = dependency_xml.get('datasource')
         self._columns = self._parse_columns()
+        self._column_instances = self._parse_column_instances()
         
     @property
     def xml(self):
@@ -26,8 +27,19 @@ class DatasourceDependency(object):
         return self._columns
     
     def _parse_columns(self):
-        columns = {}
+        columns = []
         for column in self._xml.findall('column'):
-            columns[column.attrib['name']]= dict(column.attrib)
+            name = column.get('name')
+            if name:
+                columns.append(name)
         return columns
-        
+    
+    
+    def _parse_column_instances(self):
+        column_instances = {}
+        for column_instance in self._xml.findall('column-instance'):
+            col_attrib = column_instance.get('column')
+            if col_attrib:
+                column_instances[col_attrib]= dict(column_instance.attrib)
+        return column_instances
+    

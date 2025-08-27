@@ -13,7 +13,8 @@ class Worksheet(object):
         self._filters = self._parse_filters()
         self._rows = self._parse_rows_cols('rows')
         self._cols = self._parse_rows_cols('cols')
-        self._id = worksheet_xml.find('simple-id').get('uuid').replace("{", "").replace("}","")
+        simple_id = worksheet_xml.find('simple-id')
+        self._id = simple_id.get('uuid', '').replace("{", "").replace("}", "") if simple_id is not None else ''
         
     @property
     def xml(self):

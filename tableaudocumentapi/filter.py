@@ -8,6 +8,7 @@ class Filter(object):
         Args:
             filter_xml: XML element representing the filter
         """
+        
         self._xml = filter_xml 
         self._filter_class = filter_xml.get('class')
         self._column = _clean_aggregated_column_name(filter_xml.get('column'))
@@ -18,6 +19,11 @@ class Filter(object):
         return self._xml
     
     @property
+    def field_object(self):
+        """Return xml of the datsource dependency """
+        return self._field_object
+    
+    @property
     def filter_class(self):
         """Return class attribute of the filter""" 
         return self._filter_class
@@ -26,3 +32,5 @@ class Filter(object):
     def column(self):
         """Return columns of the filter """
         return self._column
+
+    

@@ -1,3 +1,4 @@
+import re
 class Query(object):
     """A class for querying the parsed elements of the Tableau Workbook"""
     
@@ -37,3 +38,19 @@ class Query(object):
         return workbook_dependencies
     
     
+    
+    def get_field_objects(self, column):
+        """Link filter column or worksheets rows/cols to actual Field object from datasource"""
+        
+        if not isinstance(column, str) or not column:
+            return None
+
+        # Extract field name from column reference
+        # '[federated.xxx].[Table]' -> 'Table'
+        result = re.split(r'(?<=\])\.(?=\[)', column)
+        # Find matching field in datasources
+        for datasource in self._workbook.datasources:
+            if result[0][1:-1] == datasource.name:
+                if result[1] in datasource.fields:
+                    return datasource.fields[result[1]]
+        return None
