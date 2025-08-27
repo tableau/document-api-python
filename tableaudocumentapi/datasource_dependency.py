@@ -26,6 +26,11 @@ class DatasourceDependency(object):
         """Return columns of the datsource dependency """
         return self._columns
     
+    @property
+    def column_instances(self):
+        """Return columns of the datsource dependency """
+        return self._column_instances
+    
     def _parse_columns(self):
         columns = []
         for column in self._xml.findall('column'):

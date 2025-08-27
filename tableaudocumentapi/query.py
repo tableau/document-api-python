@@ -23,19 +23,36 @@ class Query(object):
         workbook_dependencies = []
         for worksheet in self._workbook.worksheet_objects.values():
             for dependency in worksheet.datasource_dependencies:
-                for column in dependency.columns.values():
+                for column_instance in dependency.column_instances.values():
                     workbook_dependencies.append({
                         "Workbook":self._workbook.filename,
                         "Dashboard":self._worksheet_dashboard_map.get(worksheet.name),
                         "Worksheet":worksheet.name,
                         "Datasource":dependency.datasource,
-                        "Field":column.get('name'),
-                        "Caption":column.get('caption'),
-                        "Datatype":column.get('datatype'),
-                        "Role":column.get('role'),
-                        "Type":column.get('type')
+                        "Columns":dependency.columns,
+                        "Column_instance":column_instance.get('column'),
+                        "Column_instance_Derivation":column_instance.get('derivation'),
+                        "Column_instance_Name":column_instance.get('name'),
+                        "Column_instance_Pivot":column_instance.get('pivot'),
+                        "Column_instance_Type":column_instance.get('type')
                     })
         return workbook_dependencies
+    
+    
+    
+    def get_workbook_filters(self):
+        workbook_filters = []
+        for worksheet in self._workbook.worksheet_objects.values():
+            for filter_obj in worksheet.filters:
+                workbook_filters.append({
+                    "Workbook": self._workbook.filename,
+                    "Dashboard": self._worksheet_dashboard_map.get(worksheet.name),
+                    "Worksheet": worksheet.name,
+                    "Filter_class": filter_obj.filter_class,
+                    "Column": filter_obj.column,
+                    "Groupfilters": filter_obj.groupfilters
+                })
+        return workbook_filters
     
     
     
