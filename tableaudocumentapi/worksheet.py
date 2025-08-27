@@ -1,7 +1,7 @@
-from traitlets import default
 from tableaudocumentapi.datasource_dependency import DatasourceDependency
 from tableaudocumentapi.filter import Filter
-
+from tableaudocumentapi.utils import _clean_aggregated_column_name
+import re
 class Worksheet(object):
     """A class representing a Worksheet in a Tableau workbook file """
     
@@ -63,19 +63,19 @@ class Worksheet(object):
         """Function that will parse the filters under the worksheet"""
         filters = []
         filter_elements = self._xml.findall('table/view/filter')
-        for filter in filter_elements:
-            filters.append(Filter(filter))
+        for filter_element in filter_elements:
+            filters.append(Filter(filter_element))
         return filters    
     
+
     def _parse_rows_cols(self, row_or_col):
         """Function that will parse the rows and columns in the worksheet"""
         if row_or_col not in ["rows", "cols"]:
             raise ValueError("row_or_col must be 'rows' or 'cols'")
-        
-        element_list = []
+
         path = f"table/{row_or_col}"
         text = self._xml.findtext(path, default='').strip()
-        
-        if text:
-            element_list = text.split(' / ')
-        return element_list
+        if not text:
+            return []
+
+        return _clean_aggregated_column_name(text)

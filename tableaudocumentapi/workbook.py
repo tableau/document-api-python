@@ -7,7 +7,6 @@ from tableaudocumentapi.filter import Filter
 from tableaudocumentapi import Datasource, xfile
 from tableaudocumentapi.xfile import xml_open, TableauInvalidFileException
 
-
 class Workbook(object):
     """A class for writing Tableau workbook files."""
 
@@ -207,3 +206,5 @@ class Workbook(object):
             shapes.append(shape_name)
 
         return shapes
+    
+    
