@@ -8,7 +8,7 @@ from tableaudocumentapi import Connection, xfile
 from tableaudocumentapi import Field
 from tableaudocumentapi.multilookup_dict import MultiLookupDict
 from tableaudocumentapi.xfile import xml_open
-
+from tableaudocumentapi.filter import Filter, _parse_filters
 
 _ColumnObjectReturnTuple = collections.namedtuple('_ColumnObjectReturnTupleType', ['id', 'object'])
 
@@ -128,7 +128,8 @@ class Datasource(object):
             self._datasourceXML, version=self._version)
         self._connections = self._connection_parser.get_connections()
         self._fields = None
-
+        self._filters = _parse_filters(self._datasourceXML, "filter")
+        
     @classmethod
     def from_file(cls, filename):
         """Initialize datasource from file (.tds ot .tdsx)"""
@@ -211,6 +212,11 @@ class Datasource(object):
     def connections(self):
         """ List of connections are used in workbook. """
         return self._connections
+    
+    @property
+    def filters(self):
+        """Return the worksheet filters"""
+        return self._filters
 
     def clear_repository_location(self):
         tag = self._datasourceXML.find('./repository-location')

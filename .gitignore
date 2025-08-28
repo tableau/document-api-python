@@ -75,3 +75,9 @@ tasks.json
 
 #Jekyll
 docs/_site
+
+# Miscellaneous Temp folder
+temp/
+
+# Virtual Environment
+venv/

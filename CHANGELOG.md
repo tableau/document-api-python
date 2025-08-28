@@ -1,3 +1,6 @@
+## 012 (August 2025)
+* Added dashboard, worksheet and query objects
+
 ## 011 (November 2022)
 * Remove extraneous debug print statements
 

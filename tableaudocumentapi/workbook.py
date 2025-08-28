@@ -1,8 +1,11 @@
 import weakref
-
+from tableaudocumentapi.dashboard import Dashboard
+from tableaudocumentapi.worksheet import Worksheet
+from tableaudocumentapi.query import Query
+from tableaudocumentapi.datasource_dependency import DatasourceDependency
+from tableaudocumentapi.filter import Filter
 from tableaudocumentapi import Datasource, xfile
 from tableaudocumentapi.xfile import xml_open, TableauInvalidFileException
-
 
 class Workbook(object):
     """A class for writing Tableau workbook files."""
@@ -23,7 +26,9 @@ class Workbook(object):
         self._workbookRoot = self._workbookTree.getroot()
 
         self._dashboards = self._prepare_dashboards(self._workbookRoot)
-
+        
+        self._dashboard_objects = self._prepare_dashboard_objects(self._workbookRoot)
+                                
         self._datasources = self._prepare_datasources(
             self._workbookRoot)
 
@@ -31,12 +36,20 @@ class Workbook(object):
 
         self._worksheets = self._prepare_worksheets(
             self._workbookRoot, self._datasource_index)
+        
+        self._worksheet_objects = self._prepare_worksheet_objects(self._workbookRoot)
 
         self._shapes = self._prepare_shapes(self._workbookRoot)
+        
+        self._query = Query(self)
 
     @property
     def dashboards(self):
         return self._dashboards
+
+    @property
+    def dashboard_objects(self):
+        return self._dashboard_objects
 
     @property
     def datasources(self):
@@ -45,6 +58,10 @@ class Workbook(object):
     @property
     def worksheets(self):
         return self._worksheets
+    
+    @property
+    def worksheet_objects(self):
+        return self._worksheet_objects
 
     @property
     def filename(self):
@@ -53,6 +70,10 @@ class Workbook(object):
     @property
     def shapes(self):
         return self._shapes
+    
+    @property
+    def query(self):
+        return self._query
 
     def save(self):
         """
@@ -119,6 +140,21 @@ class Workbook(object):
             dashboards.append(dash_name)
 
         return dashboards
+    
+    @staticmethod
+    def _prepare_dashboard_objects(xml_root):
+        dashboard_objects = {}
+
+        # loop through our dashboards and append
+        dashboard_elements = xml_root.find('dashboards')
+        if dashboard_elements is None:
+            return {}
+
+        for dashboard in dashboard_elements:
+            db = Dashboard(dashboard)
+            dashboard_objects[db.name] = db
+
+        return dashboard_objects
 
     @staticmethod
     def _prepare_worksheets(xml_root, ds_index):
@@ -144,6 +180,21 @@ class Workbook(object):
         return worksheets
 
     @staticmethod
+    def _prepare_worksheet_objects(xml_root):
+        worksheet_objects = {}
+
+        # loop through our worksheets and add to worksheets dict
+        worksheet_elements = xml_root.find('worksheets')
+        if worksheet_elements is None:
+            return {}
+
+        for worksheet in worksheet_elements:
+            wsheet = Worksheet(worksheet)
+            worksheet_objects[wsheet.name] = wsheet
+
+        return worksheet_objects
+
+    @staticmethod
     def _prepare_shapes(xml_root):
         shapes = []
         worksheets_element = xml_root.find('.//external/shapes')
@@ -155,3 +206,5 @@ class Workbook(object):
             shapes.append(shape_name)
 
         return shapes
+    
+    
