@@ -61,7 +61,7 @@ for dep in worksheet.datasource_dependencies:
 ```
 
 ### Filter
-Represents filters applied to worksheets.
+Represents filters applied to datasources or worksheets
 
 **Properties:**
 - `filter_class` - Filter type (categorical, quantitative, etc.)
@@ -75,6 +75,11 @@ for filter_obj in worksheet.filters:
     print(f"Filter class: {filter_obj.filter_class}")
     print(f"Column: {filter_obj.column}")
     print(f"Groupfilters: {len(filter_obj.groupfilters)}")
+
+for filter_obj2 in datasource.filters:
+    print(f"Filter class: {filter_obj2.filter_class}")
+    print(f"Column: {filter_obj2.column}")
+    print(f"Groupfilters: {len(filter_obj2.groupfilters)}")
 ```
 
 ### Query
@@ -90,7 +95,7 @@ Provides high-level querying capabilities across the workbook.
 wb = Workbook('file.twbx')
 dependencies = wb.query.get_workbook_dependencies()
 for dep in dependencies:
-    print(f"{dep['Worksheet']} uses {dep['Column_instance']} from {dep['Datasource']}")
+    print(f"{dep['Dashboard']} with {dep['Worksheet']} uses {dep['Column_instance']} from {dep['Datasource']}")
 
 filters = wb.query.get_workbook_filters()
 for f in filters:

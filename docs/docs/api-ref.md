@@ -84,7 +84,7 @@ A class representing Tableau Data Sources, embedded in workbook files or in TDS 
 
 `self.calculations` Returns calculated field of the workbook.
 
-`self.filters` Returns datasource filters.
+`self.filters` Returns datasource filters. *(added in v012)*
 
 
 
@@ -207,7 +207,7 @@ Represents a tableau worksheet within a workbook file.
 
 `self.datasource_dependencies:` Returns a list of DatasourceDependency objects used by the worksheet.
 
-`self.filters:` Returns a list of Filter objects applied to the worksheet.
+`self.filters:` Returns a list of Filter objects applied to the worksheet or datasource
 
 `self.rows:` Returns a list of cleaned field references used in worksheet rows.
 
@@ -239,7 +239,7 @@ Represents datasource dependencies within dashboards or worksheets.
 class Filter(filter_xml)
 ```
 
-Represents filters applied to worksheets.
+Represents filters applied to worksheets or datasources.
 
 **Params:**
 
