@@ -3,7 +3,7 @@
 [![As-Is](https://img.shields.io/badge/Support%20Level-As--Is-e8762c.svg)](https://www.tableau.com/support-levels-it-and-developer-tools)
 
 ## About This Fork
-This repository is a community-maintained fork of Tableau’s [document-api-python](https://github.com/tableau/document-api-python).  
+This repository is a maintained fork of Tableau’s [document-api-python](https://github.com/tableau/document-api-python).  
 It extends the original Document API with object-oriented access to dashboards, worksheets, filters, and datasource dependencies.  
 All enhancements are fully backward compatible.
 
