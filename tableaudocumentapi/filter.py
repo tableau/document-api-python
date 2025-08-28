@@ -1,9 +1,9 @@
 import re
-from tableaudocumentapi.utils import _clean_aggregated_column_name
+from tableaudocumentapi.utils import _clean_aggregated_column_names
 class Filter(object):
-    """A class representing a Filter in a worksheet"""
+    """A class representing a Filter in a worksheet or datasource"""
     def __init__(self, filter_xml):
-        """Inititialize Filter from XML Element
+        """Initialize Filter from XML Element
         
         Args:
             filter_xml: XML element representing the filter
@@ -11,12 +11,12 @@ class Filter(object):
         
         self._xml = filter_xml 
         self._filter_class = filter_xml.get('class')
-        self._column = _clean_aggregated_column_name(filter_xml.get('column'))
+        self._column = _clean_aggregated_column_names(filter_xml.get('column'))
         self._groupfilters = self._parse_groupfilters()
         
     @property
     def xml(self):
-        """Return xml of the datsource dependency """
+        """Return xml of the filter """
         return self._xml
     
     @property
@@ -65,3 +65,11 @@ class Filter(object):
                 groupfilter_data['children'].append(child_data)
                 
         return groupfilter_data
+    
+def _parse_filters(root_node, path):
+    """Function that will parse the filters under the worksheet or datasource"""
+    filters = []
+    filter_elements = root_node.findall(path)
+    for filter_element in filter_elements:
+        filters.append(Filter(filter_element))
+    return filters    

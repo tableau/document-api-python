@@ -45,6 +45,6 @@ class DatasourceDependency(object):
         for column_instance in self._xml.findall('column-instance'):
             col_attrib = column_instance.get('column')
             if col_attrib:
-                column_instances[col_attrib]= dict(column_instance.attrib)
+                column_instances[col_attrib] = dict(column_instance.attrib)
         return column_instances
     

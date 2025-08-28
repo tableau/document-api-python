@@ -40,7 +40,13 @@ Saves any changes to the workbook to a new file specified by the `new_file` para
 
 `self.shapes` Returns a list of strings with the names of shapes found in the workbook.
 
-`self.dashboards:` Returns a list of strings with the names of the dashboards found in the workbook  
+`self.dashboards:` Returns a list of strings with the names of the dashboards found in the workbook
+
+`self.dashboard_objects:` Returns a dictionary mapping dashboard names to Dashboard objects *(added in v012)*
+
+`self.worksheet_objects:` Returns a dictionary mapping worksheet names to Worksheet objects *(added in v012)*
+
+`self.query:` Returns a Query object for advanced workbook analysis *(added in v012)*
 
 ## Datasources
 ```python
@@ -78,7 +84,11 @@ A class representing Tableau Data Sources, embedded in workbook files or in TDS 
 
 `self.calculations` Returns calculated field of the workbook.
 
-## Connections
+`self.filters` Returns datasource filters.
+
+
+
+### Connections
 ```python
 class Connection(connxml)
 ```
@@ -107,7 +117,7 @@ The Connection class represents a tableau data connection. It can be from any ty
 
 `self.initial_sql:` Returns a string containing the initial sql.
 
-## Fields
+### Fields
 ```python
 class Field(column_xml=None, metadata_xml=None)
 ```
@@ -154,3 +164,112 @@ Represents a field in a datasource
 `self.description` Returns a string with contents of the <desc> tag on a field.
 
 `self.worksheets` Returns a list of strings with the worksheet's names uses this field.
+
+## Dashboards *(added in v012)*
+```python
+class Dashboard(dashboard_xml)
+```
+
+Represents a tableau dashboard within a workbook file.
+
+**Params:**
+
+`dashboard_xml` XML element representing the dashboard.
+
+**Properties:**
+
+`self.name:` Returns a string with the name of the dashboard.
+
+`self.xml:` Returns the XML element of the dashboard.
+
+`self.worksheets:` Returns a list of worksheet names contained in the dashboard.
+
+`self.datasource_dependencies:` Returns a list of DatasourceDependency objects used by the dashboard.
+
+## Worksheets *(added in v012)*
+```python
+class Worksheet(worksheet_xml)
+```
+
+Represents a tableau worksheet within a workbook file.
+
+**Params:**
+
+`worksheet_xml` XML element representing the worksheet.
+
+**Properties:**
+
+`self.name:` Returns a string with the name of the worksheet.
+
+`self.xml:` Returns the XML element of the worksheet.
+
+`self.id:` Returns a string with the worksheet UUID (cleaned of curly braces).
+
+`self.datasource_dependencies:` Returns a list of DatasourceDependency objects used by the worksheet.
+
+`self.filters:` Returns a list of Filter objects applied to the worksheet.
+
+`self.rows:` Returns a list of cleaned field references used in worksheet rows.
+
+`self.cols:` Returns a list of cleaned field references used in worksheet columns.
+
+### Datasource Dependencies *(added in v012)*
+```python
+class DatasourceDependency(dependency_xml)
+```
+
+Represents datasource dependencies within dashboards or worksheets.
+
+**Params:**
+
+`dependency_xml` XML element representing the datasource dependency.
+
+**Properties:**
+
+`self.datasource:` Returns a string with the name of the datasource.
+
+`self.xml:` Returns the XML element of the dependency.
+
+`self.columns:` Returns a list of column names referenced by the dependency.
+
+`self.column_instances:` Returns a dictionary mapping column references to their attribute dictionaries.
+
+### Filters *(added in v012)*
+```python
+class Filter(filter_xml)
+```
+
+Represents filters applied to worksheets.
+
+**Params:**
+
+`filter_xml` XML element representing the filter.
+
+**Properties:**
+
+`self.filter_class:` Returns a string with the filter type (categorical, quantitative, etc.).
+
+`self.xml:` Returns the XML element of the filter.
+
+`self.column:` Returns a list of cleaned field references being filtered.
+
+`self.groupfilters:` Returns a list of nested groupfilter dictionaries representing the filter structure.
+
+## Query *(added in v012)*
+```python
+class Query(workbook)
+```
+
+Provides high-level querying capabilities across the workbook.
+
+**Params:**
+
+`workbook` The workbook object to query.
+
+**Methods:**
+
+`Query.get_workbook_dependencies(self):` Returns a flattened list of dictionaries containing all dependencies with metadata including workbook, dashboard, worksheet, datasource, and column information.
+
+`Query.get_workbook_filters(self):` Returns a flattened list of dictionaries containing all filters with metadata including workbook, dashboard, worksheet, filter class, column, and groupfilter information.
+
+`Query.get_field_objects(self, column):` Links column references to Field objects from datasources. Returns Field object if found, None otherwise.

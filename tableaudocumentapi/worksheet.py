@@ -1,6 +1,6 @@
 from tableaudocumentapi.datasource_dependency import DatasourceDependency
-from tableaudocumentapi.filter import Filter
-from tableaudocumentapi.utils import _clean_aggregated_column_name
+from tableaudocumentapi.filter import Filter, _parse_filters
+from tableaudocumentapi.utils import _clean_aggregated_column_names
 import re
 class Worksheet(object):
     """A class representing a Worksheet in a Tableau workbook file """
@@ -10,7 +10,7 @@ class Worksheet(object):
         self._xml = worksheet_xml
         self._name = worksheet_xml.attrib['name']
         self._datasource_dependencies = self._parse_datasource_dependencies()
-        self._filters = self._parse_filters()
+        self._filters = _parse_filters(self._xml, "table/view/filter")
         self._rows = self._parse_rows_cols('rows')
         self._cols = self._parse_rows_cols('cols')
         simple_id = worksheet_xml.find('simple-id')
@@ -60,13 +60,7 @@ class Worksheet(object):
                 datasource_dependencies.append(DatasourceDependency(dependency))
         return datasource_dependencies    
     
-    def _parse_filters(self):
-        """Function that will parse the filters under the worksheet"""
-        filters = []
-        filter_elements = self._xml.findall('table/view/filter')
-        for filter_element in filter_elements:
-            filters.append(Filter(filter_element))
-        return filters    
+    
     
 
     def _parse_rows_cols(self, row_or_col):
@@ -79,4 +73,4 @@ class Worksheet(object):
         if not text:
             return []
 
-        return _clean_aggregated_column_name(text)
+        return _clean_aggregated_column_names(text)

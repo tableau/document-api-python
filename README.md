@@ -25,6 +25,16 @@ Features include:
 
 - It *doesn't* support creating files from scratch, adding extracts into workbooks or data sources, or updating field information. As of 2021, this SDK no longer supports Python 2.
 
+## Version 012 Fork Enhancements
+This fork adds comprehensive object-oriented functionality to the Document API:
+- **Dashboard Objects** - Full dashboard representation with worksheet containment and dependency tracking
+- **Worksheet Objects** - Rich worksheet metadata including filters, field references, and dependencies  
+- **Advanced Querying** - High-level Query interface for cross-workbook analysis and dependency mapping
+- **Filter Support** - Parse and analyze complex filter structures including nested groupfilters, for worksheets and datasources
+- **Field Reference Cleaning** - Normalize Tableau's internal field naming conventions
+
+These enhancements maintain full backwards compatibility while providing significantly expanded analytical capabilities. For detailed information and usage examples, see [Version 012 Enhancements](Version_012_enhancements.md).
+
 For Hyper files, take a look at the [Tableau Hyper API](https://help.tableau.com/current/api/hyper_api/en-us/index.html).
 
 For more information, see the [Document API documentation](https://tableau.github.io/document-api-python)

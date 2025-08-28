@@ -45,4 +45,3 @@ class Dashboard(object):
             if dependency.get("datasource"):
                 datasource_dependencies.append(DatasourceDependency(dependency))
         return datasource_dependencies
-        
