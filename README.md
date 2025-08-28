@@ -1,41 +1,44 @@
-# document-api-python
+# document-api-python (Fork)
+
 [![As-Is](https://img.shields.io/badge/Support%20Level-As--Is-e8762c.svg)](https://www.tableau.com/support-levels-it-and-developer-tools)
 
+## About This Fork
+This repository is a community-maintained fork of Tableau’s [document-api-python](https://github.com/tableau/document-api-python).  
+It extends the original Document API with object-oriented access to dashboards, worksheets, filters, and datasource dependencies.  
+All enhancements are fully backward compatible.
 
-Document API
----------------
-This repo contains Python source and example files for the Tableau Document API. 
-The Document API provides a useful but *unsupported* way to programmatically make updates to Tableau workbook and data source files. If you've been making changes to these file types by directly updating the XML--that is, by XML hacking--this SDK is for you :) Get help from other users on the [Tableau Community Forums](https://community.tableau.com/s/topic/0TO4T000000SF3sWAG/document-api).
+If you are looking for the official Tableau Document API, see the [upstream project](https://github.com/tableau/document-api-python).
 
-Features include:
-- Support for TWB, TWBX, TDE and TDSX files starting roughly back to Tableau 9.x
-- Getting connection information from data sources and workbooks
-  - Server Name
-  - Username
-  - Database Name
-  - Authentication Type
-  - Connection Type
-- Updating connection information in workbooks and data sources
-  - Server Name
-  - Username
-  - Database Name
-- Getting Field information from data sources and workbooks
-  - Get all fields in a data source
-  - Get all fields in use by certain sheets in a workbook
+## Enhancements in Version 012
+This fork introduces the following major improvements:
 
-- It *doesn't* support creating files from scratch, adding extracts into workbooks or data sources, or updating field information. As of 2021, this SDK no longer supports Python 2.
+- **Dashboard objects** – structured representation with worksheet containment and dependency tracking  
+- **Worksheet objects** – access to datasource dependencies, filters, rows, columns, and column instances  
+- **Filter support** – dedicated `Filter` class, including parsing of nested `groupfilter` structures  
+- **Datasource dependencies** – new `DatasourceDependency` class separating fields from dependency columns and instances  
+- **Query interface** – high-level `workbook.query` API for cross-workbook analysis and dependency mapping  
+- **Field reference cleaning** – normalization of Tableau’s internal field naming conventions  
 
-## Version 012 Fork Enhancements
-This fork adds comprehensive object-oriented functionality to the Document API:
-- **Dashboard Objects** - Full dashboard representation with worksheet containment and dependency tracking
-- **Worksheet Objects** - Rich worksheet metadata including filters, field references, and dependencies  
-- **Advanced Querying** - High-level Query interface for cross-workbook analysis and dependency mapping
-- **Filter Support** - Parse and analyze complex filter structures including nested groupfilters, for worksheets and datasources
-- **Field Reference Cleaning** - Normalize Tableau's internal field naming conventions
+Detailed descriptions, examples, and resolved issue references are available in [Version 012 Enhancements](Version_012_enhancements.md).
 
-These enhancements maintain full backwards compatibility while providing significantly expanded analytical capabilities. For detailed information and usage examples, see [Version 012 Enhancements](Version_012_enhancements.md).
+## Upstream Issues Resolved
+Several long-standing enhancement requests in the upstream project are addressed in this fork, including:
 
-For Hyper files, take a look at the [Tableau Hyper API](https://help.tableau.com/current/api/hyper_api/en-us/index.html).
+- [#33 – Datasource Filters](https://github.com/tableau/document-api-python/issues/33)  
+- [#138 – Datasource-dependencies columns passed as fields](https://github.com/tableau/document-api-python/issues/138)  
+- [#164 – Expose all child objects of Workbook/Worksheet](https://github.com/tableau/document-api-python/issues/164)  
+- [#246 – Missing attributes for meta-data records](https://github.com/tableau/document-api-python/issues/246)  
+- [#129 – Retrieve all fields used in a workbook](https://github.com/tableau/document-api-python/issues/129)  
 
-For more information, see the [Document API documentation](https://tableau.github.io/document-api-python)
+For a full explanation, see the “Resolved Upstream Issues” section in [Version 012 Enhancements](Version_012_enhancements.md).
 
+## Original Features
+All original capabilities of the Tableau Document API are preserved, including:
+
+- Support for TWB, TWBX, TDE and TDSX files  
+- Access to connection information (server, username, database, authentication type, connection type)  
+- Updating connection details in workbooks and datasources  
+- Extracting field information from datasources and workbooks  
+
+For Hyper files, refer to the [Tableau Hyper API](https://help.tableau.com/current/api/hyper_api/en-us/index.html).  
+For more information on the original API, see the [Tableau API documentation](https://tableau.github.io/document-api-python).
