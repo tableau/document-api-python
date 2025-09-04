@@ -18,6 +18,7 @@ This fork introduces the following major improvements:
 - **Datasource dependencies** – new `DatasourceDependency` class separating fields from dependency columns and instances  
 - **Query interface** – high-level `workbook.query` API for cross-workbook analysis and dependency mapping  
 - **Field reference cleaning** – normalization of Tableau’s internal field naming conventions  
+- **Workbook TWB XML string input** – Modified `Workbook` class to accept TBW XML string as input
 
 Detailed descriptions, examples, and resolved issue references are available in [Version 012 Enhancements](Version_012_enhancements.md).
 
