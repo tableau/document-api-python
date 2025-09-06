@@ -108,6 +108,7 @@ for f in filters:
 - `dashboard_objects` - Dictionary mapping dashboard names to Dashboard objects
 - `worksheet_objects` - Dictionary mapping worksheet names to Worksheet objects  
 - `query` - Query object for advanced workbook analysis
+- `twb_xml_string` - Modified Workbook class now accepts string TWB XML as input
 
 #### Backwards Compatibility
 All existing properties (`dashboards`, `worksheets`, `datasources`) continue to work unchanged.

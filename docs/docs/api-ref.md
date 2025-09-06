@@ -16,6 +16,7 @@ The Workbook class represents a tableau workbook. It may be either a TWB or TWBX
 **Params:**
 
 `filename` takes a string representing the path to the workbook file.
+`twb_xml_string` takes a string representing the xml of the workbook file.
 
 **Raises:**
 

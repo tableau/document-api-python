@@ -2,28 +2,34 @@ import weakref
 from tableaudocumentapi.dashboard import Dashboard
 from tableaudocumentapi.worksheet import Worksheet
 from tableaudocumentapi.query import Query
-from tableaudocumentapi.datasource_dependency import DatasourceDependency
-from tableaudocumentapi.filter import Filter
 from tableaudocumentapi import Datasource, xfile
 from tableaudocumentapi.xfile import xml_open, TableauInvalidFileException
+from lxml import etree as ET
 
 class Workbook(object):
     """A class for writing Tableau workbook files."""
 
-    def __init__(self, filename):
-        """Open the workbook at `filename`. This will handle packaged and unpacked
+    def __init__(self, filename=None, twb_xml_string=None):
+        """Open the workbook at `filename`, or as a string. This will handle packaged and unpacked
         workbook files automatically. This will also parse Data Sources and Worksheets
         for access.
 
         """
-
-        self._filename = filename
-
-        self._workbookTree = xml_open(self._filename, 'workbook')
-        if not self._workbookTree:
-            raise TableauInvalidFileException("Workbook file must have a workbook element at root")
-
-        self._workbookRoot = self._workbookTree.getroot()
+        if twb_xml_string is not None:
+            if not isinstance(twb_xml_string, str):
+                raise TypeError(f"twb_xml_string must be a str")
+            root = ET.fromstring(twb_xml_string.encode('utf-8'))
+            if root.tag !="workbook":
+                raise TableauInvalidFileException(f"Expected 'workbook' tag in xml root, got {root.tag}")
+            self._workbookRoot = root
+            self._workbookTree = ET.ElementTree(root)
+            self._filename = None
+        else:
+            self._filename = filename
+            self._workbookTree = xml_open(self._filename, 'workbook')
+            if not self._workbookTree:
+                raise TableauInvalidFileException("Workbook file must have a workbook element at root")
+            self._workbookRoot = self._workbookTree.getroot()
 
         self._dashboards = self._prepare_dashboards(self._workbookRoot)
         
@@ -86,7 +92,8 @@ class Workbook(object):
             Nothing.
 
         """
-
+        if not self._filename:
+            raise TableauInvalidFileException("Cannot use save for workbook created from twb xml string, use save_as(new_filename) instead")
         # save the file
         xfile._save_file(self._filename, self._workbookTree)
 
@@ -101,8 +108,16 @@ class Workbook(object):
             Nothing.
 
         """
-        xfile._save_file(
-            self._filename, self._workbookTree, new_filename)
+        if not new_filename:
+            raise TableauInvalidFileException("new filename must be a non-empty path")
+        
+        if not self._filename:
+            xfile._save_file(
+                new_filename, self._workbookTree
+            )
+        else:    
+            xfile._save_file(
+                self._filename, self._workbookTree, new_filename)
 
     @staticmethod
     def _prepare_datasource_index(datasources):
