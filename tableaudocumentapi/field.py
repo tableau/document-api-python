@@ -339,10 +339,8 @@ class Field(object):
         Returns:
             Key-value mappings of all registered members. Dict.
         """
-        # if self.caption == "pSelector":
-        #     import pdb; pdb.set_trace()
-        members_tag = self._xml.find('members') or []    # ignore the FutureWarning, does not apply to our usage
-        return list(members_tag)
+        return [member.attrib.get("value") for member in self._xml.findall('members/member')]
+        # return list(members_tag)
 
     ########################################
     # Attribute getters
