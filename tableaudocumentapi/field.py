@@ -14,6 +14,8 @@ _ATTRIBUTES = [
     'calculation',  # If this field is a calculated field, this will be the formula
     'description',  # If this field has a description, this will be the description (including formatting tags)
     'hidden',       # If this field has been hidden
+    'value',       # The value of the field (applicable to parameters)
+    'param_domain_type',       # The value of the field (applicable to parameters)
 ]
 
 _METADATA_ATTRIBUTES = [
@@ -73,7 +75,7 @@ class Field(object):
         self.apply_metadata(xmldata)
 
     @classmethod
-    def create_field_xml(cls, caption, datatype, hidden, role, field_type, name):
+    def create_field_xml(cls, caption, datatype, hidden, role, field_type, name, value, param_domain_type):
         column = ET.Element('column')
         column.set('caption', caption)
         column.set('datatype', datatype)
@@ -81,6 +83,8 @@ class Field(object):
         column.set('role', role)
         column.set('type', field_type)
         column.set('name', name)
+        column.set('value', value)
+        column.set('param_domain_type', param_domain_type)
         return column
 
     ########################################
@@ -317,6 +321,28 @@ class Field(object):
         """
         aliases_tag = self._xml.find('aliases') or []    # ignore the FutureWarning, does not apply to our usage
         return {a.get('key', 'None'): a.get('value', 'None') for a in list(aliases_tag)}
+
+    @property
+    def value(self):
+        """ Get the value of a field (applicable to parameters) """
+        return self._xml.get('value')
+
+    @property
+    def param_domain_type(self):
+        """ Get the value of a field (applicable to parameters) """
+        return self._xml.get('param-domain-type')
+
+    @property
+    def members(self):
+        """ Returns all members that are registered under this field.
+
+        Returns:
+            Key-value mappings of all registered members. Dict.
+        """
+        # if self.caption == "pSelector":
+        #     import pdb; pdb.set_trace()
+        members_tag = self._xml.find('members') or []    # ignore the FutureWarning, does not apply to our usage
+        return list(members_tag)
 
     ########################################
     # Attribute getters
