@@ -1,6 +1,5 @@
 import re
-import xmltodict
-from lxml import etree as ET
+
 class Query(object):
     """A class for querying the parsed elements of the Tableau Workbook"""
     

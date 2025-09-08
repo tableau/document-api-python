@@ -83,8 +83,10 @@ class Field(object):
         column.set('role', role)
         column.set('type', field_type)
         column.set('name', name)
-        column.set('value', value)
-        column.set('param_domain_type', param_domain_type)
+        if value is not None:
+            column.set('value', value)
+        if param_domain_type is not None:
+            column.set('param_domain_type', param_domain_type)
         return column
 
     ########################################
@@ -340,7 +342,6 @@ class Field(object):
             Key-value mappings of all registered members. Dict.
         """
         return [member.attrib.get("value") for member in self._xml.findall('members/member')]
-        # return list(members_tag)
 
     ########################################
     # Attribute getters
