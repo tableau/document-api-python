@@ -1,4 +1,5 @@
 import re
+
 class Query(object):
     """A class for querying the parsed elements of the Tableau Workbook"""
     
@@ -71,3 +72,25 @@ class Query(object):
                 if result[1] in datasource.fields:
                     return datasource.fields[result[1]]
         return None
+    
+    def get_workbook_parameters(self):
+        """Get all Parameters in workbook and their attributes as a list of dictionaries"""
+        workbook_parameters = []
+        for datasource in self._workbook.datasources:
+            if datasource.name == "Parameters":
+                for field in datasource.fields:
+                    workbook_parameters.append({
+                        "Alias": datasource.fields[field].alias,
+                        "Aliases": datasource.fields[field].aliases,
+                        "Calculation": datasource.fields[field].calculation,
+                        "Caption": datasource.fields[field].caption,
+                        "Datatype": datasource.fields[field].datatype,
+                        "Name": datasource.fields[field].name,
+                        "Parameter_Domain_Type": datasource.fields[field].param_domain_type,
+                        "Role": datasource.fields[field].role,
+                        "Type": datasource.fields[field].type,
+                        "Value": datasource.fields[field].value,
+                        "Worksheets": datasource.fields[field].worksheets,
+                        "Members": datasource.fields[field].members
+                    })
+        return workbook_parameters

@@ -8,15 +8,18 @@ layout: docs
 
 ## Workbooks
 ```python
-class Workbook(filename):
+class Workbook(filename=None, twb_xml_string=None):
 ```
 
-The Workbook class represents a tableau workbook. It may be either a TWB or TWBX, and the library will handle packaging and unpackaging automatically.
+The Workbook class represents a tableau workbook. It may be either a TWB or TWBX, and the library will handle packaging and unpackaging automatically. *(Enhanced in v012 to support XML string input)*
 
 **Params:**
 
-`filename` takes a string representing the path to the workbook file.
-`twb_xml_string` takes a string representing the xml of the workbook file.
+`filename` *(optional)* - String representing the path to the workbook file.
+
+`twb_xml_string` *(optional, added in v012)* - String representing the TWB XML content. Enables integration with Tableau Server Client and REST API.
+
+**Note:** Either `filename` or `twb_xml_string` must be provided, but not both.
 
 **Raises:**
 
@@ -26,10 +29,10 @@ The Workbook class represents a tableau workbook. It may be either a TWB or TWBX
 **Methods:**
 
 `Workbook.save(self):`
-Saves any changes to the workbook to the existing file.
+Saves any changes to the workbook to the existing file. *(Note: Raises exception for workbooks created from XML strings)*
 
 `Workbook.save_as(self, new_filename):`
-Saves any changes to the workbook to a new file specified by the `new_file` parameter.
+Saves any changes to the workbook to a new file specified by the `new_filename` parameter.
 
 **Properties:**
 
@@ -128,7 +131,8 @@ Represents a field in a datasource
 **Raises:**
 
 **Methods:**
-`Field.create_field_xml()` Create field from scratch.
+
+`Field.create_field_xml(cls, caption, datatype, hidden, role, field_type, name, value=None, param_domain_type=None)` *(Enhanced in v012)* Create field XML from scratch. Now supports parameter-specific attributes with default values for backward compatibility.
 
 `Field.add_alias(self, key, value)` Add an alias for a given display value.
 
@@ -164,7 +168,13 @@ Represents a field in a datasource
 
 `self.description` Returns a string with contents of the <desc> tag on a field.
 
-`self.worksheets` Returns a list of strings with the worksheet's names uses this field.
+`self.worksheets` Returns a list of strings with the worksheet names that use this field.
+
+`self.value` *(added in v012)* Returns a string with the default value for parameters, None for regular fields.
+
+`self.param_domain_type` *(added in v012)* Returns a string with the parameter domain type (range, list, etc.), None for regular fields.
+
+`self.members` *(added in v012)* Returns a list of member values extracted from the field's XML.
 
 ## Dashboards *(added in v012)*
 ```python
@@ -274,3 +284,5 @@ Provides high-level querying capabilities across the workbook.
 `Query.get_workbook_filters(self):` Returns a flattened list of dictionaries containing all filters with metadata including workbook, dashboard, worksheet, filter class, column, and groupfilter information.
 
 `Query.get_field_objects(self, column):` Links column references to Field objects from datasources. Returns Field object if found, None otherwise.
+
+`Query.get_workbook_parameters(self):` *(added in v012)* Returns a list of dictionaries containing all workbook parameters with their attributes including alias, aliases, calculation, caption, datatype, name, parameter domain type, role, type, value, worksheets, and members.

@@ -1,5 +1,8 @@
 ## 012 (August 2025)
-* Added dashboard, worksheet and query objects
+* Added Dashboard, Worksheet, Filter, DatasourceDependency, and Query classes
+* Added XML string input support for Workbook class
+* Added parameter parsing with `Field.value, Field.param_domain_type, and Field.members properties                                                                            
+* Resolved upstream issues #33, #138, #164, #246, #129
 
 ## 011 (November 2022)
 * Remove extraneous debug print statements

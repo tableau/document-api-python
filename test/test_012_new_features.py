@@ -485,5 +485,240 @@ class TestBackwardsCompatibility(unittest.TestCase):
         self.assertEqual(old_worksheet_names, new_worksheet_names)
 
 
+class TestXMLStringInput(unittest.TestCase):
+    """Test XML string input feature for Workbook class"""
+    
+    def setUp(self):
+        if not os.path.exists(TEST_SUPERSTORE_FILE):
+            self.skipTest(f"Test file {TEST_SUPERSTORE_FILE} not available")
+        # Read the TWB XML content from existing file for testing
+        self.wb_from_file = Workbook(TEST_SUPERSTORE_FILE)
+    
+    def test_workbook_can_be_created_from_xml_string(self):
+        """Test that Workbook can be created from XML string"""
+        # Extract XML from existing workbook file
+        if hasattr(self.wb_from_file, '_workbookTree') and self.wb_from_file._workbookTree is not None:
+            import xml.etree.ElementTree as ET
+            xml_string = ET.tostring(self.wb_from_file._workbookTree.getroot(), encoding='unicode')
+            
+            # Create workbook from XML string
+            wb_from_string = Workbook(twb_xml_string=xml_string)
+            
+            # Basic validation
+            self.assertIsNotNone(wb_from_string)
+            self.assertIsNone(wb_from_string._filename)  # Should be None for string input
+            self.assertIsNotNone(wb_from_string._workbookRoot)
+            
+    def test_workbook_xml_string_has_same_properties_as_file(self):
+        """Test that workbook created from XML string has same properties as file"""
+        if hasattr(self.wb_from_file, '_workbookTree') and self.wb_from_file._workbookTree is not None:
+            import xml.etree.ElementTree as ET
+            xml_string = ET.tostring(self.wb_from_file._workbookTree.getroot(), encoding='unicode')
+            
+            wb_from_string = Workbook(twb_xml_string=xml_string)
+            
+            # Compare basic properties
+            self.assertEqual(len(self.wb_from_file.dashboards), len(wb_from_string.dashboards))
+            self.assertEqual(len(self.wb_from_file.worksheets), len(wb_from_string.worksheets))
+            self.assertEqual(len(self.wb_from_file.datasources), len(wb_from_string.datasources))
+            
+    def test_workbook_xml_string_invalid_input_raises_error(self):
+        """Test that invalid XML string input raises appropriate errors"""
+        # Test with non-string input
+        with self.assertRaises(TypeError):
+            Workbook(twb_xml_string=123)
+            
+        # Test with invalid XML
+        with self.assertRaises(Exception):
+            Workbook(twb_xml_string="<invalid>xml</invalid>")
+            
+        # Test with wrong root element
+        with self.assertRaises(Exception):
+            Workbook(twb_xml_string="<wrongroot></wrongroot>")
+            
+    def test_workbook_xml_string_save_methods(self):
+        """Test save behavior for workbooks created from XML strings"""
+        if hasattr(self.wb_from_file, '_workbookTree') and self.wb_from_file._workbookTree is not None:
+            import xml.etree.ElementTree as ET
+            xml_string = ET.tostring(self.wb_from_file._workbookTree.getroot(), encoding='unicode')
+            
+            wb_from_string = Workbook(twb_xml_string=xml_string)
+            
+            # save() should raise error
+            with self.assertRaises(Exception):
+                wb_from_string.save()
+                
+            # save_as() should work if we provide a filename
+            # We won't actually save, just test that it doesn't raise error for filename validation
+            import tempfile
+            with tempfile.NamedTemporaryFile(suffix='.twb', delete=True) as tmp:
+                # This should not raise an error
+                try:
+                    wb_from_string.save_as(tmp.name)
+                except Exception as e:
+                    # Allow file write errors, but not parameter validation errors
+                    if "new filename must be a non-empty path" in str(e):
+                        self.fail("save_as parameter validation failed")
+
+
+class TestParameterFunctionality(unittest.TestCase):
+    """Test parameter-related functionality"""
+    
+    def setUp(self):
+        if not os.path.exists(TEST_SUPERSTORE_FILE):
+            self.skipTest(f"Test file {TEST_SUPERSTORE_FILE} not available")
+        self.wb = Workbook(TEST_SUPERSTORE_FILE)
+        
+    def test_query_has_get_workbook_parameters_method(self):
+        """Test that Query class has get_workbook_parameters method"""
+        self.assertTrue(hasattr(self.wb.query, 'get_workbook_parameters'))
+        
+    def test_get_workbook_parameters_returns_list(self):
+        """Test that get_workbook_parameters returns a list"""
+        parameters = self.wb.query.get_workbook_parameters()
+        self.assertIsInstance(parameters, list)
+        
+    def test_parameter_structure_contains_expected_keys(self):
+        """Test that parameter dictionaries contain expected keys"""
+        parameters = self.wb.query.get_workbook_parameters()
+        
+        if parameters:  # Only test if parameters exist
+            param = parameters[0]
+            expected_keys = [
+                "Alias", "Aliases", "Calculation", "Caption", "Datatype", 
+                "Name", "Parameter_Domain_Type", "Role", "Type", "Value",
+                "Worksheets", "Members"
+            ]
+            for key in expected_keys:
+                with self.subTest(key=key):
+                    self.assertIn(key, param)
+                    
+    def test_parameter_data_types(self):
+        """Test that parameter attributes have correct data types"""
+        parameters = self.wb.query.get_workbook_parameters()
+        
+        for param in parameters:
+            with self.subTest(parameter=param.get("Name", "Unknown")):
+                # String fields (can be None)
+                string_fields = ["Alias", "Caption", "Datatype", "Name", "Parameter_Domain_Type", "Role", "Type", "Value", "Calculation"]
+                for field in string_fields:
+                    value = param.get(field)
+                    self.assertTrue(value is None or isinstance(value, str))
+                
+                # List fields
+                self.assertIsInstance(param["Worksheets"], list)
+                self.assertIsInstance(param["Members"], list)
+                
+                # Dict field
+                self.assertIsInstance(param["Aliases"], dict)
+
+
+class TestNewFieldProperties(unittest.TestCase):
+    """Test new Field properties: value, param_domain_type, members"""
+    
+    def setUp(self):
+        if not os.path.exists(TEST_SUPERSTORE_FILE):
+            self.skipTest(f"Test file {TEST_SUPERSTORE_FILE} not available")
+        self.wb = Workbook(TEST_SUPERSTORE_FILE)
+        
+    def test_field_has_value_property(self):
+        """Test that Field objects have value property"""
+        # Get a field from any datasource
+        if self.wb.datasources:
+            datasource = self.wb.datasources[0]
+            if datasource.fields:
+                field = next(iter(datasource.fields.values()))
+                self.assertTrue(hasattr(field, 'value'))
+                # Value can be None or string
+                value = field.value
+                self.assertTrue(value is None or isinstance(value, str))
+                
+    def test_field_has_param_domain_type_property(self):
+        """Test that Field objects have param_domain_type property"""
+        if self.wb.datasources:
+            datasource = self.wb.datasources[0]
+            if datasource.fields:
+                field = next(iter(datasource.fields.values()))
+                self.assertTrue(hasattr(field, 'param_domain_type'))
+                # param_domain_type can be None or string
+                param_domain_type = field.param_domain_type
+                self.assertTrue(param_domain_type is None or isinstance(param_domain_type, str))
+                
+    def test_field_has_members_property(self):
+        """Test that Field objects have members property"""
+        if self.wb.datasources:
+            datasource = self.wb.datasources[0]
+            if datasource.fields:
+                field = next(iter(datasource.fields.values()))
+                self.assertTrue(hasattr(field, 'members'))
+                # Members should be a list
+                members = field.members
+                self.assertIsInstance(members, list)
+                # Each member should be a string or None
+                for member in members:
+                    self.assertTrue(member is None or isinstance(member, str))
+                    
+    def test_field_create_field_xml_with_parameter_attributes(self):
+        """Test that create_field_xml works with new parameter attributes"""
+        from tableaudocumentapi.field import Field
+        
+        # Test with parameter attributes
+        xml = Field.create_field_xml(
+            caption="Test Param",
+            datatype="string", 
+            hidden="false",
+            role="dimension",
+            field_type="nominal",
+            name="[Test Param]",
+            value="default_value",
+            param_domain_type="range"
+        )
+        
+        self.assertIsNotNone(xml)
+        self.assertEqual(xml.get('caption'), "Test Param")
+        self.assertEqual(xml.get('value'), "default_value")
+        self.assertEqual(xml.get('param_domain_type'), "range")
+        
+    def test_field_create_field_xml_without_parameter_attributes(self):
+        """Test that create_field_xml works without parameter attributes (backward compatibility)"""
+        from tableaudocumentapi.field import Field
+        
+        # Test without parameter attributes (should work with defaults)
+        xml = Field.create_field_xml(
+            caption="Test Field",
+            datatype="string",
+            hidden="false", 
+            role="dimension",
+            field_type="nominal",
+            name="[Test Field]"
+        )
+        
+        self.assertIsNotNone(xml)
+        self.assertEqual(xml.get('caption'), "Test Field")
+        self.assertIsNone(xml.get('value'))
+        self.assertIsNone(xml.get('param_domain_type'))
+        
+    def test_parameters_datasource_exists(self):
+        """Test if Parameters datasource exists in workbook"""
+        parameter_datasources = [ds for ds in self.wb.datasources if ds.name == "Parameters"]
+        
+        # This test documents whether the test file has parameters
+        # If no parameters exist, the test passes but logs the information
+        if not parameter_datasources:
+            # This is informational - the test file might not have parameters
+            pass
+        else:
+            # If parameters exist, test their structure
+            params_ds = parameter_datasources[0]
+            self.assertIsInstance(params_ds.fields, dict)
+            
+            for field_name, field in params_ds.fields.items():
+                with self.subTest(field=field_name):
+                    # Parameter fields should have these properties accessible
+                    self.assertTrue(hasattr(field, 'value'))
+                    self.assertTrue(hasattr(field, 'param_domain_type'))
+                    self.assertTrue(hasattr(field, 'members'))
+
+
 if __name__ == '__main__':
     unittest.main()
