@@ -75,7 +75,7 @@ class Field(object):
         self.apply_metadata(xmldata)
 
     @classmethod
-    def create_field_xml(cls, caption, datatype, hidden, role, field_type, name, value, param_domain_type):
+    def create_field_xml(cls, caption, datatype, hidden, role, field_type, name, value=None, param_domain_type=None):
         column = ET.Element('column')
         column.set('caption', caption)
         column.set('datatype', datatype)
