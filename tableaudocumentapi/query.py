@@ -90,7 +90,6 @@ class Query(object):
                         "Role": datasource.fields[field].role,
                         "Type": datasource.fields[field].type,
                         "Value": datasource.fields[field].value,
-                        "Calculation": datasource.fields[field].calculation,
                         "Worksheets": datasource.fields[field].worksheets,
                         "Members": datasource.fields[field].members
                     })
