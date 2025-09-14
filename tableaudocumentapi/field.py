@@ -14,8 +14,6 @@ _ATTRIBUTES = [
     'calculation',  # If this field is a calculated field, this will be the formula
     'description',  # If this field has a description, this will be the description (including formatting tags)
     'hidden',       # If this field has been hidden
-    'value',       # The value of the field (applicable to parameters)
-    'param_domain_type',       # The value of the field (applicable to parameters)
 ]
 
 _METADATA_ATTRIBUTES = [
@@ -75,7 +73,7 @@ class Field(object):
         self.apply_metadata(xmldata)
 
     @classmethod
-    def create_field_xml(cls, caption, datatype, hidden, role, field_type, name, value=None, param_domain_type=None):
+    def create_field_xml(cls, caption, datatype, hidden, role, field_type, name):
         column = ET.Element('column')
         column.set('caption', caption)
         column.set('datatype', datatype)
@@ -83,10 +81,6 @@ class Field(object):
         column.set('role', role)
         column.set('type', field_type)
         column.set('name', name)
-        if value is not None:
-            column.set('value', value)
-        if param_domain_type is not None:
-            column.set('param_domain_type', param_domain_type)
         return column
 
     ########################################
@@ -339,10 +333,25 @@ class Field(object):
         """ Returns all members that are registered under this field.
 
         Returns:
-            Key-value mappings of all registered members. Dict.
+            list of all registered members.
         """
         return [member.attrib.get("value") for member in self._xml.findall('members/member')]
 
+    @property
+    def table(self):
+        """ Get the table of a column in a datasource """
+        node = self._xml.getparent()
+        for _ in range(4):
+            if node:
+                if node.tag == 'relation':
+                    return node.get('table')
+                else:
+                    if node.getparent():
+                        node = node.getparent()
+                    else:
+                        return
+        return None
+    
     ########################################
     # Attribute getters
     ########################################

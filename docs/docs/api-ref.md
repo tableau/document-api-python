@@ -176,6 +176,8 @@ Represents a field in a datasource
 
 `self.members` *(added in v012)* Returns a list of member values extracted from the field's XML.
 
+`self.table` *(added in v012)* Returns a string with the name of the datasource table a column belongs to.
+
 ## Dashboards *(added in v012)*
 ```python
 class Dashboard(dashboard_xml)

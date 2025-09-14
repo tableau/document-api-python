@@ -110,9 +110,9 @@ for p in parameters:
 ```
 
 
-### Enhanced Workbook Class
-
-#### New Properties
+## Enhanced Classes
+### Workbook Class
+#### New Workbook Properties
 - `dashboard_objects` - Dictionary mapping dashboard names to Dashboard objects
 - `worksheet_objects` - Dictionary mapping worksheet names to Worksheet objects  
 - `query` - Query object for advanced workbook analysis
@@ -131,24 +131,28 @@ wb2 = Workbook(twb_xml_string=xml_content)
 # Note: Workbooks created from strings cannot use save(), only save_as()
 wb2.save_as('new_file.twb')
 ```
-
-#### Enhanced Field Properties
+### Field Class
+#### New Field Properties
 Field objects now include parameter-specific properties:
 
 **New Properties:**
+- `table` - The datasource table the column belongs to (not applicable to calculations, parameters)
 - `value` - The default value for parameters
 - `param_domain_type` - Parameter domain type (range, list, etc.)
 - `members` - List of member values (improved extraction from XML)
 
 ```python
-# Access parameter-specific field properties
 for ds in wb.datasources:
+    # Access parameter-specific field properties
     if ds.name == "Parameters":
         for field_name, field in ds.fields.items():
             print(f"Parameter: {field.caption}")
             print(f"  Value: {field.value}")
             print(f"  Domain Type: {field.param_domain_type}")
             print(f"  Members: {field.members}")
+    else:
+        # Get the table in the datasource a column belongs to
+        print(f"Table: {field.table})
 ```
 
 #### Backwards Compatibility

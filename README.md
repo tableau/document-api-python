@@ -19,9 +19,9 @@ This fork builds on Tableau’s Document API with optional, backward-compatible 
 - **Filter support** – dedicated `Filter` class, including parsing of nested `groupfilter` structures  
 - **Datasource dependencies** – new `DatasourceDependency` class separating fields from dependency columns and instances  
 - **Query interface** – high-level `workbook.query` API for cross-workbook analysis and dependency mapping  
-- **Field reference cleaning** – normalization of Tableau’s internal field naming conventions  
+- **Column - Table mapping** – get the column datasource table as a read-only attribute with `field.table`  
 - **XML string input** – `Workbook` class now accepts TWB XML string input for integration with Tableau Server Client and REST API
-- **Parameter parsing** – Enhanced `Field` class with parameter attributes (`value`, `param_domain_type`, `members`) and added `get_workbook_parameters()` method
+- **Parameter parsing** – Enhanced `Field` class with read-only parameter attributes (`value`, `param_domain_type`, `members`) and added `get_workbook_parameters()` method
 
 Detailed descriptions, examples, and resolved issue references are available in [Version 012 Enhancements](Version_012_enhancements.md).
 
