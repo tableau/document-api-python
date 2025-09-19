@@ -339,18 +339,39 @@ class Field(object):
 
     @property
     def table(self):
-        """ Get the table of a column in a datasource """
-        node = self._xml.getparent()
-        for _ in range(4):
-            if node:
-                if node.tag == 'relation':
-                    return node.get('table')
-                else:
-                    if node.getparent():
-                        node = node.getparent()
-                    else:
-                        return
+        """Get the table of a column in a datasource."""
+        node = self._xml
+        if node is None:
+            return None
+
+        if node.tag == 'metadata-record':
+            return node.findtext('./family')
+
+        parent = node.getparent()
+        if parent is None:
+            return None
+
+        # Case 1: direct child of a relation
+        if parent.tag == 'relation':
+            return parent.get('name')
+
+        # Case 2: column directly under datasource
+        if node.tag == 'column' and parent.tag == 'datasource':
+            col_name = node.get('name', '').strip('[]')  # Remove square brackets
+            matches = parent.xpath(
+                ".//relation[.//columns/column[@name=$col]]/@name",
+                col=col_name
+            )
+            return matches[0] if matches else None
+
+        # Case 3: column under datasource/columns/column
+        if parent.tag == 'columns':
+            grandparent = parent.getparent()
+            if grandparent is not None:
+                return grandparent.get('name')
+
         return None
+
     
     ########################################
     # Attribute getters
@@ -404,6 +425,7 @@ class Field(object):
     @property
     def default_aggregation(self):
         """ The default type of aggregation on the field (e.g Sum, Avg)"""
+        # import pdb; pdb.set_trace()
         return self._aggregation
 
     @property

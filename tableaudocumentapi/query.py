@@ -57,20 +57,24 @@ class Query(object):
     
     
     
-    def get_field_objects(self, column):
+    def get_field_objects(self, column, datasource_name = None):
         """Link filter column or worksheets rows/cols to actual Field object from datasource"""
-        
         if not isinstance(column, str) or not column:
             return None
 
-        # Extract field name from column reference
-        # '[federated.xxx].[Table]' -> 'Table'
-        result = re.split(r'(?<=\])\.(?=\[)', column)
+        if datasource_name is None:
+            # Extract field name from column reference
+            # '[federated.xxx].[Table]' -> 'Table'
+            result = re.split(r'(?<=\])\.(?=\[)', column)
+            datasource_name = result[0][1:-1]
+            field_name = result[1]
+        else:
+            field_name = column
         # Find matching field in datasources
         for datasource in self._workbook.datasources:
-            if result[0][1:-1] == datasource.name:
-                if result[1] in datasource.fields:
-                    return datasource.fields[result[1]]
+            if datasource_name == datasource.name:
+                if field_name in datasource.fields:
+                    return datasource.fields[field_name]
         return None
     
     def get_workbook_parameters(self):

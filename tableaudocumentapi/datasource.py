@@ -228,6 +228,7 @@ class Datasource(object):
         """ Key-value result of field's names and its attributes. Dict. """
         if not self._fields:
             self._refresh_fields()
+            # import pdb; pdb.set_trace()
         return self._fields
 
     def _refresh_fields(self):
