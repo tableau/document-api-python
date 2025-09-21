@@ -98,3 +98,25 @@ class Query(object):
                         "Members": datasource.fields[field].members
                     })
         return workbook_parameters
+    
+    
+    
+    def get_workbook_fields(self):
+        """Get all non-parameter Fields in a workbook and their attributes as a list of dictionaries"""
+        field_attributes = [
+            'alias', 'aliases', 'calculation', 'caption', 'datatype', 'default_aggregation',
+            'description', 'hidden', 'id', 'is_nominal', 'is_ordinal','is_quantitative', 
+            'name', 'param_domain_type', 'role', 'table', 'type','value','worksheets']
+        workbook_fields = []
+        for datasource in self._workbook.datasources:
+            if datasource.name != "Parameters":
+                fields = datasource.fields
+                for key in fields:
+                    if key.startswith('[') and key.endswith(']'):
+                        field_dict = {}
+                        field_dict['datasource'] = datasource.name
+                        field_dict['field_key'] = key
+                        for field_attribute in field_attributes:
+                            field_dict[field_attribute] = getattr(fields[key],field_attribute)
+                        workbook_fields.append(field_dict)
+        return workbook_fields

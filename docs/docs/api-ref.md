@@ -170,11 +170,11 @@ Represents a field in a datasource
 
 `self.worksheets` Returns a list of strings with the worksheet names that use this field.
 
-`self.value` *(added in v012)* Returns a string with the default value for parameters, None for regular fields.
+`self.value` *(added in v012)* Returns a string with the default value for a field. Applicable to parameters, not regular columns/calculations.
 
-`self.param_domain_type` *(added in v012)* Returns a string with the parameter domain type (range, list, etc.), None for regular fields.
+`self.param_domain_type` *(added in v012)* Returns a string with the parameter domain type (range, list, etc.). Applicable to parameters, not regular columns/calculations.
 
-`self.members` *(added in v012)* Returns a list of member values extracted from the field's XML.
+`self.members` *(added in v012)* Returns a list of member values extracted from the field's XML. Applicable to parameters, not regular columns/calculations.
 
 `self.table` *(added in v012)* Returns a string with the name of the datasource table a column belongs to.
 
@@ -287,4 +287,8 @@ Provides high-level querying capabilities across the workbook.
 
 `Query.get_field_objects(self, column):` Links column references to Field objects from datasources. Returns Field object if found, None otherwise.
 
-`Query.get_workbook_parameters(self):` *(added in v012)* Returns a list of dictionaries containing all workbook parameters with their attributes including alias, aliases, calculation, caption, datatype, name, parameter domain type, role, type, value, worksheets, and members.
+`Query.get_workbook_fields(self, column):` Returns a list of dictionaries containing all workbook fields, with their attributes, including 'alias', 'aliases', 'calculation', 'caption', 'datatype', 'default_aggregation',
+            'description', 'hidden', 'id', 'is_nominal', 'is_ordinal','is_quantitative', 
+            'name', 'param_domain_type', 'role', 'table', 'type','value','worksheets', and datasource
+
+`Query.get_workbook_parameters(self):` Returns a list of dictionaries containing all workbook parameters with their attributes including alias, aliases, calculation, caption, datatype, name, parameter domain type, role, type, value, worksheets, and members.

@@ -89,6 +89,7 @@ Provides high-level querying capabilities across the workbook.
 - `get_workbook_dependencies()` - Returns flattened list of all dependencies with metadata
 - `get_workbook_filters()` - Returns flattened list of all filters with metadata
 - `get_field_objects(column)` - Links column references to Field objects from datasources
+- `get_workbook_fields()` - Returns all workbook fields and their attirbutes, like calculation, datatype, and default aggregation)
 - `get_workbook_parameters()` - Returns all workbook parameters and their attributes like aliases, members and value
 
 **Usage:**
@@ -198,6 +199,8 @@ workbook.datasources[3].filters
 ```python
 workbook.query.get_workbook_dependencies()
 # Outputs a tabular field usage report for every Dashboard and Worksheet
+workbook.query.get_workbook_fields()
+# Outputs a tabular attribute report for all fields in a workbook
 ```
 
 
