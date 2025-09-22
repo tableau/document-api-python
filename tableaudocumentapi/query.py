@@ -1,4 +1,6 @@
 import re
+import pandas as pd
+from tableaudocumentapi.utils import _clean_aggregated_column_names
 
 class Query(object):
     """A class for querying the parsed elements of the Tableau Workbook"""
@@ -16,18 +18,17 @@ class Query(object):
             for dashboard, worksheets_in_dashboard in self._workbook.dashboard_objects.items():
                 if this_worksheet in worksheets_in_dashboard.worksheets:
                     worksheet_dashboard_map[this_worksheet].append(dashboard)
+            worksheet_dashboard_map[this_worksheet] = worksheet_dashboard_map[this_worksheet]
         return worksheet_dashboard_map
     
 
     
-    def get_workbook_dependencies(self):
-        workbook_dependencies = []
+    def get_worksheet_dependencies(self):
+        worksheet_dependencies = []
         for worksheet in self._workbook.worksheet_objects.values():
             for dependency in worksheet.datasource_dependencies:
                 for column_instance in dependency.column_instances.values():
-                    workbook_dependencies.append({
-                        "Workbook":self._workbook.filename,
-                        "Dashboard":self._worksheet_dashboard_map.get(worksheet.name),
+                    worksheet_dependencies.append({
                         "Worksheet":worksheet.name,
                         "Datasource":dependency.datasource,
                         "Columns":dependency.columns,
@@ -35,25 +36,47 @@ class Query(object):
                         "Column_instance_Derivation":column_instance.get('derivation'),
                         "Column_instance_Name":column_instance.get('name'),
                         "Column_instance_Pivot":column_instance.get('pivot'),
-                        "Column_instance_Type":column_instance.get('type')
+                        "Column_instance_Type":column_instance.get('type'),
+                        "Column_instance_Type":column_instance.get('type'),
                     })
-        return workbook_dependencies
+        return worksheet_dependencies
     
     
     
-    def get_workbook_filters(self):
+    def get_worksheet_filters(self):
         workbook_filters = []
         for worksheet in self._workbook.worksheet_objects.values():
             for filter_obj in worksheet.filters:
                 workbook_filters.append({
-                    "Workbook": self._workbook.filename,
-                    "Dashboard": self._worksheet_dashboard_map.get(worksheet.name),
                     "Worksheet": worksheet.name,
                     "Filter_class": filter_obj.filter_class,
+                    "Datasource": filter_obj.datasource,
                     "Column": filter_obj.column,
                     "Groupfilters": filter_obj.groupfilters
                 })
         return workbook_filters
+    
+    def get_worksheet_rows(self):
+        worksheet_rows = []
+        for worksheet in self._workbook.worksheet_objects.values():
+            for row in worksheet.rows:
+                worksheet_rows.append({
+                    "Worksheet": worksheet.name,
+                    "Datasource": _clean_aggregated_column_names(row)[0],
+                    "Row": _clean_aggregated_column_names(row)[1]                
+                })
+        return worksheet_rows
+    
+    def get_worksheet_cols(self):
+        worksheet_cols = []
+        for worksheet in self._workbook.worksheet_objects.values():
+            for col in worksheet.cols:
+                worksheet_cols.append({
+                    "Worksheet": worksheet.name,
+                    "Datasource": _clean_aggregated_column_names(col)[0],
+                    "Col": _clean_aggregated_column_names(col)[1]                
+                })
+        return worksheet_cols
     
     
     
@@ -120,3 +143,27 @@ class Query(object):
                             field_dict[field_attribute] = getattr(fields[key],field_attribute)
                         workbook_fields.append(field_dict)
         return workbook_fields
+    
+    def get_workbook_diff_table(self):
+        """Generate a table all workbook dependencies and their attributes"""
+        # Join Worksheets with dashboards
+        df_dependencies = pd.DataFrame(self.get_worksheet_dependencies())
+        worksheet_dashboard_map = self._get_worksheet_dashboard_map()
+        df_worksheet_dashboard_map = pd.DataFrame({"Worksheet":worksheet_dashboard_map.keys(), "Dashboard":worksheet_dashboard_map.values()})
+        df_diff = df_dependencies.merge(df_worksheet_dashboard_map, how='left', on='Worksheet')
+        
+        
+        # Join with Filters
+        df_filters = pd.DataFrame(self.get_worksheet_filters())
+        df_diff = pd.merge(df_diff, df_filters, left_on = ['Datasource', 'Column_instance', 'Worksheet'], right_on=['Datasource', 'Column', 'Worksheet'], how='left')
+        
+        import pdb; pdb.set_trace()
+        # Join with Rows
+        df_rows = pd.DataFrame(self.get_worksheet_rows())
+        df_diff = pd.merge(df_diff, df_rows, left_on = ['Datasource', 'Column_instance', 'Worksheet'], right_on=['Datasource', 'Row', 'Worksheet'], how='left')
+        
+        # Join with Cols
+        df_cols = pd.DataFrame(self.get_worksheet_cols())
+        df_diff = pd.merge(df_diff, df_cols, left_on = ['Datasource', 'Column_instance', 'Worksheet'], right_on=['Datasource', 'Col', 'Worksheet'], how='left')
+        
+        return df_diff

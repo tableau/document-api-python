@@ -69,8 +69,11 @@ class Worksheet(object):
             raise ValueError("row_or_col must be 'rows' or 'cols'")
 
         path = f"table/{row_or_col}"
+        # import pdb; pdb.set_trace()
         text = self._xml.findtext(path, default='').strip()
         if not text:
             return []
-
-        return _clean_aggregated_column_names(text)
+        list_of_rows_cols = []
+        for _ in text.split(" / "):
+            list_of_rows_cols.append((_))
+        return list_of_rows_cols

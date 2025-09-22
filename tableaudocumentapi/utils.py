@@ -10,7 +10,6 @@ def _clean_aggregated_column_names(text):
       [Calculation_123:qk]            -> [Calculation_123]
     """
     cleaned_fields = []
-
     if not isinstance(text, str) or not text:
         return cleaned_fields
 
@@ -45,7 +44,7 @@ def _clean_aggregated_column_names(text):
             # Remove prefix before first colon (if any)
             if ':' in inner:
                 colon_parts = inner.split(':', 1)
-                if len(colon_parts) > 1 and colon_parts[0] in ['none', 'sum', 'attr', 'avg', 'min', 'max', 'count']:
+                if len(colon_parts) > 1 and colon_parts[0] in ['none', 'sum', 'attr', 'avg', 'min', 'max', 'count', 'usr']:
                     inner = colon_parts[1]  # Remove known prefix
             # Remove suffix after last colon (if any)  
             if ':' in inner:
@@ -59,12 +58,15 @@ def _clean_aggregated_column_names(text):
             # Remove prefix before first colon (if any)
             if ':' in inner:
                 colon_parts = inner.split(':', 1)
-                if len(colon_parts) > 1 and colon_parts[0] in ['none', 'sum', 'attr', 'avg', 'min', 'max', 'count']:
+                if len(colon_parts) > 1 and colon_parts[0] in ['none', 'sum', 'attr', 'avg', 'min', 'max', 'count', 'usr']:
                     inner = colon_parts[1]  # Remove known prefix
             # Remove suffix after last colon (if any)
             if ':' in inner:
                 inner = inner.rsplit(':', 1)[0]  # Remove last suffix
             
             cleaned_fields.append(f'[{inner}]')
-
-    return cleaned_fields
+    
+    result = re.split(r'(?<=\])\.(?=\[)', cleaned_fields[0])
+    datasource_name = result[0][1:-1]
+    field_name = result[1]
+    return datasource_name, field_name

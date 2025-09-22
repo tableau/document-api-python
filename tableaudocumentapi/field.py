@@ -425,7 +425,6 @@ class Field(object):
     @property
     def default_aggregation(self):
         """ The default type of aggregation on the field (e.g Sum, Avg)"""
-        # import pdb; pdb.set_trace()
         return self._aggregation
 
     @property

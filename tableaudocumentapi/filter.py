@@ -11,7 +11,8 @@ class Filter(object):
         
         self._xml = filter_xml 
         self._filter_class = filter_xml.get('class')
-        self._column = _clean_aggregated_column_names(filter_xml.get('column'))
+        self._column = _clean_aggregated_column_names(filter_xml.get('column'))[1]
+        self._datasource = _clean_aggregated_column_names(filter_xml.get('column'))[0]
         self._groupfilters = self._parse_groupfilters()
         
     @property
@@ -33,6 +34,11 @@ class Filter(object):
     def column(self):
         """Return columns of the filter """
         return self._column
+    
+    @property
+    def datasource(self):
+        """Return datasource of the columns of the filter """
+        return self._datasource
 
     def _parse_groupfilters(self):
         """Function that will parse the groupfilters under the filter"""
