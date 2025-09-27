@@ -155,17 +155,22 @@ class Query(object):
         
         # Join with Filters
         df_filters = pd.DataFrame(self.get_worksheet_filters())
-        df_diff = pd.merge(df_diff, df_filters, left_on = ['Datasource', 'Column_instance', 'Worksheet'], right_on=['Datasource', 'Column', 'Worksheet'], how='left')
+        df_diff = pd.merge(df_diff, df_filters.add_prefix('_filter_'), left_on = ['Datasource', 'Column_instance', 'Worksheet'], 
+                           right_on=['_filter_Datasource', '_filter_Column', '_filter_Worksheet'], how='left')
         
         # Join with Rows
         df_rows = pd.DataFrame(self.get_worksheet_rows())
-        df_diff = pd.merge(df_diff, df_rows, left_on = ['Datasource', 'Column_instance', 'Worksheet'], right_on=['Datasource', 'Row', 'Worksheet'], how='left')
+        df_diff = pd.merge(df_diff, df_rows.add_prefix('_rows_'), left_on = ['Datasource', 'Column_instance', 'Worksheet'], 
+                           right_on=['_rows_Datasource', '_rows_Row', '_rows_Worksheet'], how='left')
         
         # Join with Cols
         df_cols = pd.DataFrame(self.get_worksheet_cols())
-        df_diff = pd.merge(df_diff, df_cols, left_on = ['Datasource', 'Column_instance', 'Worksheet'], right_on=['Datasource', 'Col', 'Worksheet'], how='left')
+        df_diff = pd.merge(df_diff, df_cols.add_prefix('_cols_'), left_on = ['Datasource', 'Column_instance', 'Worksheet'], 
+                           right_on=['_cols_Datasource', '_cols_Col', '_cols_Worksheet'], how='left')
         
+        # Join with fields
         df_fields = pd.DataFrame(self.get_workbook_fields())
-        df_diff = pd.merge(df_diff, df_fields, left_on = ['Datasource', 'Column_instance'], right_on=['datasource', 'field_key'], how='left')
+        df_diff = pd.merge(df_diff, df_fields.add_prefix('_fields_'), left_on = ['Datasource', 'Column_instance'], 
+                           right_on=['_fields_datasource', '_fields_field_key'], how='left')
     
         return df_diff
