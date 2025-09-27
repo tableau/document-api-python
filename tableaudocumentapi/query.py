@@ -129,24 +129,24 @@ class Query(object):
         field_attributes = [
             'alias', 'aliases', 'calculation', 'caption', 'datatype', 'default_aggregation',
             'description', 'hidden', 'id', 'is_nominal', 'is_ordinal','is_quantitative', 
-            'name', 'param_domain_type', 'role', 'table', 'type','value','worksheets']
+            'members','name', 'param_domain_type', 'role', 'table', 'type','value','worksheets']
         workbook_fields = []
         for datasource in self._workbook.datasources:
-            if datasource.name != "Parameters":
-                fields = datasource.fields
-                for key in fields:
-                    if key.startswith('[') and key.endswith(']'):
-                        field_dict = {}
-                        field_dict['datasource'] = datasource.name
-                        field_dict['field_key'] = key
-                        for field_attribute in field_attributes:
-                            field_dict[field_attribute] = getattr(fields[key],field_attribute)
-                        workbook_fields.append(field_dict)
+            fields = datasource.fields
+            for key in fields:
+                if key.startswith('[') and key.endswith(']'):
+                    field_dict = {}
+                    field_dict['datasource'] = datasource.name
+                    field_dict['field_key'] = key
+                    for field_attribute in field_attributes:
+                        field_dict[field_attribute] = getattr(fields[key],field_attribute)
+                    workbook_fields.append(field_dict)
         return workbook_fields
     
     def get_workbook_diff_table(self):
         """Generate a table all workbook dependencies and their attributes"""
         # Join Worksheets with dashboards
+        import pdb; pdb.set_trace()
         df_dependencies = pd.DataFrame(self.get_worksheet_dependencies())
         worksheet_dashboard_map = self._get_worksheet_dashboard_map()
         df_worksheet_dashboard_map = pd.DataFrame({"Worksheet":worksheet_dashboard_map.keys(), "Dashboard":worksheet_dashboard_map.values()})
@@ -157,7 +157,6 @@ class Query(object):
         df_filters = pd.DataFrame(self.get_worksheet_filters())
         df_diff = pd.merge(df_diff, df_filters, left_on = ['Datasource', 'Column_instance', 'Worksheet'], right_on=['Datasource', 'Column', 'Worksheet'], how='left')
         
-        import pdb; pdb.set_trace()
         # Join with Rows
         df_rows = pd.DataFrame(self.get_worksheet_rows())
         df_diff = pd.merge(df_diff, df_rows, left_on = ['Datasource', 'Column_instance', 'Worksheet'], right_on=['Datasource', 'Row', 'Worksheet'], how='left')
@@ -166,4 +165,7 @@ class Query(object):
         df_cols = pd.DataFrame(self.get_worksheet_cols())
         df_diff = pd.merge(df_diff, df_cols, left_on = ['Datasource', 'Column_instance', 'Worksheet'], right_on=['Datasource', 'Col', 'Worksheet'], how='left')
         
+        df_fields = pd.DataFrame(self.get_workbook_fields())
+        df_diff = pd.merge(df_diff, df_fields, left_on = ['Datasource', 'Column_instance'], right_on=['datasource', 'field_key'], how='left')
+    
         return df_diff
