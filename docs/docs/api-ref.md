@@ -281,9 +281,11 @@ Provides high-level querying capabilities across the workbook.
 
 **Methods:**
 
-`Query.get_workbook_dependencies(self):` Returns a flattened list of dictionaries containing all dependencies with metadata including workbook, dashboard, worksheet, datasource, and column information.
+`Query.get_worksheet_dependencies(self):` Returns a flattened list of dictionaries containing all dependencies with metadata including workbook, dashboard, worksheet, datasource, and column information.
 
-`Query.get_workbook_filters(self):` Returns a flattened list of dictionaries containing all filters with metadata including workbook, dashboard, worksheet, filter class, column, and groupfilter information.
+`Query.get_worksheet_filters(self):` Returns a flattened list of dictionaries containing all filters with metadata including workbook, dashboard, worksheet, filter class, column, and groupfilter information.
+
+`Query.normalize_worksheet_filters(self, workbook_fitlers):` Normalizes nested Groupfilters structures in worksheet filters into a flattened tabular format.
 
 `Query.get_field_objects(self, column):` Links column references to Field objects from datasources. Returns Field object if found, None otherwise.
 

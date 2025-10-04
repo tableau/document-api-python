@@ -86,8 +86,9 @@ for filter_obj2 in datasource.filters:
 Provides high-level querying capabilities across the workbook.
 
 **Methods:**
-- `get_workbook_dependencies()` - Returns flattened list of all dependencies with metadata
-- `get_workbook_filters()` - Returns flattened list of all filters with metadata
+- `get_worksheet_dependencies()` - Returns flattened list of all dependencies with metadata
+- `get_worksheet_filters()` - Returns flattened list of all filters with metadata
+- `normalize_worksheet_filters(worksheet_filters)` — Flattens and expands nested Groupfilters within worksheet filters into a tabular DataFrame
 - `get_field_objects(column)` - Links column references to Field objects from datasources
 - `get_workbook_fields()` - Returns all workbook fields and their attirbutes, like calculation, datatype, and default aggregation)
 - `get_workbook_parameters()` - Returns all workbook parameters and their attributes like aliases, members and value
@@ -95,15 +96,19 @@ Provides high-level querying capabilities across the workbook.
 **Usage:**
 ```python
 wb = Workbook('file.twbx')
-dependencies = wb.query.get_workbook_dependencies()
+dependencies = wb.query.get_worksheet_dependencies()
 for dep in dependencies:
     print(f"{dep['Dashboard']} with {dep['Worksheet']} uses {dep['Column_instance']} from {dep['Datasource']}")
 
-filters = wb.query.get_workbook_filters()
+filters = wb.query.get_worksheet_filters()
 for f in filters:
     print(f"{f['Worksheet']} filters {f['Column']} ({f['Filter_class']})")
 
-parameters = wb.query.get_workbook_parameters()
+normalized_filters = wb.query.normalize_worksheet_filters(filters)
+# View flattened filter structure
+print(normalized_filters.head())
+
+parameters = wb.query.get_worksheet_parameters()
 for p in parameters:
     print(f"Parameter: {p['Name']} (Type: {p['Datatype']})")
     print(f"  Value: {p['Value']}, Domain Type: {p['Parameter_Domain_Type']}")
