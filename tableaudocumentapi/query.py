@@ -1,5 +1,7 @@
 import re
 import pandas as pd
+import json
+import numpy as np
 from tableaudocumentapi.utils import _clean_aggregated_column_names
 
 class Query(object):
@@ -38,6 +40,26 @@ class Query(object):
                     })
         return worksheet_dependencies
     
+    
+    def normalize_groupfilter(self, filter_json):    
+        # import pdb; pdb.set_trace()
+        normalized_groupfilter = pd.json_normalize(filter_json).explode("children").reset_index(drop=True).to_dict(orient="records")
+        return normalized_groupfilter
+    
+    def normalize_worksheet_filters(self, worksheet_filters):
+        for worksheet_filter in worksheet_filters:
+            if len(worksheet_filter.get('Groupfilters')) > 0:
+                worksheet_filter['normalized_groupfilter'] = self.normalize_groupfilter(worksheet_filter.get('Groupfilters'))
+        worksheet_filters2 = pd.DataFrame(worksheet_filters).explode('normalized_groupfilter').reset_index(drop=True)
+        worksheet_normalized_groupfilter = pd.json_normalize(worksheet_filters2['normalized_groupfilter'])
+        col_dict = {}
+        for col in worksheet_normalized_groupfilter.columns:
+            col_dict[col]= "groupfilter_"+ col
+        
+        worksheet_normalized_groupfilter.rename(columns=col_dict, inplace=True)
+        worksheet_filters = worksheet_filters2.join(worksheet_normalized_groupfilter)
+        return worksheet_filters
+            
     def get_worksheet_filters(self):
         worksheet_filters = []
         for worksheet in self._workbook.worksheet_objects.values():
@@ -49,22 +71,9 @@ class Query(object):
                     "Column": filter_obj.column,
                     "Groupfilters": filter_obj.groupfilters
                 })
-        return worksheet_filters
+            normalized_worksheet_filters = self.normalize_worksheet_filters(worksheet_filters)
+        return normalized_worksheet_filters
     
-    def normalize_groupfilter(self, filter_json):    
-        # import pdb; pdb.set_trace()
-        normalized_groupfilter = pd.json_normalize(filter_json).explode("children").reset_index(drop=True).to_dict(orient="records")
-        return normalized_groupfilter
-    
-    def normalize_worksheet_filters(self, worksheet_filters):
-        for worksheet_filter in worksheet_filters:
-            if len(worksheet_filter.get('Groupfilters')) > 0:
-                worksheet_filter['normalized_groupfilter'] = self.normalize_groupfilter(worksheet_filter.get('Groupfilters'))
-        worksheet_filters = pd.DataFrame(worksheet_filters).explode('normalized_groupfilter')
-        worksheet_normalized_groupfilter = pd.json_normalize(worksheet_filters['normalized_groupfilter'])
-        worksheet_filters = worksheet_filters.join(worksheet_normalized_groupfilter)
-        return worksheet_filters
-            
     def get_worksheet_rows(self):
         worksheet_rows = []
         for worksheet in self._workbook.worksheet_objects.values():
@@ -172,5 +181,30 @@ class Query(object):
         df_fields = pd.DataFrame(self.get_workbook_fields())
         df_diff = pd.merge(df_diff, df_fields.add_prefix('_fields_'), left_on = ['Datasource', 'Column_instance'], 
                            right_on=['_fields_datasource', '_fields_field_key'], how='left')
-            
+        return df_diff
+    
+    @staticmethod
+    def json_safe_dataframe(df: pd.DataFrame) -> pd.DataFrame:
+        """Convert columns containing dicts/lists/ndarrays to JSON strings (leaves scalars alone)."""
+        df = df.copy()
+        def to_json_if_needed(x):
+            # Convert JSON-serializable containers
+            if isinstance(x, (dict, list)):
+                return json.dumps(x, ensure_ascii=False)
+            # Convert numpy arrays to lists first
+            if isinstance(x, np.ndarray):
+                return json.dumps(x.tolist(), ensure_ascii=False)
+            # Leave everything else (including None/NaN) unchanged
+            return x
+
+        # Only touch columns that actually contain container types to avoid overhead
+        for col in df.columns:
+            if df[col].apply(lambda v: isinstance(v, (dict, list)) or hasattr(v, "__array__")).any():
+                df[col] = df[col].apply(to_json_if_needed)
+        return df
+
+    def compare_diffs(self, diff_wb1, diff_wb2):
+        diff_wb1 = self.json_safe_dataframe(diff_wb1)
+        diff_wb2 = self.json_safe_dataframe(diff_wb2)
+        df_diff = pd.merge(diff_wb1, diff_wb2, how='outer', indicator=True)
         return df_diff
