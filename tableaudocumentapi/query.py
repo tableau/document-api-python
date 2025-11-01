@@ -35,8 +35,7 @@ class Query(object):
                         "Column_instance_Derivation":column_instance.get('derivation'),
                         "Column_instance_Name":column_instance.get('name'),
                         "Column_instance_Pivot":column_instance.get('pivot'),
-                        "Column_instance_Type":column_instance.get('type'),
-                        "Column_instance_Type":column_instance.get('type'),
+                        "Column_instance_Type":column_instance.get('type')
                     })
         return worksheet_dependencies
     
@@ -205,6 +204,8 @@ class Query(object):
 
     def compare_diffs(self, diff_wb1, diff_wb2):
         diff_wb1 = self.json_safe_dataframe(diff_wb1)
+        diff_wb1 = diff_wb1.melt(id_vars=[col for col in diff_wb1.columns if col[0] != '_'], value_vars=[col for col in diff_wb1.columns if col[0] == '_'])
         diff_wb2 = self.json_safe_dataframe(diff_wb2)
-        df_diff = pd.merge(diff_wb1, diff_wb2, how='outer', indicator=True)
+        diff_wb2 = diff_wb2.melt(id_vars=[col for col in diff_wb2.columns if col[0] != '_'], value_vars=[col for col in diff_wb2.columns if col[0] == '_'])    
+        df_diff = pd.merge(diff_wb1, diff_wb2, how='outer', indicator=True).rename(columns={'_merge':'Workbook_Source'}).drop_duplicates()
         return df_diff
