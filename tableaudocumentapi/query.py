@@ -2,6 +2,7 @@ import re
 import pandas as pd
 import json
 import numpy as np
+import tableaudocumentapi
 from tableaudocumentapi.utils import _clean_aggregated_column_names
 
 class Query(object):
@@ -19,8 +20,8 @@ class Query(object):
             for dashboard, worksheets_in_dashboard in self._workbook.dashboard_objects.items():
                 if this_worksheet in worksheets_in_dashboard.worksheets:
                     worksheet_dashboard_map[this_worksheet].append(dashboard)
-            worksheet_dashboard_map[this_worksheet] = worksheet_dashboard_map[this_worksheet]
         return worksheet_dashboard_map
+
 
     def get_worksheet_dependencies(self):
         worksheet_dependencies = []
@@ -39,62 +40,59 @@ class Query(object):
                     })
         return worksheet_dependencies
     
-    
-    def normalize_groupfilter(self, filter_json):    
-        # import pdb; pdb.set_trace()
-        normalized_groupfilter = pd.json_normalize(filter_json).explode("children").reset_index(drop=True).to_dict(orient="records")
-        return normalized_groupfilter
-    
+    def normalize_groupfilter(self, filter_json):
+        if not filter_json:
+            return []
+        # Ensure list-of-dicts structure; explode safely
+        df = pd.json_normalize(filter_json)
+        if 'children' in df.columns:
+            df = df.explode('children', ignore_index=True)
+        return df.to_dict(orient="records")
+
     def normalize_worksheet_filters(self, worksheet_filters):
-        for worksheet_filter in worksheet_filters:
-            if len(worksheet_filter.get('Groupfilters')) > 0:
-                worksheet_filter['normalized_groupfilter'] = self.normalize_groupfilter(worksheet_filter.get('Groupfilters'))
-        worksheet_filters2 = pd.DataFrame(worksheet_filters).explode('normalized_groupfilter').reset_index(drop=True)
-        worksheet_normalized_groupfilter = pd.json_normalize(worksheet_filters2['normalized_groupfilter'])
-        col_dict = {}
-        for col in worksheet_normalized_groupfilter.columns:
-            col_dict[col]= "groupfilter_"+ col
-        
-        worksheet_normalized_groupfilter.rename(columns=col_dict, inplace=True)
-        worksheet_filters = worksheet_filters2.join(worksheet_normalized_groupfilter)
-        return worksheet_filters
-            
+        for wf in worksheet_filters:
+            gf = wf.get('Groupfilters') or []
+            wf['normalized_groupfilter'] = self.normalize_groupfilter(gf) if gf else []
+        # Build frame even if some rows have empty normalized lists
+        wf2 = pd.DataFrame(worksheet_filters)
+        # Explode safely (empty lists will repeat row once)
+        wf2 = wf2.explode('normalized_groupfilter', ignore_index=True)
+        wf_norm = pd.json_normalize(wf2['normalized_groupfilter'])
+        wf_norm = wf_norm.add_prefix('groupfilter_')
+        return wf2.join(wf_norm)
+
+    
     def get_worksheet_filters(self):
         worksheet_filters = []
         for worksheet in self._workbook.worksheet_objects.values():
-            for filter_obj in worksheet.filters:
+            for f in worksheet.filters:
                 worksheet_filters.append({
                     "Worksheet": worksheet.name,
-                    "Filter_class": filter_obj.filter_class,
-                    "Datasource": filter_obj.datasource,
-                    "Column": filter_obj.column,
-                    "Groupfilters": filter_obj.groupfilters
+                    "Filter_class": f.filter_class,
+                    "Datasource": f.datasource,
+                    "Column": f.column,
+                    "Groupfilters": f.groupfilters
                 })
-            normalized_worksheet_filters = self.normalize_worksheet_filters(worksheet_filters)
-        return normalized_worksheet_filters
+        return self.normalize_worksheet_filters(worksheet_filters)
+
     
     def get_worksheet_rows(self):
-        worksheet_rows = []
-        for worksheet in self._workbook.worksheet_objects.values():
-            for row in worksheet.rows:
-                worksheet_rows.append({
-                    "Worksheet": worksheet.name,
-                    "Datasource": _clean_aggregated_column_names(row)[0],
-                    "Row": _clean_aggregated_column_names(row)[1]                
-                })
-        return worksheet_rows
-    
+        out = []
+        for ws in self._workbook.worksheet_objects.values():
+            for r in ws.rows:
+                ds_name, row_name = _clean_aggregated_column_names(r) or (None, None)
+                out.append({"Worksheet": ws.name, "Datasource": ds_name, "Row": row_name})
+        return out
+
     def get_worksheet_cols(self):
-        worksheet_cols = []
-        for worksheet in self._workbook.worksheet_objects.values():
-            for col in worksheet.cols:
-                worksheet_cols.append({
-                    "Worksheet": worksheet.name,
-                    "Datasource": _clean_aggregated_column_names(col)[0],
-                    "Col": _clean_aggregated_column_names(col)[1]                
-                })
-        return worksheet_cols
-    
+        out = []
+        for ws in self._workbook.worksheet_objects.values():
+            for c in ws.cols:
+                ds_name, col_name = _clean_aggregated_column_names(c) or (None, None)
+                out.append({"Worksheet": ws.name, "Datasource": ds_name, "Col": col_name})
+        return out
+
+        
     def get_field_objects(self, column, datasource_name = None):
         """Link filter column or worksheets rows/cols to actual Field object from datasource"""
         if not isinstance(column, str) or not column:
@@ -113,6 +111,7 @@ class Query(object):
                 if field_name in datasource.fields:
                     return datasource.fields[field_name]
         return None
+
     
     def get_workbook_parameters(self):
         """Get all Parameters in workbook and their attributes as a list of dictionaries"""
@@ -137,50 +136,68 @@ class Query(object):
         return workbook_parameters
     
     def get_workbook_fields(self):
-        """Get all non-parameter Fields in a workbook and their attributes as a list of dictionaries"""
-        field_attributes = [
-            'alias', 'aliases', 'calculation', 'caption', 'datatype', 'default_aggregation',
-            'description', 'hidden', 'id', 'is_nominal', 'is_ordinal','is_quantitative', 
-            'members','name', 'param_domain_type', 'role', 'table', 'type','value','worksheets']
-        workbook_fields = []
-        for datasource in self._workbook.datasources:
-            fields = datasource.fields
-            for key in fields:
-                if key.startswith('[') and key.endswith(']'):
-                    field_dict = {}
-                    field_dict['datasource'] = datasource.name
-                    field_dict['datasource_caption'] = datasource.caption
-                    field_dict['field_key'] = key
-                    for field_attribute in field_attributes:
-                        field_dict[field_attribute] = getattr(fields[key],field_attribute)
-                    workbook_fields.append(field_dict)
-        return workbook_fields
+        """All non-parameter fields (+ attributes)."""
+        field_attrs = [
+            'alias','aliases','calculation','caption','datatype','default_aggregation',
+            'description','hidden','id','is_nominal','is_ordinal','is_quantitative',
+            'members','name','param_domain_type','role','table','type','value','worksheets'
+        ]
+        rows = []
+        for ds in self._workbook.datasources:
+            if ds.name == "Parameters":
+                continue
+            for key, field in ds.fields.items():
+                if isinstance(key, str) and key.startswith('[') and key.endswith(']'):
+                    row = {
+                        'datasource': ds.name,
+                        'datasource_caption': getattr(ds, 'caption', None),
+                        'field_key': key,
+                    }
+                    for attr in field_attrs:
+                        row[attr] = getattr(field, attr, None)
+                    rows.append(row)
+        return rows
+
     
     def get_workbook_diff_table(self):
-        """Generate a table all workbook dependencies and their attributes"""
-        # Join Worksheets with dashboards        
-        df_dependencies = pd.DataFrame(self.get_worksheet_dependencies())
-        worksheet_dashboard_map = self._get_worksheet_dashboard_map()
-        df_worksheet_dashboard_map = pd.DataFrame({"Worksheet":worksheet_dashboard_map.keys(), "Dashboard":worksheet_dashboard_map.values()})
-        df_diff = df_dependencies.merge(df_worksheet_dashboard_map, how='left', on='Worksheet')
-        
-        # Join with Filters
+        df_dep = pd.DataFrame(self.get_worksheet_dependencies())
+
+        ws_db_map = self._get_worksheet_dashboard_map()
+        df_wsdb = pd.DataFrame({
+            "Worksheet": list(ws_db_map.keys()),
+            "Dashboard": list(ws_db_map.values())
+        })
+        df = df_dep.merge(df_wsdb, how='left', on='Worksheet')
+
         df_filters = pd.DataFrame(self.get_worksheet_filters())
-        df_diff = pd.merge(df_diff, df_filters.add_prefix('_filter_'), left_on = ['Datasource', 'Column_instance', 'Worksheet'], 
-                           right_on=['_filter_Datasource', '_filter_Column', '_filter_Worksheet'], how='left')
-        # Join with Rows
+        if not df_filters.empty:
+            df = df.merge(df_filters.add_prefix('_filter_'),
+                        left_on=['Datasource','Column_instance','Worksheet'],
+                        right_on=['_filter_Datasource','_filter_Column','_filter_Worksheet'],
+                        how='left')
+
         df_rows = pd.DataFrame(self.get_worksheet_rows())
-        df_diff = pd.merge(df_diff, df_rows.add_prefix('_rows_'), left_on = ['Datasource', 'Column_instance', 'Worksheet'], 
-                           right_on=['_rows_Datasource', '_rows_Row', '_rows_Worksheet'], how='left')
-        # Join with Cols
+        if not df_rows.empty:
+            df = df.merge(df_rows.add_prefix('_rows_'),
+                        left_on=['Datasource','Column_instance','Worksheet'],
+                        right_on=['_rows_Datasource','_rows_Row','_rows_Worksheet'],
+                        how='left')
+
         df_cols = pd.DataFrame(self.get_worksheet_cols())
-        df_diff = pd.merge(df_diff, df_cols.add_prefix('_cols_'), left_on = ['Datasource', 'Column_instance', 'Worksheet'], 
-                           right_on=['_cols_Datasource', '_cols_Col', '_cols_Worksheet'], how='left')
-        # Join with fields
+        if not df_cols.empty:
+            df = df.merge(df_cols.add_prefix('_cols_'),
+                        left_on=['Datasource','Column_instance','Worksheet'],
+                        right_on=['_cols_Datasource','_cols_Col','_cols_Worksheet'],
+                        how='left')
+
         df_fields = pd.DataFrame(self.get_workbook_fields())
-        df_diff = pd.merge(df_diff, df_fields.add_prefix('_fields_'), left_on = ['Datasource', 'Column_instance'], 
-                           right_on=['_fields_datasource', '_fields_field_key'], how='left')
-        return df_diff
+        if not df_fields.empty:
+            df = df.merge(df_fields.add_prefix('_fields_'),
+                        left_on=['Datasource','Column_instance'],
+                        right_on=['_fields_datasource','_fields_field_key'],
+                        how='left')
+        return df
+
     
     @staticmethod
     def json_safe_dataframe(df: pd.DataFrame) -> pd.DataFrame:
@@ -201,11 +218,44 @@ class Query(object):
             if df[col].apply(lambda v: isinstance(v, (dict, list)) or hasattr(v, "__array__")).any():
                 df[col] = df[col].apply(to_json_if_needed)
         return df
+    
+    @staticmethod
+    def compare_diffs(wb1_filename, wb2_filename, wb1_twb_string=None, wb2_twb_string=None):
+        from tableaudocumentapi import Workbook
 
-    def compare_diffs(self, diff_wb1, diff_wb2):
-        diff_wb1 = self.json_safe_dataframe(diff_wb1)
-        diff_wb1 = diff_wb1.melt(id_vars=[col for col in diff_wb1.columns if col[0] != '_'], value_vars=[col for col in diff_wb1.columns if col[0] == '_'])
-        diff_wb2 = self.json_safe_dataframe(diff_wb2)
-        diff_wb2 = diff_wb2.melt(id_vars=[col for col in diff_wb2.columns if col[0] != '_'], value_vars=[col for col in diff_wb2.columns if col[0] == '_'])    
-        df_diff = pd.merge(diff_wb1, diff_wb2, how='outer', indicator=True).rename(columns={'_merge':'Workbook_Source'}).drop_duplicates()
-        return df_diff
+        if wb1_twb_string:
+            d1 = Workbook(twb_xml_string=wb1_twb_string).query.get_workbook_diff_table()
+        else:
+            d1 = Workbook(wb1_filename).query.get_workbook_diff_table()
+
+        if wb2_twb_string:
+            d2 = Workbook(twb_xml_string=wb2_twb_string).query.get_workbook_diff_table()
+        else:
+            d2 = Workbook(wb2_filename).query.get_workbook_diff_table()
+
+        d1 = Query.json_safe_dataframe(d1)
+        d2 = Query.json_safe_dataframe(d2)
+
+        # Partition columns
+        def split_cols(cols):
+            id_cols = [c for c in cols if isinstance(c, str) and c and c[0] != '_']
+            val_cols = [c for c in cols if isinstance(c, str) and c and c[0] == '_']
+            # If nothing qualifies as id, keep at least 'Worksheet' and 'Datasource' if present
+            if not id_cols:
+                id_cols = [c for c in ['Worksheet','Datasource','Column_instance'] if c in cols]
+            return id_cols, val_cols
+
+        id1, val1 = split_cols(d1.columns)
+        id2, val2 = split_cols(d2.columns)
+
+        d1m = d1.melt(id_vars=id1, value_vars=val1) if val1 else d1
+        d2m = d2.melt(id_vars=id2, value_vars=val2) if val2 else d2
+
+        out = pd.merge(d1m, d2m, how='outer', indicator=True)
+        out = out.rename(columns={'_merge': 'Workbook_Source'})
+        out['Workbook_Source'] = out['Workbook_Source'].map({
+            'left_only': 'wb1',
+            'right_only': 'wb2',
+            'both': 'both'
+        })
+        return out.drop_duplicates()
