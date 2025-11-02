@@ -2,7 +2,6 @@ import re
 import pandas as pd
 import json
 import numpy as np
-import tableaudocumentapi
 from tableaudocumentapi.utils import _clean_aggregated_column_names
 
 class Query(object):
@@ -101,16 +100,18 @@ class Query(object):
             # Extract field name from column reference
             # '[federated.xxx].[Table]' -> 'Table'
             result = re.split(r'(?<=\])\.(?=\[)', column)
-            datasource_name = result[0][1:-1]
-            field_name = result[1]
+            if len(result) == 2:
+                datasource_name = result[0][1:-1]
+                field_name = result[1]
+            else:
+                return None
         else:
             field_name = column
         # Find matching field in datasources
-        for datasource in self._workbook.datasources:
-            if datasource_name == datasource.name:
-                if field_name in datasource.fields:
-                    return datasource.fields[field_name]
-        return None
+        ds = getattr(self._workbook, '_datasource_index', {}).get(datasource_name)
+        if not ds:
+            return None
+        return ds.fields.get(field_name)
 
     
     def get_workbook_parameters(self):
@@ -162,11 +163,12 @@ class Query(object):
     def get_workbook_diff_table(self):
         df_dep = pd.DataFrame(self.get_worksheet_dependencies())
 
-        ws_db_map = self._get_worksheet_dashboard_map()
+        # use cached map, and stabilize order for diff-friendliness
+        ws_db_map = self._worksheet_dashboard_map
         df_wsdb = pd.DataFrame({
             "Worksheet": list(ws_db_map.keys()),
-            "Dashboard": list(ws_db_map.values())
-        })
+            "Dashboard": [sorted(v) for v in ws_db_map.values()]
+        }) 
         df = df_dep.merge(df_wsdb, how='left', on='Worksheet')
 
         df_filters = pd.DataFrame(self.get_worksheet_filters())
@@ -198,11 +200,11 @@ class Query(object):
                         how='left')
         return df
 
-    
     @staticmethod
-    def json_safe_dataframe(df: pd.DataFrame) -> pd.DataFrame:
+    def json_safe_dataframe(df):
         """Convert columns containing dicts/lists/ndarrays to JSON strings (leaves scalars alone)."""
         df = df.copy()
+
         def to_json_if_needed(x):
             # Convert JSON-serializable containers
             if isinstance(x, (dict, list)):
@@ -213,9 +215,8 @@ class Query(object):
             # Leave everything else (including None/NaN) unchanged
             return x
 
-        # Only touch columns that actually contain container types to avoid overhead
         for col in df.columns:
-            if df[col].apply(lambda v: isinstance(v, (dict, list)) or hasattr(v, "__array__")).any():
+            if df[col].apply(lambda v: isinstance(v, (dict, list, np.ndarray))).any():
                 df[col] = df[col].apply(to_json_if_needed)
         return df
     
