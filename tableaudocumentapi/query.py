@@ -42,12 +42,49 @@ class Query(object):
     def normalize_groupfilter(self, filter_json):
         if not filter_json:
             return []
-        # Ensure list-of-dicts structure; explode safely
+        # Ensure list-of-dicts structure; explode safely    
         df = pd.json_normalize(filter_json)
         if 'children' in df.columns:
             df = df.explode('children', ignore_index=True)
         return df.to_dict(orient="records")
+    
+    def normalize_groupfilter(self, filter_json):
+        if not filter_json:
+            return []
 
+        # Ensure list input
+        queue = filter_json if isinstance(filter_json, list) else [filter_json]
+        out = []
+        stack = [(None, 0, node) for node in queue]  # (parent_idx, depth, node)
+
+        while stack:
+            parent_idx, depth, node = stack.pop(0)
+            if not isinstance(node, dict):
+                continue
+            rec = {
+                'function': node.get('function'),
+                'level': node.get('level'),
+                'member': node.get('member'),
+                'depth': depth,
+                'parent_index': parent_idx
+            }
+            attrs = node.get('attributes') or {}
+            if isinstance(attrs, dict):
+                for k, v in attrs.items():
+                    rec[f'attributes.{k}'] = v
+            # remember our index before appending children
+            this_index = len(out)
+            out.append(rec)
+
+            for child in (node.get('children') or []):
+                stack.append((this_index, depth + 1, child))
+
+        # flatten attributes.* keys into columns
+        df = pd.json_normalize(out, sep='.')
+        return df.to_dict(orient='records')
+
+
+    
     def normalize_worksheet_filters(self, worksheet_filters):
         for wf in worksheet_filters:
             gf = wf.get('Groupfilters') or []
@@ -59,6 +96,7 @@ class Query(object):
         wf_norm = pd.json_normalize(wf2['normalized_groupfilter'])
         wf_norm = wf_norm.add_prefix('groupfilter_')
         return wf2.join(wf_norm)
+
 
     
     def get_worksheet_filters(self):
