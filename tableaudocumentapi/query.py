@@ -261,7 +261,6 @@ class Query(object):
     @staticmethod
     def compare_diffs(wb1_filename, wb2_filename, wb1_twb_string=None, wb2_twb_string=None):
         from tableaudocumentapi import Workbook
-
         if wb1_twb_string:
             d1 = Workbook(twb_xml_string=wb1_twb_string).query.get_workbook_diff_table()
         else:

@@ -1,7 +1,11 @@
-## 012 (August 2025)
+## 012 (November 2025)
+* Added workbook diff comparison via Query.compare_diffs() and Query.get_workbook_diff_table()
 * Added Dashboard, Worksheet, Filter, DatasourceDependency, and Query classes
 * Added XML string input support for Workbook class
-* Enhanced Field class by adding read-only attributes Field.table and parameter parsing with Field.value, Field param_domain_type, and Field.members
+* Enhanced Field class by adding read-only attributes Field.table and parameter parsing with Field.value, Field.param_domain_type, and Field.members
+* Added Query methods for worksheet analysis: get_worksheet_dependencies(), get_worksheet_filters(), get_worksheet_rows(), get_worksheet_cols(), get_worksheet_fields()
+* Added normalize_groupfilter() for flattening nested filter structures
+* Added sample workbook diff comparison with show_diff.py and dashboard visualization of results with diff_dashboard.twb
 * Resolved upstream issues #33, #138, #164, #246, #129
 
 ## 011 (November 2022)
