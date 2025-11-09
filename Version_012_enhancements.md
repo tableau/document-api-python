@@ -66,7 +66,8 @@ Represents filters applied to datasources or worksheets
 **Properties:**
 - `filter_class` - Filter type (categorical, quantitative, etc.)
 - `xml` - Raw XML element
-- `column` - List of cleaned field references being filtered
+- `column` - Cleaned field reference being filtered
+- `datasource` - Name of the datasource for the filtered column
 - `groupfilters` - List of nested groupfilter dictionaries
 
 **Usage:**
@@ -87,33 +88,112 @@ Provides high-level querying capabilities across the workbook.
 
 **Methods:**
 - `get_worksheet_dependencies()` - Returns flattened list of all dependencies with metadata
-- `get_worksheet_filters()` - Returns flattened list of all filters with metadata
-- `normalize_worksheet_filters(worksheet_filters)` — Flattens and expands nested Groupfilters within worksheet filters into a tabular DataFrame
-- `get_field_objects(column)` - Links column references to Field objects from datasources
-- `get_workbook_fields()` - Returns all workbook fields and their attirbutes, like calculation, datatype, and default aggregation)
-- `get_workbook_parameters()` - Returns all workbook parameters and their attributes like aliases, members and value
+- `get_worksheet_filters()` - Returns flattened list of all filters with metadata and normalized groupfilters
+- `get_worksheet_rows()` - Returns all row field references from worksheets with datasource mapping
+- `get_worksheet_cols()` - Returns all column field references from worksheets with datasource mapping
+- `normalize_groupfilter(filter_json)` - Flattens nested groupfilter structures into tabular format with parent-child relationships
+- `get_field_objects(column, datasource_name)` - Links column references to Field objects from datasources
+- `get_workbook_fields()` - Returns all workbook fields and their attributes (calculation, datatype, default aggregation)
+- `get_workbook_parameters()` - Returns all workbook parameters and their attributes (aliases, members, value)
+- `get_workbook_diff_table()` - Generates comprehensive data table combining all workbook metadata for diff analysis
+- `compare_diffs(wb1_filename, wb2_filename, wb1_twb_string, wb2_twb_string)` - Static method to compare two workbooks and return differences
 
 **Usage:**
 ```python
 wb = Workbook('file.twbx')
+
+# Get worksheet dependencies
 dependencies = wb.query.get_worksheet_dependencies()
 for dep in dependencies:
-    print(f"{dep['Dashboard']} with {dep['Worksheet']} uses {dep['Column_instance']} from {dep['Datasource']}")
+    print(f"{dep['Worksheet']} uses {dep['Column_instance']} from {dep['Datasource']}")
 
+# Get worksheet filters with normalized groupfilters
 filters = wb.query.get_worksheet_filters()
 for f in filters:
     print(f"{f['Worksheet']} filters {f['Column']} ({f['Filter_class']})")
+    if 'groupfilter_function' in f:
+        print(f"  Groupfilter: {f['groupfilter_function']} at depth {f.get('groupfilter_depth', 0)}")
 
-normalized_filters = wb.query.normalize_worksheet_filters(filters)
-# View flattened filter structure
-print(normalized_filters.head())
+# Get row and column field references
+rows = wb.query.get_worksheet_rows()
+cols = wb.query.get_worksheet_cols()
+print(f"Found {len(rows)} row references and {len(cols)} column references")
 
-parameters = wb.query.get_worksheet_parameters()
+# Get parameters
+parameters = wb.query.get_workbook_parameters()
 for p in parameters:
     print(f"Parameter: {p['Name']} (Type: {p['Datatype']})")
     print(f"  Value: {p['Value']}, Domain Type: {p['Parameter_Domain_Type']}")
     print(f"  Used in: {p['Worksheets']}")
 ```
+
+
+## Workbook Comparison and Diff Analysis
+
+Version 012 introduces powerful workbook comparison capabilities to track changes between different versions of Tableau workbooks.
+
+### Comparing Two Workbooks
+Use the `Query.compare_diffs()` static method to compare two Tableau workbooks:
+
+```python
+from tableaudocumentapi.query import Query
+
+# Compare two workbook files
+df_diff = Query.compare_diffs(
+    wb1_filename="samples/show_workbook_diff/AESO.twbx",
+    wb2_filename="samples/show_workbook_diff/AESO2.twbx"
+)
+
+# Compare workbooks from XML strings (e.g., from Tableau Server)
+df_diff = Query.compare_diffs(
+    wb1_twb_string=xml_content_v1,
+    wb2_twb_string=xml_content_v2
+)
+
+# Analyze the differences
+print(f"Total differences: {len(df_diff)}")
+added_items = df_diff[df_diff['Workbook_Source'] == 'wb2']
+removed_items = df_diff[df_diff['Workbook_Source'] == 'wb1']
+unchanged_items = df_diff[df_diff['Workbook_Source'] == 'both']
+```
+
+### Comprehensive Workbook Metadata Table
+The `get_workbook_diff_table()` method generates a complete metadata table by merging:
+- Worksheet dependencies
+- Filters with normalized groupfilters
+- Row and column field references
+- Field definitions and attributes
+- Dashboard-worksheet mappings
+
+```python
+wb = Workbook('file.twbx')
+diff_table = wb.query.get_workbook_diff_table()
+
+# Export for external analysis or version comparison
+diff_table.to_csv("workbook_complete_analysis.csv", index=False)
+```
+
+### Sample Implementation
+The repository includes a complete example in `samples/show_workbook_diff/`:
+
+**show_diff.py** - Demonstrates comparing two workbook versions:
+```python
+from tableaudocumentapi.query import Query
+
+# Compare two versions of a Tableau workbook
+df_diff = Query.compare_diffs(
+    wb1_filename="samples/show_workbook_diff/AESO.twbx",
+    wb2_filename="samples/show_workbook_diff/AESO2.twbx"
+)
+
+# Output the diff to CSV
+df_diff.to_csv("samples/show_workbook_diff/Data/df_diff.csv", index=False)
+```
+
+**Additional Sample Files:**
+- `AESO.twbx` and `AESO2.twbx` - Example workbook versions for comparison
+- `diff_dashboard.twb` - Tableau dashboard for visualizing comparison results
+- `Data/df_diff.csv` - Generated diff output for analysis
 
 
 ## Enhanced Classes

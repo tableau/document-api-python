@@ -5,7 +5,7 @@ from tableaudocumentapi.query import Query
 #################################################################
 # Step 2)  Create diff of 2 versions of a tableau workboook (.twb or .twbx) we want compare
 ############################################################
-df_diff = Query.compare_diffs(wb1_filename="samples/show_workbook_diff/AESO.twbx", wb2_filename="samples/show_workbook_diff/AESO2.twbx")
+df_diff = Query.compare_diffs(wb1_filename="samples/show_workbook_diff/Workbook_v1.twbx", wb2_filename="samples/show_workbook_diff/Workbook_v2.twbx")
 #################################################################
 # Step 3)  Output the diff to csv
 #################################################################
