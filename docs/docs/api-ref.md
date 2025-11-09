@@ -264,7 +264,9 @@ Represents filters applied to worksheets or datasources.
 
 `self.xml:` Returns the XML element of the filter.
 
-`self.column:` Returns a list of cleaned field references being filtered.
+`self.column:` Returns a cleaned field reference being filtered.
+
+`self.datasource:` Returns a string with the name of the datasource for the filtered column.
 
 `self.groupfilters:` Returns a list of nested groupfilter dictionaries representing the filter structure.
 
@@ -281,16 +283,26 @@ Provides high-level querying capabilities across the workbook.
 
 **Methods:**
 
-`Query.get_worksheet_dependencies(self):` Returns a flattened list of dictionaries containing all dependencies with metadata including workbook, dashboard, worksheet, datasource, and column information.
+`Query.get_worksheet_dependencies(self):` Returns a flattened list of dictionaries containing all dependencies with metadata including worksheet, datasource, columns, column instances, and their attributes.
 
-`Query.get_worksheet_filters(self):` Returns a flattened list of dictionaries containing all filters with metadata including workbook, dashboard, worksheet, filter class, column, and groupfilter information.
+`Query.get_worksheet_filters(self):` Returns a pandas DataFrame containing all filters with metadata and normalized groupfilters including worksheet, filter class, datasource, column, and flattened groupfilter attributes.
 
-`Query.normalize_worksheet_filters(self, workbook_fitlers):` Normalizes nested Groupfilters structures in worksheet filters into a flattened tabular format.
+`Query.get_worksheet_rows(self):` Returns a list of dictionaries containing all row field references from worksheets with datasource and row name mapping.
 
-`Query.get_field_objects(self, column):` Links column references to Field objects from datasources. Returns Field object if found, None otherwise.
+`Query.get_worksheet_cols(self):` Returns a list of dictionaries containing all column field references from worksheets with datasource and column name mapping.
 
-`Query.get_workbook_fields(self, column):` Returns a list of dictionaries containing all workbook fields, with their attributes, including 'alias', 'aliases', 'calculation', 'caption', 'datatype', 'default_aggregation',
-            'description', 'hidden', 'id', 'is_nominal', 'is_ordinal','is_quantitative', 
-            'name', 'param_domain_type', 'role', 'table', 'type','value','worksheets', and datasource
+`Query.normalize_groupfilter(self, filter_json):` Flattens nested groupfilter structures into tabular format with parent-child relationships. Returns a list of dictionaries with function, level, member, depth, parent_index, and attributes.
+
+`Query.normalize_worksheet_filters(self, worksheet_filters):` Normalizes nested Groupfilters structures in worksheet filters into a flattened pandas DataFrame with exploded groupfilter attributes.
+
+`Query.get_field_objects(self, column, datasource_name=None):` Links column references to Field objects from datasources. Returns Field object if found, None otherwise. Optionally accepts datasource name for faster lookup.
+
+`Query.get_workbook_fields(self):` Returns a list of dictionaries containing all non-parameter workbook fields with their attributes including 'alias', 'aliases', 'calculation', 'caption', 'datatype', 'default_aggregation', 'description', 'hidden', 'id', 'is_nominal', 'is_ordinal', 'is_quantitative', 'name', 'param_domain_type', 'role', 'table', 'type', 'value', 'worksheets', and datasource information.
 
 `Query.get_workbook_parameters(self):` Returns a list of dictionaries containing all workbook parameters with their attributes including alias, aliases, calculation, caption, datatype, name, parameter domain type, role, type, value, worksheets, and members.
+
+`Query.get_workbook_metadata_table(self):` Generates a comprehensive pandas DataFrame combining all workbook metadata by merging worksheet dependencies, filters with normalized groupfilters, row and column field references, field definitions and attributes, and dashboard-worksheet mappings.
+
+`Query.compare_diffs(wb1_filename, wb2_filename, wb1_twb_string=None, wb2_twb_string=None):` Static method that compares two Tableau workbooks and returns a pandas DataFrame with differences. Accepts either filenames or XML strings. The returned DataFrame includes a 'Workbook_Source' column indicating whether items are in 'wb1' (left only), 'wb2' (right only), or 'both' workbooks.
+
+`Query.json_safe_dataframe(df):` Static method that converts pandas DataFrames containing complex types (dicts, lists, numpy arrays) to JSON-safe format by converting these types to JSON strings while leaving scalar values unchanged.

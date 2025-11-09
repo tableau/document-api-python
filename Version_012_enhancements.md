@@ -95,7 +95,7 @@ Provides high-level querying capabilities across the workbook.
 - `get_field_objects(column, datasource_name)` - Links column references to Field objects from datasources
 - `get_workbook_fields()` - Returns all workbook fields and their attributes (calculation, datatype, default aggregation)
 - `get_workbook_parameters()` - Returns all workbook parameters and their attributes (aliases, members, value)
-- `get_workbook_diff_table()` - Generates comprehensive data table combining all workbook metadata for diff analysis
+- `get_workbook_metadata_table()` - Generates comprehensive data table combining all workbook metadata for diff analysis
 - `compare_diffs(wb1_filename, wb2_filename, wb1_twb_string, wb2_twb_string)` - Static method to compare two workbooks and return differences
 
 **Usage:**
@@ -140,8 +140,8 @@ from tableaudocumentapi.query import Query
 
 # Compare two workbook files
 df_diff = Query.compare_diffs(
-    wb1_filename="samples/show_workbook_diff/AESO.twbx",
-    wb2_filename="samples/show_workbook_diff/AESO2.twbx"
+    wb1_filename="samples/show_workbook_diff/Workbook_v1.twbx",
+    wb2_filename="samples/show_workbook_diff/Workbook_v2.twbx"
 )
 
 # Compare workbooks from XML strings (e.g., from Tableau Server)
@@ -158,7 +158,7 @@ unchanged_items = df_diff[df_diff['Workbook_Source'] == 'both']
 ```
 
 ### Comprehensive Workbook Metadata Table
-The `get_workbook_diff_table()` method generates a complete metadata table by merging:
+The `get_workbook_metadata_table()` method generates a complete metadata table by merging:
 - Worksheet dependencies
 - Filters with normalized groupfilters
 - Row and column field references
@@ -167,10 +167,10 @@ The `get_workbook_diff_table()` method generates a complete metadata table by me
 
 ```python
 wb = Workbook('file.twbx')
-diff_table = wb.query.get_workbook_diff_table()
+metadata_table = wb.query.get_workbook_metadata_table()
 
 # Export for external analysis or version comparison
-diff_table.to_csv("workbook_complete_analysis.csv", index=False)
+metadata_table.to_csv("workbook_complete_analysis.csv", index=False)
 ```
 
 ### Sample Implementation
@@ -182,8 +182,8 @@ from tableaudocumentapi.query import Query
 
 # Compare two versions of a Tableau workbook
 df_diff = Query.compare_diffs(
-    wb1_filename="samples/show_workbook_diff/AESO.twbx",
-    wb2_filename="samples/show_workbook_diff/AESO2.twbx"
+    wb1_filename="samples/show_workbook_diff/Workbook_v1.twbx",
+    wb2_filename="samples/show_workbook_diff/Workbook_v2.twbx"
 )
 
 # Output the diff to CSV
@@ -191,7 +191,7 @@ df_diff.to_csv("samples/show_workbook_diff/Data/df_diff.csv", index=False)
 ```
 
 **Additional Sample Files:**
-- `AESO.twbx` and `AESO2.twbx` - Example workbook versions for comparison
+- `Workbook_v1.twbx` and `Workbook_v2.twbx` - Example workbook versions for comparison
 - `diff_dashboard.twb` - Tableau dashboard for visualizing comparison results
 - `Data/df_diff.csv` - Generated diff output for analysis
 

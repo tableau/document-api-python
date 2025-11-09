@@ -197,8 +197,8 @@ class Query(object):
                     rows.append(row)
         return rows
 
-    
-    def get_workbook_diff_table(self):
+
+    def get_workbook_metadata_table(self):
         df_dep = pd.DataFrame(self.get_worksheet_dependencies())
 
         # use cached map, and stabilize order for diff-friendliness
@@ -262,14 +262,14 @@ class Query(object):
     def compare_diffs(wb1_filename, wb2_filename, wb1_twb_string=None, wb2_twb_string=None):
         from tableaudocumentapi import Workbook
         if wb1_twb_string:
-            d1 = Workbook(twb_xml_string=wb1_twb_string).query.get_workbook_diff_table()
+            d1 = Workbook(twb_xml_string=wb1_twb_string).query.get_workbook_metadata_table()
         else:
-            d1 = Workbook(wb1_filename).query.get_workbook_diff_table()
+            d1 = Workbook(wb1_filename).query.get_workbook_metadata_table()
 
         if wb2_twb_string:
-            d2 = Workbook(twb_xml_string=wb2_twb_string).query.get_workbook_diff_table()
+            d2 = Workbook(twb_xml_string=wb2_twb_string).query.get_workbook_metadata_table()
         else:
-            d2 = Workbook(wb2_filename).query.get_workbook_diff_table()
+            d2 = Workbook(wb2_filename).query.get_workbook_metadata_table()
 
         d1 = Query.json_safe_dataframe(d1)
         d2 = Query.json_safe_dataframe(d2)

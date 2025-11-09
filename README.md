@@ -11,15 +11,17 @@ All enhancements are fully backward compatible.
 
 If you are looking for the official Tableau Document API, see the [upstream project](https://github.com/tableau/document-api-python).
 
-## What’s new in this fork (v0.12)
-This fork builds on Tableau’s Document API with optional, backward-compatible features aimed at analysis and diff tooling:
+## What's new in this fork (v0.12)
+This fork builds on Tableau's Document API with optional, backward-compatible features aimed at analysis and diff tooling:
 
-- **Dashboard objects** – structured representation with worksheet containment and dependency tracking  
-- **Worksheet objects** – access to datasource dependencies, filters, rows, columns, and column instances  
-- **Filter support** – dedicated `Filter` class, including parsing of nested `groupfilter` structures  
-- **Datasource dependencies** – new `DatasourceDependency` class separating fields from dependency columns and instances  
-- **Query interface** – high-level `workbook.query` API for cross-workbook analysis and dependency mapping  
-- **Column - Table mapping** – get the column datasource table as a read-only attribute with `field.table`  
+- **Workbook comparison** – compare two workbook versions with `Query.compare_diffs()` to identify added, removed, and unchanged elements
+- **Comprehensive metadata extraction** – generate complete workbook metadata tables with `get_workbook_metadata_table()` for analysis and version tracking
+- **Dashboard objects** – structured representation with worksheet containment and dependency tracking
+- **Worksheet objects** – access to datasource dependencies, filters, rows, columns, and column instances
+- **Filter support** – dedicated `Filter` class, including parsing of nested `groupfilter` structures with hierarchical flattening
+- **Datasource dependencies** – new `DatasourceDependency` class separating fields from dependency columns and instances
+- **Query interface** – high-level `workbook.query` API for cross-workbook analysis and dependency mapping
+- **Column - Table mapping** – get the column datasource table as a read-only attribute with `field.table`
 - **XML string input** – `Workbook` class now accepts TWB XML string input for integration with Tableau Server Client and REST API
 - **Parameter parsing** – Enhanced `Field` class with read-only parameter attributes (`value`, `param_domain_type`, `members`) and added `get_workbook_parameters()` method
 
