@@ -72,8 +72,29 @@ class Field(object):
                                   read_name=metadata_name)
         self.apply_metadata(xmldata)
 
+    # @classmethod
+    # def create_field_xml(cls, caption, datatype, hidden, role, field_type, name):
+    #     column = ET.Element('column')
+    #     column.set('caption', caption)
+    #     column.set('datatype', datatype)
+    #     column.set('hidden', hidden)
+    #     column.set('role', role)
+    #     column.set('type', field_type)
+    #     column.set('name', name)
+    #     return column
+
     @classmethod
-    def create_field_xml(cls, caption, datatype, hidden, role, field_type, name):
+    def create_field_xml(
+        cls,
+        caption,
+        datatype,
+        hidden,
+        role,
+        field_type,
+        name,
+        value=None,
+        param_domain_type=None
+    ):
         column = ET.Element('column')
         column.set('caption', caption)
         column.set('datatype', datatype)
@@ -81,7 +102,16 @@ class Field(object):
         column.set('role', role)
         column.set('type', field_type)
         column.set('name', name)
+
+        # NEW (V012): parameter attributes
+        if value is not None:
+            column.set('value', value)
+        if param_domain_type is not None:
+            column.set('param_domain_type', param_domain_type)   
+            column.set('param-domain-type', param_domain_type)   
+
         return column
+
 
     ########################################
     # Special Case methods for construction fields from various sources
