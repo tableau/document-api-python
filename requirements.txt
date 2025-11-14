@@ -1,0 +1,4 @@
+lxml
+setuptools
+packaging
+pycodestyle

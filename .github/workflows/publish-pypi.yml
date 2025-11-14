@@ -1,6 +1,5 @@
 name: Publish to PyPi
 
-
 on:
   workflow_dispatch:
   push:
@@ -11,10 +10,10 @@ jobs:
     name: Build dist files for PyPi
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - uses: actions/setup-python@v1
+      - uses: actions/setup-python@v4
         with:
           python-version: 3.13
       - name: Build dist files
@@ -23,12 +22,11 @@ jobs:
           python setup.py build &&
           python setup.py sdist --formats=gztar
       - name: Publish distribution 📦 to Test PyPI
-        uses: pypa/gh-action-pypi-publish@release/v1  # license BSD-2
+        uses: pypa/gh-action-pypi-publish@release/v1 # license BSD-2
         with:
           password: ${{ secrets.TEST_PYPI_API_TOKEN }}
           repository_url: https://test.pypi.org/legacy/
       - name: Publish distribution 📦 to PyPI
-        uses: pypa/gh-action-pypi-publish@release/v1  # license BSD-2
+        uses: pypa/gh-action-pypi-publish@release/v1 # license BSD-2
         with:
           password: ${{ secrets.PYPI_API_TOKEN }}
-
