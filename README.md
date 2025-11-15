@@ -5,27 +5,59 @@
 ## About This Fork
 This repository is a maintained fork of Tableau’s [document-api-python](https://github.com/tableau/document-api-python).  
 
-It extends the original Document API with object-oriented access to dashboards, worksheets, filters, and datasource dependencies.  
-
-All enhancements are fully backward compatible.
+It extends the original Document API with structured, object-oriented access to dashboards, worksheets, datasource dependencies, filters, and comprehensive workbook metadata—while remaining fully backward compatible with the upstream API.
 
 If you are looking for the official Tableau Document API, see the [upstream project](https://github.com/tableau/document-api-python).
 
-## What's new in this fork (v0.12)
-This fork builds on Tableau's Document API with optional, backward-compatible features aimed at analysis and diff tooling:
+## What's New in This Fork (v0.12)
+Version 0.12 introduces several optional, backward-compatible enhancements:
 
-- **Workbook comparison** – compare two workbook versions with `Query.compare_diffs()` to identify added, removed, and unchanged elements
-- **Comprehensive metadata extraction** – generate complete workbook metadata tables with `get_workbook_metadata_table()` for analysis and version tracking
-- **Dashboard objects** – structured representation with worksheet containment and dependency tracking
-- **Worksheet objects** – access to datasource dependencies, filters, rows, columns, and column instances
-- **Filter support** – dedicated `Filter` class, including parsing of nested `groupfilter` structures with hierarchical flattening
-- **Datasource dependencies** – new `DatasourceDependency` class separating fields from dependency columns and instances
-- **Query interface** – high-level `workbook.query` API for cross-workbook analysis and dependency mapping
-- **Column - Table mapping** – get the column datasource table as a read-only attribute with `field.table`
-- **XML string input** – `Workbook` class now accepts TWB XML string input for integration with Tableau Server Client and REST API
-- **Parameter parsing** – Enhanced `Field` class with read-only parameter attributes (`value`, `param_domain_type`, `members`) and added `get_workbook_parameters()` method
+- **Workbook comparison** — Compare two workbook versions using `Query.compare_diffs()`
+- **Comprehensive metadata extraction** — Generate a unified metadata table with `get_workbook_metadata_table()`
+- **Dashboard & worksheet objects** — Structured access to dashboard contents and worksheet details
+- **Filter parsing** — Dedicated `Filter` class with hierarchical groupfilter flattening
+- **Datasource dependencies** — New `DatasourceDependency` class separating dependency metadata from fields
+- **High-level query interface** — `workbook.query` for cross-workbook analysis and dependency mapping
+- **Parameter parsing** — Additional Field attributes (`value`, `param_domain_type`, `members`)
+- **XML string input** — Construct a `Workbook` directly from TWB XML
+- **Command-line interface** — New minimal `twb-diff` CLI for file or XML string comparison 
 
-Detailed descriptions, examples, and resolved issue references are available in [Version 012 Enhancements](Version_012_enhancements.md).
+Full details and examples are available in  
+**[Version 012 Enhancements](Version_012_enhancements.md).**
+
+## Quick Start
+### Setup
+```bash
+## Clone this repo
+git clone git@github.com:jbisal/document-api-python.git
+## Install package locally in editable mode
+pip install -e .
+```
+
+### Compare two workbooks (Python)
+```python
+from tableaudocumentapi.query import Query
+
+df_diff = Query.compare_diffs(
+    wb1_filename="Workbook_v1.twbx",
+    wb2_filename="Workbook_v2.twbx"
+)
+df_diff.to_csv("df_diff.csv", index=False)
+```
+### Compare two workbooks using the CLI
+```bash
+twb-diff --wb1 Workbook_v1.twbx \
+         --wb2 Workbook_v2.twbx \
+         --out df_diff.csv
+```
+
+Installation and additional usage examples are provided in  
+**[API Reference](api-ref.md).**
+
+## Documentation
+- **API Reference:** [api-ref.md](api-ref.md)  
+- **Enhancements & examples:** [Version 012 Enhancements](Version_012_enhancements.md)  
+- **Original Tableau API documentation:** https://tableau.github.io/document-api-python/  
 
 ## Upstream Issues Resolved
 This fork addresses several upstream issues, including:

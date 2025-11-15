@@ -176,7 +176,7 @@ metadata_table.to_csv("workbook_complete_analysis.csv", index=False)
 ### Sample Implementation
 The repository includes a complete example in `samples/show_workbook_diff/`:
 
-**show_diff.py** - Demonstrates comparing two workbook versions:
+**show_twb_diff.py** - Demonstrates comparing two workbook versions:
 ```python
 from tableaudocumentapi.query import Query
 
@@ -194,6 +194,37 @@ df_diff.to_csv("samples/show_workbook_diff/Data/df_diff.csv", index=False)
 - `Workbook_v1.twbx` and `Workbook_v2.twbx` - Example workbook versions for comparison
 - `diff_dashboard.twb` - Tableau dashboard for visualizing comparison results
 - `Data/df_diff.csv` - Generated diff output for analysis
+
+## Command-Line Interface (CLI)
+
+Version 012 adds a minimal command-line interface for comparing Tableau workbooks without writing Python code. The CLI is installed as the `twb-diff` command and serves as a lightweight wrapper around `Query.compare_diffs()`.
+
+### Features:
+- Compare two Tableau workbooks (`.twb` or `.twbx`)
+- Compare two workbook XML strings
+- Output diff results to a CSV file (`df_diff.csv` by default)
+
+### Usage:
+#### TWB file comparison
+```bash
+twb-diff --wb1 samples/show_workbook_diff/Workbook_v1.twbx \
+         --wb2 samples/show_workbook_diff/Workbook_v2.twbx \
+         --out df_diff.csv
+```
+#### TWB XML string comparison
+```bash
+twb-diff --wb1-str "$(cat samples/replicate-workbook/sample-superstore.twb)" \
+         --wb2-str "$(cat /tmp/sample-superstore_v2.twb)" \
+         --out df_diff_strings.csv
+```
+
+### Arguments:
+- `--wb1`, `--wb2` — Paths to workbook files  
+- `--wb1-str`, `--wb2-str` — Raw TWB XML strings (alternative to file paths)  
+- `--out` — Output CSV file (optional)
+
+### Output:
+A CSV containing workbook metadata differences, including a `Workbook_Source` field indicating whether each item appears in `wb1`, `wb2`, or `both`.
 
 
 ## Enhanced Classes

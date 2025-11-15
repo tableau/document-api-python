@@ -306,3 +306,64 @@ Provides high-level querying capabilities across the workbook.
 `Query.compare_diffs(wb1_filename, wb2_filename, wb1_twb_string=None, wb2_twb_string=None):` Static method that compares two Tableau workbooks and returns a pandas DataFrame with differences. Accepts either filenames or XML strings. The returned DataFrame includes a 'Workbook_Source' column indicating whether items are in 'wb1' (left only), 'wb2' (right only), or 'both' workbooks.
 
 `Query.json_safe_dataframe(df):` Static method that converts pandas DataFrames containing complex types (dicts, lists, numpy arrays) to JSON-safe format by converting these types to JSON strings while leaving scalar values unchanged.
+
+## Command-Line Interface (CLI) *(added in v012)*
+
+The package now includes a minimal command-line utility for comparing Tableau workbooks without writing any Python code.
+
+**Command:**  
+`twb-diff`
+
+**Description:**  
+Compares two Tableau workbooks (TWB or TWBX files) or two XML workbook strings and outputs their differences to a CSV file.  
+The CLI provides the same functionality as `Query.compare_diffs()` and supports both file-based and XML string-based inputs.
+
+**Usage:**
+- Compare two workbook files  
+    ```bash
+    twb-diff --wb1 samples/show_workbook_diff/Workbook_v1.twbx \
+            --wb2 samples/show_workbook_diff/Workbook_v2.twbx \
+            --out samples/show_workbook_diff/Data/df_diff.csv
+    ```
+
+- Compare two XML strings  
+    ```bash
+    twb-diff --wb1-str "$(cat samples/replicate-workbook/sample-superstore.twb)" \
+            --wb2-str "$(cat /tmp/sample-superstore_v2.twb)" \
+            --out /tmp/df_diff_strings.csv
+    ```
+**Arguments:**
+
+`--wb1`  
+Path to the first workbook file (.twb or .twbx).
+
+`--wb2`  
+Path to the second workbook file (.twb or .twbx).
+
+`--wb1-str`  
+Raw XML string of the first workbook (alternative to `--wb1`).
+
+`--wb2-str`  
+Raw XML string of the second workbook (alternative to `--wb2`).
+
+`--out`  
+Path for the output CSV file. Defaults to `df_diff.csv`.
+
+**Notes:**
+- You must provide either both `--wb1` and `--wb2`, or both `--wb1-str` and `--wb2-str`.  
+- The output CSV contains the same structure and columns as the DataFrame returned by `Query.compare_diffs()`.  
+- Typical output includes a `Workbook_Source` column indicating whether a record appears in:
+  - `'wb1'` (only in the first workbook)
+  - `'wb2'` (only in the second workbook)
+  - `'both'` (unchanged or common between versions)
+
+**Example Output:**
+A CSV file summarizing changes across worksheets, datasources, and fields, with columns such as:
+- `Worksheet`
+- `Datasource`
+- `Column_instance`
+- `value`
+- `Workbook_Source`
+
+**Location:**  
+Installed automatically via `pip install -e .` and available globally as the `twb-diff` command.

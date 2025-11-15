@@ -61,10 +61,18 @@ This test file comprehensively tests all new features added in v012:
     - Field.members - parameter member values
     - Field.table - datasource table for columns
     - create_field_xml() supports parameter attributes
+
+12. Command-Line Interface (TestCLI)
+    - Minimal CLI wrapper around Query.compare_diffs()
+    - File-based workbook comparison via python -m tableaudocumentapi.cli
+    - Outputs a CSV diff table with a Workbook_Source column
 """
 
 import unittest
 import os.path
+import sys
+import subprocess
+import tempfile
 
 from tableaudocumentapi import Workbook
 from tableaudocumentapi.dashboard import Dashboard
@@ -799,7 +807,6 @@ class TestQueryComparisonMethods(unittest.TestCase):
     def test_query_json_safe_dataframe_converts_complex_types(self):
         """Test json_safe_dataframe converts complex types to JSON strings"""
         import pandas as pd
-        import numpy as np
 
         # Create a test DataFrame with complex types
         df = pd.DataFrame({
@@ -940,6 +947,49 @@ class TestNewFieldProperties(unittest.TestCase):
                     self.assertTrue(hasattr(field, 'param_domain_type'))
                     self.assertTrue(hasattr(field, 'members'))
 
+class TestCLI(unittest.TestCase):
+    """Test minimal CLI wrapper around Query.compare_diffs"""
+
+    def setUp(self):
+        if not os.path.exists(TEST_SUPERSTORE_FILE):
+            self.skipTest(f"Test file {TEST_SUPERSTORE_FILE} not available")
+
+    def test_cli_file_comparison_generates_csv(self):
+        """Test that CLI file-based comparison generates a CSV with Workbook_Source"""
+        import pandas as pd
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            out_path = os.path.join(tmpdir, "df_diff_cli.csv")
+
+            cmd = [
+                sys.executable,
+                "-m",
+                "tableaudocumentapi.cli",
+                "--wb1",
+                TEST_SUPERSTORE_FILE,
+                "--wb2",
+                TEST_SUPERSTORE_FILE,
+                "--out",
+                out_path,
+            ]
+            result = subprocess.run(cmd, capture_output=True, text=True)
+
+            self.assertEqual(
+                result.returncode,
+                0,
+                msg=f"CLI exited with non-zero code.\nSTDOUT:\n{result.stdout}\nSTDERR:\n{result.stderr}",
+            )
+
+            self.assertTrue(
+                os.path.exists(out_path),
+                msg=f"Expected output CSV not found at {out_path}",
+            )
+
+            df = pd.read_csv(out_path)
+            self.assertIn("Workbook_Source", df.columns)
+            # For identical files, most or all entries should be 'both'
+            if not df.empty:
+                self.assertIn("both", set(df["Workbook_Source"].unique()))
 
 if __name__ == '__main__':
     unittest.main()
