@@ -12,5 +12,10 @@ setup(
     long_description="file: README.md",
     long_description_content_type="text/markdown",
     test_suite='test',
-    install_requires=['lxml', 'pandas']
+    install_requires=['lxml', 'pandas'],
+    entry_points={
+        'console_scripts': [
+            'twb-diff = tableaudocumentapi.cli:main',
+        ],
+    }
 )
