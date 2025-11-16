@@ -27,3 +27,6 @@ def main():
 
     df.to_csv(args.out, index=False)
     print(f"✅ Diff written to {args.out}")
+
+if __name__ == "__main__":
+    main()

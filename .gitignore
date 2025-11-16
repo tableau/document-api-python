@@ -81,3 +81,6 @@ temp/
 
 # Virtual Environment
 venv/
+
+# Test-generated files
+saved-as-twb.twb

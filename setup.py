@@ -4,7 +4,7 @@ setup(
     name='tableaudocumentapi',
     version='0.12',
     author='Tableau',
-    author_email='github@tableau.com',
+    author_email='justin@viz-explainer.com',
     url='https://github.com/jbisal/document-api-python',
     packages=['tableaudocumentapi'],
     license='MIT',

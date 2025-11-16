@@ -87,25 +87,25 @@ TEST_ASSET_DIR = os.path.join(
     'assets'
 )
 
-TEST_SUPERSTORE_FILE = os.path.join(TEST_ASSET_DIR, 'US_Superstore_10.0.twbx')
+TEST_WORKBOOK_FILE = os.path.join(TEST_ASSET_DIR, 'Tableau Server Performance.twbx')
 
 
 class TestNewFeaturesFileAvailability(unittest.TestCase):
     """Test that the required test file exists before running other tests"""
     
-    def test_superstore_file_exists(self):
-        """Test that US_Superstore_10.0.twbx exists"""
-        self.assertTrue(os.path.exists(TEST_SUPERSTORE_FILE), 
-                       f"Test file {TEST_SUPERSTORE_FILE} does not exist")
+    def test_workbook_file_exists(self):
+        """Test that 'Tableau Server Performance.twbx' file exists"""
+        self.assertTrue(os.path.exists(TEST_WORKBOOK_FILE), 
+                       f"Test file {TEST_WORKBOOK_FILE} does not exist")
 
 
 class TestDashboardObjects(unittest.TestCase):
-    """Test Dashboard objects using US Superstore file"""
+    """Test Dashboard objects using Test Workbook file"""
     
     def setUp(self):
-        if not os.path.exists(TEST_SUPERSTORE_FILE):
-            self.skipTest(f"Test file {TEST_SUPERSTORE_FILE} not available")
-        self.wb = Workbook(TEST_SUPERSTORE_FILE)
+        if not os.path.exists(TEST_WORKBOOK_FILE):
+            self.skipTest(f"Test file {TEST_WORKBOOK_FILE} not available")
+        self.wb = Workbook(TEST_WORKBOOK_FILE)
         
     def test_workbook_has_dashboard_objects_property(self):
         """Test that workbook has dashboard_objects property"""
@@ -123,7 +123,7 @@ class TestDashboardObjects(unittest.TestCase):
     def test_dashboard_has_required_properties(self):
         """Test that Dashboard objects have all expected properties"""
         self.assertGreater(len(self.wb.dashboard_objects), 0, 
-                          "Superstore file should have at least one dashboard")
+                          "Test Workbook file should have at least one dashboard")
         
         dashboard = next(iter(self.wb.dashboard_objects.values()))
         self.assertTrue(hasattr(dashboard, 'name'))
@@ -160,12 +160,12 @@ class TestDashboardObjects(unittest.TestCase):
 
 
 class TestWorksheetObjects(unittest.TestCase):
-    """Test Worksheet objects using US Superstore file"""
+    """Test Worksheet objects using Test Workbook file"""
     
     def setUp(self):
-        if not os.path.exists(TEST_SUPERSTORE_FILE):
-            self.skipTest(f"Test file {TEST_SUPERSTORE_FILE} not available")
-        self.wb = Workbook(TEST_SUPERSTORE_FILE)
+        if not os.path.exists(TEST_WORKBOOK_FILE):
+            self.skipTest(f"Test file {TEST_WORKBOOK_FILE} not available")
+        self.wb = Workbook(TEST_WORKBOOK_FILE)
         
     def test_workbook_has_worksheet_objects_property(self):
         """Test that workbook has worksheet_objects property"""
@@ -175,7 +175,7 @@ class TestWorksheetObjects(unittest.TestCase):
     def test_worksheet_objects_are_worksheet_instances(self):
         """Test that worksheet objects are Worksheet instances"""
         self.assertGreater(len(self.wb.worksheet_objects), 0,
-                          "Superstore file should have at least one worksheet")
+                          "Test Workbook file should have at least one worksheet")
         
         for worksheet_name, worksheet in self.wb.worksheet_objects.items():
             with self.subTest(worksheet_name=worksheet_name):
@@ -244,12 +244,12 @@ class TestWorksheetObjects(unittest.TestCase):
 
 
 class TestDatasourceDependencyObjects(unittest.TestCase):
-    """Test DatasourceDependency objects using US Superstore file"""
+    """Test DatasourceDependency objects using sample Tableau Performance Workbook file"""
     
     def setUp(self):
-        if not os.path.exists(TEST_SUPERSTORE_FILE):
-            self.skipTest(f"Test file {TEST_SUPERSTORE_FILE} not available")
-        self.wb = Workbook(TEST_SUPERSTORE_FILE)
+        if not os.path.exists(TEST_WORKBOOK_FILE):
+            self.skipTest(f"Test file {TEST_WORKBOOK_FILE} not available")
+        self.wb = Workbook(TEST_WORKBOOK_FILE)
         
     def test_datasource_dependency_properties(self):
         """Test DatasourceDependency properties"""
@@ -258,7 +258,7 @@ class TestDatasourceDependencyObjects(unittest.TestCase):
             dependencies.extend(worksheet.datasource_dependencies)
             
         self.assertGreater(len(dependencies), 0, 
-                          "Superstore should have datasource dependencies")
+                          "Test Workbook should have datasource dependencies")
         
         for dep in dependencies:
             with self.subTest(datasource=dep.datasource):
@@ -306,12 +306,12 @@ class TestDatasourceDependencyObjects(unittest.TestCase):
 
 
 class TestFilterObjects(unittest.TestCase):
-    """Test Filter objects using US Superstore file"""
+    """Test Filter objects using Test Workbook file"""
 
     def setUp(self):
-        if not os.path.exists(TEST_SUPERSTORE_FILE):
-            self.skipTest(f"Test file {TEST_SUPERSTORE_FILE} not available")
-        self.wb = Workbook(TEST_SUPERSTORE_FILE)
+        if not os.path.exists(TEST_WORKBOOK_FILE):
+            self.skipTest(f"Test file {TEST_WORKBOOK_FILE} not available")
+        self.wb = Workbook(TEST_WORKBOOK_FILE)
 
     def test_datasource_has_filters_property(self):
         """Test that datasources have filters property"""
@@ -389,12 +389,12 @@ class TestFilterObjects(unittest.TestCase):
 
 
 class TestQueryObjects(unittest.TestCase):
-    """Test Query objects using US Superstore file"""
+    """Test Query objects using Test Workbook file"""
     
     def setUp(self):
-        if not os.path.exists(TEST_SUPERSTORE_FILE):
-            self.skipTest(f"Test file {TEST_SUPERSTORE_FILE} not available")
-        self.wb = Workbook(TEST_SUPERSTORE_FILE)
+        if not os.path.exists(TEST_WORKBOOK_FILE):
+            self.skipTest(f"Test file {TEST_WORKBOOK_FILE} not available")
+        self.wb = Workbook(TEST_WORKBOOK_FILE)
         
     def test_workbook_has_query_property(self):
         """Test that workbook has query property"""
@@ -591,9 +591,9 @@ class TestBackwardsCompatibility(unittest.TestCase):
     """Test that version 012 features don't break existing functionality"""
     
     def setUp(self):
-        if not os.path.exists(TEST_SUPERSTORE_FILE):
-            self.skipTest(f"Test file {TEST_SUPERSTORE_FILE} not available")
-        self.wb = Workbook(TEST_SUPERSTORE_FILE)
+        if not os.path.exists(TEST_WORKBOOK_FILE):
+            self.skipTest(f"Test file {TEST_WORKBOOK_FILE} not available")
+        self.wb = Workbook(TEST_WORKBOOK_FILE)
         
     def test_existing_dashboards_property_still_works(self):
         """Test that the original dashboards property still works"""
@@ -627,10 +627,10 @@ class TestXMLStringInput(unittest.TestCase):
     """Test XML string input feature for Workbook class"""
     
     def setUp(self):
-        if not os.path.exists(TEST_SUPERSTORE_FILE):
-            self.skipTest(f"Test file {TEST_SUPERSTORE_FILE} not available")
+        if not os.path.exists(TEST_WORKBOOK_FILE):
+            self.skipTest(f"Test file {TEST_WORKBOOK_FILE} not available")
         # Read the TWB XML content from existing file for testing
-        self.wb_from_file = Workbook(TEST_SUPERSTORE_FILE)
+        self.wb_from_file = Workbook(TEST_WORKBOOK_FILE)
     
     def test_workbook_can_be_created_from_xml_string(self):
         """Test that Workbook can be created from XML string"""
@@ -703,9 +703,9 @@ class TestParameterFunctionality(unittest.TestCase):
     """Test parameter-related functionality"""
     
     def setUp(self):
-        if not os.path.exists(TEST_SUPERSTORE_FILE):
-            self.skipTest(f"Test file {TEST_SUPERSTORE_FILE} not available")
-        self.wb = Workbook(TEST_SUPERSTORE_FILE)
+        if not os.path.exists(TEST_WORKBOOK_FILE):
+            self.skipTest(f"Test file {TEST_WORKBOOK_FILE} not available")
+        self.wb = Workbook(TEST_WORKBOOK_FILE)
         
     def test_query_has_get_workbook_parameters_method(self):
         """Test that Query class has get_workbook_parameters method"""
@@ -755,9 +755,9 @@ class TestQueryComparisonMethods(unittest.TestCase):
     """Test Query comparison methods"""
 
     def setUp(self):
-        if not os.path.exists(TEST_SUPERSTORE_FILE):
-            self.skipTest(f"Test file {TEST_SUPERSTORE_FILE} not available")
-        self.wb = Workbook(TEST_SUPERSTORE_FILE)
+        if not os.path.exists(TEST_WORKBOOK_FILE):
+            self.skipTest(f"Test file {TEST_WORKBOOK_FILE} not available")
+        self.wb = Workbook(TEST_WORKBOOK_FILE)
 
     def test_query_compare_diffs_exists(self):
         """Test that Query.compare_diffs static method exists"""
@@ -768,8 +768,8 @@ class TestQueryComparisonMethods(unittest.TestCase):
         import pandas as pd
         # Compare the same file
         df_diff = Query.compare_diffs(
-            wb1_filename=TEST_SUPERSTORE_FILE,
-            wb2_filename=TEST_SUPERSTORE_FILE
+            wb1_filename=TEST_WORKBOOK_FILE,
+            wb2_filename=TEST_WORKBOOK_FILE
         )
         self.assertIsInstance(df_diff, pd.DataFrame)
         # Should have Workbook_Source column
@@ -831,9 +831,9 @@ class TestNewFieldProperties(unittest.TestCase):
     """Test new Field properties: value, param_domain_type, members, table"""
 
     def setUp(self):
-        if not os.path.exists(TEST_SUPERSTORE_FILE):
-            self.skipTest(f"Test file {TEST_SUPERSTORE_FILE} not available")
-        self.wb = Workbook(TEST_SUPERSTORE_FILE)
+        if not os.path.exists(TEST_WORKBOOK_FILE):
+            self.skipTest(f"Test file {TEST_WORKBOOK_FILE} not available")
+        self.wb = Workbook(TEST_WORKBOOK_FILE)
         
     def test_field_has_value_property(self):
         """Test that Field objects have value property"""
@@ -951,8 +951,8 @@ class TestCLI(unittest.TestCase):
     """Test minimal CLI wrapper around Query.compare_diffs"""
 
     def setUp(self):
-        if not os.path.exists(TEST_SUPERSTORE_FILE):
-            self.skipTest(f"Test file {TEST_SUPERSTORE_FILE} not available")
+        if not os.path.exists(TEST_WORKBOOK_FILE):
+            self.skipTest(f"Test file {TEST_WORKBOOK_FILE} not available")
 
     def test_cli_file_comparison_generates_csv(self):
         """Test that CLI file-based comparison generates a CSV with Workbook_Source"""
@@ -966,9 +966,9 @@ class TestCLI(unittest.TestCase):
                 "-m",
                 "tableaudocumentapi.cli",
                 "--wb1",
-                TEST_SUPERSTORE_FILE,
+                TEST_WORKBOOK_FILE,
                 "--wb2",
-                TEST_SUPERSTORE_FILE,
+                TEST_WORKBOOK_FILE,
                 "--out",
                 out_path,
             ]
