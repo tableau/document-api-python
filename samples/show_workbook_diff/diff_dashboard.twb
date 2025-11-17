@@ -309,7 +309,7 @@
         </groupfilter>
       </group>
       <extract _.fcp.VConnDownstreamExtractsWithWarnings.true...user-specific='false' count='-1' enabled='true' object-id='' units='records'>
-        <connection access_mode='readonly' authentication='auth-none' author-locale='en_US' class='hyper' dbname='/Data/#TableauTemp_0wljktf03fb4x819a5bys0dgp7u6.hyper' default-settings='yes' schema='Extract' sslmode='' update-time='11/12/2025 08:14:29 AM' username='tableau_internal_user'>
+        <connection access_mode='readonly' authentication='auth-none' author-locale='en_US' class='hyper' dbname='Data/#TableauTemp_0wljktf03fb4x819a5bys0dgp7u6.hyper' default-settings='yes' schema='Extract' sslmode='' update-time='11/12/2025 08:14:29 AM' username='tableau_internal_user'>
           <relation name='Extract' table='[Extract].[Extract]' type='table' />
           <refresh>
             <refresh-event add-from-file-path='df_diff_melt' increment-value='%null%' refresh-type='create' rows-inserted='1984' timestamp-start='2025-11-12 08:14:29.817' />
