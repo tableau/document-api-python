@@ -1,6 +1,19 @@
 # document-api-python (Fork)
+A maintained, backward-compatible fork of Tableau’s Document API with structured workbook objects, complete metadata extraction, and an integrated diff engine.
 
-[![As-Is](https://img.shields.io/badge/Support%20Level-As--Is-e8762c.svg)](https://www.tableau.com/support-levels-it-and-developer-tools)
+
+<p align="center">
+  <img src="docs/assets/demo_viz-diff.gif" width="800" />
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/status-maintained-brightgreen" />
+  <img src="https://img.shields.io/badge/python-3.9%20%7C%203.10%20%7C%203.11-blue" />
+  <img src="https://img.shields.io/badge/license-MIT-lightgrey" />
+</p>
+
+
+
 
 ## About This Fork
 This repository is a maintained fork of Tableau’s [document-api-python](https://github.com/tableau/document-api-python).  
@@ -12,18 +25,19 @@ If you are looking for the official Tableau Document API, see the [upstream proj
 ## What's New in This Fork (v0.12)
 Version 0.12 introduces several optional, backward-compatible enhancements:
 
-- **Workbook comparison** — Compare two workbook versions using `Query.compare_diffs()`
+- **Workbook comparison** — Compare two workbook versions using `Query.compare_workbooks()`
 - **Comprehensive metadata extraction** — Generate a unified metadata table with `get_workbook_metadata_table()`
-- **Dashboard & worksheet objects** — Structured access to dashboard contents and worksheet details
-- **Filter parsing** — Dedicated `Filter` class with hierarchical groupfilter flattening
-- **Datasource dependencies** — New `DatasourceDependency` class separating dependency metadata from fields
+- **Dashboard & worksheet objects** — Structured access to child elements and usage metadata  
+- **Datasource dependency parsing** — Distinguishes field definitions from dependency instances.  
+- **Filter parsing** — Access to filter classes, groupfilters, and hierarchical filter structures.  
 - **High-level query interface** — `workbook.query` for cross-workbook analysis and dependency mapping
 - **Parameter parsing** — Additional Field attributes (`value`, `param_domain_type`, `members`)
-- **XML string input** — Construct a `Workbook` directly from TWB XML
-- **Command-line interface** — New minimal `twb-diff` CLI for file or XML string comparison 
+- **XML string input** — Create workbooks directly from raw TWB XML, enabling integration with the [Tableau Server REST API](https://help.tableau.com/current/api/rest_api/en-us/REST/rest_api.htm).  
+- **Command-line tool** — Minimal `twb-diff` CLI to compare two workbooks.
 
 Full details and examples are available in  
 **[Version 012 Enhancements](Version_012_enhancements.md).**
+
 
 ## Quick Start
 ### Setup
@@ -38,7 +52,7 @@ pip install -e .
 ```python
 from tableaudocumentapi.query import Query
 
-df_diff = Query.compare_diffs(
+df_diff = Query.compare_workbooks(
     wb1_filename="Workbook_v1.twbx",
     wb2_filename="Workbook_v2.twbx"
 )

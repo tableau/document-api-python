@@ -31,7 +31,7 @@ This test file comprehensively tests all new features added in v012:
    - normalize_groupfilter() - flattens nested filter structures
 
 6. Workbook Comparison (TestQueryComparisonMethods)
-   - Query.compare_diffs() - static method to compare two workbooks
+   - Query.compare_workbooks() - static method to compare two workbooks
    - Support for both file paths and XML strings as input
    - Returns DataFrame with 'Workbook_Source' column (wb1/wb2/both)
    - Query.json_safe_dataframe() - converts complex types to JSON strings
@@ -63,7 +63,7 @@ This test file comprehensively tests all new features added in v012:
     - create_field_xml() supports parameter attributes
 
 12. Command-Line Interface (TestCLI)
-    - Minimal CLI wrapper around Query.compare_diffs()
+    - Minimal CLI wrapper around Query.compare_workbooks()
     - File-based workbook comparison via python -m tableaudocumentapi.cli
     - Outputs a CSV diff table with a Workbook_Source column
 """
@@ -759,15 +759,15 @@ class TestQueryComparisonMethods(unittest.TestCase):
             self.skipTest(f"Test file {TEST_WORKBOOK_FILE} not available")
         self.wb = Workbook(TEST_WORKBOOK_FILE)
 
-    def test_query_compare_diffs_exists(self):
-        """Test that Query.compare_diffs static method exists"""
-        self.assertTrue(hasattr(Query, 'compare_diffs'))
+    def test_query_compare_workbooks_exists(self):
+        """Test that Query.compare_workbooks static method exists"""
+        self.assertTrue(hasattr(Query, 'compare_workbooks'))
 
-    def test_query_compare_diffs_with_same_file(self):
+    def test_query_compare_workbooks_with_same_file(self):
         """Test comparing a workbook with itself"""
         import pandas as pd
         # Compare the same file
-        df_diff = Query.compare_diffs(
+        df_diff = Query.compare_workbooks(
             wb1_filename=TEST_WORKBOOK_FILE,
             wb2_filename=TEST_WORKBOOK_FILE
         )
@@ -781,8 +781,8 @@ class TestQueryComparisonMethods(unittest.TestCase):
             # Most entries should be 'both' for identical files
             self.assertIn('both', unique_sources)
 
-    def test_query_compare_diffs_with_xml_strings(self):
-        """Test compare_diffs with XML string input"""
+    def test_query_compare_workbooks_with_xml_strings(self):
+        """Test compare_workbooks with XML string input"""
         import pandas as pd
         import xml.etree.ElementTree as ET
 
@@ -791,7 +791,7 @@ class TestQueryComparisonMethods(unittest.TestCase):
             xml_string = ET.tostring(self.wb._workbookTree.getroot(), encoding='unicode')
 
             # Compare using XML strings
-            df_diff = Query.compare_diffs(
+            df_diff = Query.compare_workbooks(
                 wb1_filename=None,
                 wb2_filename=None,
                 wb1_twb_string=xml_string,
@@ -948,7 +948,7 @@ class TestNewFieldProperties(unittest.TestCase):
                     self.assertTrue(hasattr(field, 'members'))
 
 class TestCLI(unittest.TestCase):
-    """Test minimal CLI wrapper around Query.compare_diffs"""
+    """Test minimal CLI wrapper around Query.compare_workbooks"""
 
     def setUp(self):
         if not os.path.exists(TEST_WORKBOOK_FILE):

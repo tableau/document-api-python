@@ -1,5 +1,5 @@
 ## 012 (November 2025)
-* Added workbook diff comparison via Query.compare_diffs() and Query.get_workbook_metadata_table()
+* Added workbook diff comparison via Query.compare_workbooks() and Query.get_workbook_metadata_table()
 * Added Dashboard, Worksheet, Filter, DatasourceDependency, and Query classes
 * Added XML string input support for Workbook class
 * Enhanced Field class by adding read-only attributes Field.table and parameter parsing with Field.value, Field.param_domain_type, and Field.members

@@ -303,7 +303,7 @@ Provides high-level querying capabilities across the workbook.
 
 `Query.get_workbook_metadata_table(self):` Generates a comprehensive pandas DataFrame combining all workbook metadata by merging worksheet dependencies, filters with normalized groupfilters, row and column field references, field definitions and attributes, and dashboard-worksheet mappings.
 
-`Query.compare_diffs(wb1_filename, wb2_filename, wb1_twb_string=None, wb2_twb_string=None):` Static method that compares two Tableau workbooks and returns a pandas DataFrame with differences. Accepts either filenames or XML strings. The returned DataFrame includes a 'Workbook_Source' column indicating whether items are in 'wb1' (left only), 'wb2' (right only), or 'both' workbooks.
+`Query.compare_workbooks(wb1_filename, wb2_filename, wb1_twb_string=None, wb2_twb_string=None):` Static method that compares two Tableau workbooks and returns a pandas DataFrame with differences. Accepts either filenames or XML strings. The returned DataFrame includes a 'Workbook_Source' column indicating whether items are in 'wb1' (left only), 'wb2' (right only), or 'both' workbooks.
 
 `Query.json_safe_dataframe(df):` Static method that converts pandas DataFrames containing complex types (dicts, lists, numpy arrays) to JSON-safe format by converting these types to JSON strings while leaving scalar values unchanged.
 
@@ -316,7 +316,7 @@ The package now includes a minimal command-line utility for comparing Tableau wo
 
 **Description:**  
 Compares two Tableau workbooks (TWB or TWBX files) or two XML workbook strings and outputs their differences to a CSV file.  
-The CLI provides the same functionality as `Query.compare_diffs()` and supports both file-based and XML string-based inputs.
+The CLI provides the same functionality as `Query.compare_workbooks()` and supports both file-based and XML string-based inputs.
 
 **Usage:**
 - Compare two workbook files  
@@ -351,7 +351,7 @@ Path for the output CSV file. Defaults to `df_diff.csv`.
 
 **Notes:**
 - You must provide either both `--wb1` and `--wb2`, or both `--wb1-str` and `--wb2-str`.  
-- The output CSV contains the same structure and columns as the DataFrame returned by `Query.compare_diffs()`.  
+- The output CSV contains the same structure and columns as the DataFrame returned by `Query.compare_workbooks()`.  
 - Typical output includes a `Workbook_Source` column indicating whether a record appears in:
   - `'wb1'` (only in the first workbook)
   - `'wb2'` (only in the second workbook)

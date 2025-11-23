@@ -96,7 +96,7 @@ Provides high-level querying capabilities across the workbook.
 - `get_workbook_fields()` - Returns all workbook fields and their attributes (calculation, datatype, default aggregation)
 - `get_workbook_parameters()` - Returns all workbook parameters and their attributes (aliases, members, value)
 - `get_workbook_metadata_table()` - Generates comprehensive data table combining all workbook metadata for diff analysis
-- `compare_diffs(wb1_filename, wb2_filename, wb1_twb_string, wb2_twb_string)` - Static method to compare two workbooks and return differences
+- `compare_workbooks(wb1_filename, wb2_filename, wb1_twb_string, wb2_twb_string)` - Static method to compare two workbooks and return differences
 
 **Usage:**
 ```python
@@ -133,19 +133,19 @@ for p in parameters:
 Version 012 introduces powerful workbook comparison capabilities to track changes between different versions of Tableau workbooks.
 
 ### Comparing Two Workbooks
-Use the `Query.compare_diffs()` static method to compare two Tableau workbooks:
+Use the `Query.compare_workbooks()` static method to compare two Tableau workbooks:
 
 ```python
 from tableaudocumentapi.query import Query
 
 # Compare two workbook files
-df_diff = Query.compare_diffs(
+df_diff = Query.compare_workbooks(
     wb1_filename="samples/show_workbook_diff/Workbook_v1.twbx",
     wb2_filename="samples/show_workbook_diff/Workbook_v2.twbx"
 )
 
 # Compare workbooks from XML strings (e.g., from Tableau Server)
-df_diff = Query.compare_diffs(
+df_diff = Query.compare_workbooks(
     wb1_twb_string=xml_content_v1,
     wb2_twb_string=xml_content_v2
 )
@@ -181,7 +181,7 @@ The repository includes a complete example in `samples/show_workbook_diff/`:
 from tableaudocumentapi.query import Query
 
 # Compare two versions of a Tableau workbook
-df_diff = Query.compare_diffs(
+df_diff = Query.compare_workbooks(
     wb1_filename="samples/show_workbook_diff/Workbook_v1.twbx",
     wb2_filename="samples/show_workbook_diff/Workbook_v2.twbx"
 )
@@ -197,7 +197,7 @@ df_diff.to_csv("samples/show_workbook_diff/Data/df_diff.csv", index=False)
 
 ## Command-Line Interface (CLI)
 
-Version 012 adds a minimal command-line interface for comparing Tableau workbooks without writing Python code. The CLI is installed as the `twb-diff` command and serves as a lightweight wrapper around `Query.compare_diffs()`.
+Version 012 adds a minimal command-line interface for comparing Tableau workbooks without writing Python code. The CLI is installed as the `twb-diff` command and serves as a lightweight wrapper around `Query.compare_workbooks()`.
 
 ### Features:
 - Compare two Tableau workbooks (`.twb` or `.twbx`)

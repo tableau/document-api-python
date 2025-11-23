@@ -16,9 +16,9 @@ def main():
 
     # Determine which mode to use
     if args.wb1 and args.wb2:
-        df = Query.compare_diffs(args.wb1, args.wb2)
+        df = Query.compare_workbooks(args.wb1, args.wb2)
     elif args.wb1_str and args.wb2_str:
-        df = Query.compare_diffs(
+        df = Query.compare_workbooks(
             wb1_filename=None, wb2_filename=None,
             wb1_twb_string=args.wb1_str, wb2_twb_string=args.wb2_str
         )
