@@ -81,6 +81,6 @@ temp/
 
 # Virtual Environment
 venv/
-
+.venv311/
 # Test-generated files
 saved-as-twb.twb
