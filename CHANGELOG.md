@@ -6,9 +6,9 @@
 * Added Query methods for worksheet analysis: get_worksheet_dependencies(), get_worksheet_filters(), get_worksheet_rows(), get_worksheet_cols(), get_worksheet_fields()
 * Added normalize_groupfilter() for flattening nested filter structures
 * Added command-line interface (CLI) `twb-diff` for comparing two Tableau workbooks or XML strings and exporting results to CSV
+* Added Model Context Protocol (MCP) server integration for AI-powered workbook comparison
 * Added sample workbook diff comparison with show_twb_diff.py and dashboard visualization of results with diff_dashboard.twb
 * Resolved upstream issues #33, #138, #164, #246, #129
-
 
 ## 011 (November 2022)
 * Remove extraneous debug print statements

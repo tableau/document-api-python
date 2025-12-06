@@ -8,17 +8,20 @@ A maintained, backward-compatible fork of Tableau’s Document API with structur
 
 <p align="center">
   <img src="https://img.shields.io/badge/status-maintained-brightgreen" />
-  <img src="https://img.shields.io/badge/python-3.9%20%7C%203.10%20%7C%203.11-blue" />
+  <img src="https://img.shields.io/badge/python-3.10%20%7C%203.11-blue" />
   <img src="https://img.shields.io/badge/license-MIT-lightgrey" />
 </p>
 
 
 
 
-## About This Fork
-This repository is a maintained fork of Tableau’s [document-api-python](https://github.com/tableau/document-api-python).  
 
-It extends the original Document API with structured, object-oriented access to dashboards, worksheets, datasource dependencies, filters, and comprehensive workbook metadata—while remaining fully backward compatible with the upstream API.
+
+## About This Fork
+
+This repository is a maintained fork of Tableau's [document-api-python](https://github.com/tableau/document-api-python).
+
+**The core feature of this fork is to enable programmatic comparison of Tableau workbooks**, implemented through structured extraction of workbook metadata to enable programmatic comparison of changes affecting reported values.
 
 If you are looking for the official Tableau Document API, see the [upstream project](https://github.com/tableau/document-api-python).
 
@@ -27,6 +30,7 @@ Version 0.12 introduces several optional, backward-compatible enhancements:
 
 - **Workbook comparison** — Compare two workbook versions using `Query.compare_workbooks()`
 - **Comprehensive metadata extraction** — Generate a unified metadata table with `get_workbook_metadata_table()`
+- **MCP integration** — AI-powered workbook comparison via Model Context Protocol
 - **Dashboard & worksheet objects** — Structured access to child elements and usage metadata  
 - **Datasource dependency parsing** — Distinguishes field definitions from dependency instances.  
 - **Filter parsing** — Access to filter classes, groupfilters, and hierarchical filter structures.  
@@ -51,7 +55,6 @@ pip install -e .
 ### Compare two workbooks (Python)
 ```python
 from tableaudocumentapi.query import Query
-
 df_diff = Query.compare_workbooks(
     wb1_filename="Workbook_v1.twbx",
     wb2_filename="Workbook_v2.twbx"
@@ -63,6 +66,14 @@ df_diff.to_csv("df_diff.csv", index=False)
 twb-diff --wb1 Workbook_v1.twbx \
          --wb2 Workbook_v2.twbx \
          --out df_diff.csv
+```
+### Compare with MCP Client (e.g., Claude)
+```bash
+# Add TWB-Diff to claude as a MCP server w stdio transport
+claude mcp add --transport stdio TWB-Diff -- \
+  $(pwd)/.venv/bin/python \
+  -m tableaudocumentapi.mcp_server
+# Ask Claude: "Compare these two Tableau workbooks and explain the differences"
 ```
 
 Installation and additional usage examples are provided in  

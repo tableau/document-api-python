@@ -1,6 +1,92 @@
 # Version 012 Enhancements
 
-This document outlines the new features and functionality added in version 012 fork of the Tableau Document API.
+Version 0.12 introduces programmatic workbook comparison with structured metadata extraction, enabling diff analysis of Tableau workbooks while maintaining full backward compatibility.
+
+## Workbook Comparison
+Use the `Query.compare_workbooks()` static method to compare two Tableau workbooks:
+
+```python
+from tableaudocumentapi.query import Query
+
+# Compare two workbook files
+df_diff = Query.compare_workbooks(
+    wb1_filename="samples/show_workbook_diff/Workbook_v1.twbx",
+    wb2_filename="samples/show_workbook_diff/Workbook_v2.twbx"
+)
+
+# Analyze the differences
+print(f"Total differences: {len(df_diff)}")
+added_items = df_diff[df_diff['Workbook_Source'] == 'wb2']
+removed_items = df_diff[df_diff['Workbook_Source'] == 'wb1']
+unchanged_items = df_diff[df_diff['Workbook_Source'] == 'both']
+
+# Output the diff to CSV
+df_diff.to_csv("samples/show_workbook_diff/Data/df_diff.csv", index=False)
+```
+**Additional Sample Files:**
+- `Workbook_v1.twbx` and `Workbook_v2.twbx` - Example workbook versions for comparison
+- `diff_dashboard.twb` - Tableau dashboard for visualizing comparison results
+- `Data/df_diff.csv` - Generated diff output for analysis
+
+
+## Command-Line Interface (CLI)
+
+The `twb-diff` command provides a lightweight wrapper around `Query.compare_workbooks()` for comparing workbooks without writing Python code.
+
+### Usage:
+
+#### TWB file comparison
+```bash
+twb-diff --wb1 samples/show_workbook_diff/Workbook_v1.twbx \
+         --wb2 samples/show_workbook_diff/Workbook_v2.twbx \
+         --out df_diff.csv
+```
+#### TWB XML string comparison
+```bash
+twb-diff --wb1-str "$(cat samples/show_workbook_diff/Workbook_v1.twb)" \
+         --wb2-str "$(cat samples/show_workbook_diff/Workbook_v2.twb)" \
+         --out df_diff_strings.csv
+```
+
+### Arguments:
+- `--wb1`, `--wb2` — Paths to workbook files  
+- `--wb1-str`, `--wb2-str` — Raw TWB XML strings (alternative to file paths)  
+- `--out` — Output CSV file (optional)
+
+### Output:
+A CSV containing workbook metadata differences, including a `Workbook_Source` field indicating whether each item appears in `wb1`, `wb2`, or `both`.
+
+
+
+## Model Context Protocol (MCP) Integration
+
+The MCP server enables AI-powered workbook analysis through conversational interfaces with MCP-compatible clients (Claude, Cline, Zed, etc.).
+
+### Setup:
+```bash
+# Navigate to your project directory
+cd /path/to/document-api-python
+
+# Add MCP server with stdio transport
+claude mcp add --transport stdio TWB-Diff -- \
+  $(pwd)/.venv/bin/python \
+  -m tableaudocumentapi.mcp_server
+```
+
+### Usage:
+Once configured, interact naturally with your AI assistant:
+
+- "Compare these two Tableau workbooks and explain the differences"
+- "What changed between version 1 and version 2 of my workbook?"
+- "Analyze the structural differences in these workbook files"
+
+The MCP tool wraps `Query.compare_workbooks()` and returns differences in JSON format, automatically filtering to show only items where `Workbook_Source != 'both'`.
+
+**Requirements:**
+- [FastMCP](https://github.com/jlowin/fastmcp) package (installed with dependencies)
+- MCP-compatible client (Claude, Cline, Zed, or similar)
+- Python 3.10 or higher
+
 
 ## New Classes
 
@@ -91,140 +177,26 @@ Provides high-level querying capabilities across the workbook.
 - `get_worksheet_filters()` - Returns flattened list of all filters with metadata and normalized groupfilters
 - `get_worksheet_rows()` - Returns all row field references from worksheets with datasource mapping
 - `get_worksheet_cols()` - Returns all column field references from worksheets with datasource mapping
-- `normalize_groupfilter(filter_json)` - Flattens nested groupfilter structures into tabular format with parent-child relationships
 - `get_field_objects(column, datasource_name)` - Links column references to Field objects from datasources
 - `get_workbook_fields()` - Returns all workbook fields and their attributes (calculation, datatype, default aggregation)
 - `get_workbook_parameters()` - Returns all workbook parameters and their attributes (aliases, members, value)
 - `get_workbook_metadata_table()` - Generates comprehensive data table combining all workbook metadata for diff analysis
-- `compare_workbooks(wb1_filename, wb2_filename, wb1_twb_string, wb2_twb_string)` - Static method to compare two workbooks and return differences
 
 **Usage:**
 ```python
 wb = Workbook('file.twbx')
 
-# Get worksheet dependencies
+# Generate complete metadata table for diff analysis
+metadata = wb.query.get_workbook_metadata_table()
+metadata.to_csv("analysis.csv", index=False)
+
+# Extract specific components
 dependencies = wb.query.get_worksheet_dependencies()
-for dep in dependencies:
-    print(f"{dep['Worksheet']} uses {dep['Column_instance']} from {dep['Datasource']}")
-
-# Get worksheet filters with normalized groupfilters
 filters = wb.query.get_worksheet_filters()
-for f in filters:
-    print(f"{f['Worksheet']} filters {f['Column']} ({f['Filter_class']})")
-    if 'groupfilter_function' in f:
-        print(f"  Groupfilter: {f['groupfilter_function']} at depth {f.get('groupfilter_depth', 0)}")
-
-# Get row and column field references
-rows = wb.query.get_worksheet_rows()
-cols = wb.query.get_worksheet_cols()
-print(f"Found {len(rows)} row references and {len(cols)} column references")
-
-# Get parameters
 parameters = wb.query.get_workbook_parameters()
-for p in parameters:
-    print(f"Parameter: {p['Name']} (Type: {p['Datatype']})")
-    print(f"  Value: {p['Value']}, Domain Type: {p['Parameter_Domain_Type']}")
-    print(f"  Used in: {p['Worksheets']}")
-```
-
-
-## Workbook Comparison and Diff Analysis
-
-Version 012 introduces powerful workbook comparison capabilities to track changes between different versions of Tableau workbooks.
-
-### Comparing Two Workbooks
-Use the `Query.compare_workbooks()` static method to compare two Tableau workbooks:
-
-```python
-from tableaudocumentapi.query import Query
-
-# Compare two workbook files
-df_diff = Query.compare_workbooks(
-    wb1_filename="samples/show_workbook_diff/Workbook_v1.twbx",
-    wb2_filename="samples/show_workbook_diff/Workbook_v2.twbx"
-)
-
-# Compare workbooks from XML strings (e.g., from Tableau Server)
-df_diff = Query.compare_workbooks(
-    wb1_twb_string=xml_content_v1,
-    wb2_twb_string=xml_content_v2
-)
-
-# Analyze the differences
-print(f"Total differences: {len(df_diff)}")
-added_items = df_diff[df_diff['Workbook_Source'] == 'wb2']
-removed_items = df_diff[df_diff['Workbook_Source'] == 'wb1']
-unchanged_items = df_diff[df_diff['Workbook_Source'] == 'both']
-```
-
-### Comprehensive Workbook Metadata Table
-The `get_workbook_metadata_table()` method generates a complete metadata table by merging:
-- Worksheet dependencies
-- Filters with normalized groupfilters
-- Row and column field references
-- Field definitions and attributes
-- Dashboard-worksheet mappings
-
-```python
-wb = Workbook('file.twbx')
+fields = wb.query.get_workbook_fields()
 metadata_table = wb.query.get_workbook_metadata_table()
-
-# Export for external analysis or version comparison
-metadata_table.to_csv("workbook_complete_analysis.csv", index=False)
 ```
-
-### Sample Implementation
-The repository includes a complete example in `samples/show_workbook_diff/`:
-
-**show_twb_diff.py** - Demonstrates comparing two workbook versions:
-```python
-from tableaudocumentapi.query import Query
-
-# Compare two versions of a Tableau workbook
-df_diff = Query.compare_workbooks(
-    wb1_filename="samples/show_workbook_diff/Workbook_v1.twbx",
-    wb2_filename="samples/show_workbook_diff/Workbook_v2.twbx"
-)
-
-# Output the diff to CSV
-df_diff.to_csv("samples/show_workbook_diff/Data/df_diff.csv", index=False)
-```
-
-**Additional Sample Files:**
-- `Workbook_v1.twbx` and `Workbook_v2.twbx` - Example workbook versions for comparison
-- `diff_dashboard.twb` - Tableau dashboard for visualizing comparison results
-- `Data/df_diff.csv` - Generated diff output for analysis
-
-## Command-Line Interface (CLI)
-
-Version 012 adds a minimal command-line interface for comparing Tableau workbooks without writing Python code. The CLI is installed as the `twb-diff` command and serves as a lightweight wrapper around `Query.compare_workbooks()`.
-
-### Features:
-- Compare two Tableau workbooks (`.twb` or `.twbx`)
-- Compare two workbook XML strings
-- Output diff results to a CSV file (`df_diff.csv` by default)
-
-### Usage:
-#### TWB file comparison
-```bash
-twb-diff --wb1 samples/show_workbook_diff/Workbook_v1.twbx \
-         --wb2 samples/show_workbook_diff/Workbook_v2.twbx \
-         --out df_diff.csv
-```
-#### TWB XML string comparison
-```bash
-twb-diff --wb1-str "$(cat samples/replicate-workbook/sample-superstore.twb)" \
-         --wb2-str "$(cat /tmp/sample-superstore_v2.twb)" \
-         --out df_diff_strings.csv
-```
-
-### Arguments:
-- `--wb1`, `--wb2` — Paths to workbook files  
-- `--wb1-str`, `--wb2-str` — Raw TWB XML strings (alternative to file paths)  
-- `--out` — Output CSV file (optional)
-
-### Output:
-A CSV containing workbook metadata differences, including a `Workbook_Source` field indicating whether each item appears in `wb1`, `wb2`, or `both`.
 
 
 ## Enhanced Classes
@@ -269,7 +241,7 @@ for ds in wb.datasources:
             print(f"  Members: {field.members}")
     else:
         # Get the table in the datasource a column belongs to
-        print(f"Table: {field.table})
+        print(f"Table: {field.table}")
 ```
 
 #### Backwards Compatibility
@@ -335,3 +307,5 @@ for dashboard_name, dashboard_obj in wb.dashboard_objects.items():
 ```
 
 The new object-oriented approach provides significantly more functionality while maintaining the simplicity of the original API for basic use cases.
+
+

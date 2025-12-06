@@ -367,3 +367,83 @@ A CSV file summarizing changes across worksheets, datasources, and fields, with 
 
 **Location:**  
 Installed automatically via `pip install -e .` and available globally as the `twb-diff` command.
+
+## Model Context Protocol (MCP) Integration *(added in v012)*
+
+The package includes an MCP server that exposes workbook comparison capabilities to AI assistants through the Model Context Protocol.
+
+**Server:**  
+`tableaudocumentapi.mcp_server`
+
+
+**Description:**  
+A FastMCP-based server that wraps `Query.compare_workbooks()`, enabling AI assistants to compare Tableau workbooks through natural language queries.
+
+**Setup:**
+
+Add the TWB-Diff MCP server to Claude Desktop:
+```bash
+# Navigate to your project directory
+cd /path/to/document-api-python
+
+# Add MCP server with stdio transport
+claude mcp add --transport stdio TWB-Diff -- \
+  $(pwd)/.venv/bin/python \
+  -m tableaudocumentapi.mcp_server
+```
+
+**Tool:**  
+`compare_twb_workbooks`
+
+**Parameters:**
+
+`wb1_filepath` *(optional)*  
+String path to the first workbook file (.twb or .twbx).
+
+`wb2_filepath` *(optional)*  
+String path to the second workbook file (.twb or .twbx).
+
+`wb1_xml_string` *(optional)*  
+String containing the raw XML content of the first workbook.
+
+`wb2_xml_string` *(optional)*  
+String containing the raw XML content of the second workbook.
+
+**Notes:**
+- You must provide either both file paths (`wb1_filepath` and `wb2_filepath`) OR both XML strings (`wb1_xml_string` and `wb2_xml_string`), but not both methods simultaneously.
+- The tool automatically filters results to return only differences (excludes items where `Workbook_Source == 'both'`).
+- Returns JSON-formatted diff data compatible with Claude's analysis capabilities.
+
+**Usage Examples:**
+
+Once configured in Claude Desktop, you can interact naturally:
+
+- "Compare these two Tableau workbooks and explain the differences"
+- "What changed between version 1 and version 2 of my workbook?"
+- "Analyze the structural differences in these workbook files"
+
+**File-based comparison:**
+```
+I have two workbook files:
+- samples/show_workbook_diff/Workbook_v1.twbx
+- samples/show_workbook_diff/Workbook_v2.twbx
+
+Can you compare them and summarize what changed?
+```
+
+**XML string comparison:**
+```
+Compare these two workbook XML strings and identify key differences:
+[attach or paste XML content]
+```
+
+**Requirements:**
+- [FastMCP](https://github.com/jlowin/fastmcp) package (installed automatically with dependencies)
+- Claude Desktop or other MCP-compatible client
+- Python 3.10 or higher
+
+**Location:**  
+`tableaudocumentapi/mcp_server.py`
+
+**See Also:**  
+For detailed implementation examples and additional context, see the "Model Context Protocol (MCP) Integration" section in [Version 012 Enhancements](Version_012_enhancements.md).
