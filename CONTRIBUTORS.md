@@ -1,15 +1,8 @@
-This project wouldn't be possible without our amazing contributors.
+# Contributors
 
-The following people have contributed to this project to make it possible, and we thank them for their contributions!
+This project is a maintained fork of Tableau's [document-api-python](https://github.com/tableau/document-api-python).
 
-## Contributors
+* [Original Tableau Document API Contributors](https://github.com/tableau/document-api-python/blob/master/CONTRIBUTORS.md)
 
-* [Charley Peng](https://github.com/chid)
-* [Miguel Sánchez](https://github.com/MiguelSR)
-* [Ryan Richmond](https://github.com/r-richmond)
-
-## Core Team
-
-* [Tyler Doyle](https://github.com/t8y8)
-* [Russell Hay](https://github.com/RussTheAerialist)
-
+This fork (v0.12+) is maintained by:
+* [jbisal](https://github.com/jbisal)

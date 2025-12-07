@@ -12,10 +12,24 @@ def compare_twb_workbooks(
 ):
     """
     Compare 2 versions of a tableau workbook file (twb) and identify the differences.
-    
     Provide either file paths OR XML strings (not both):
     - For file comparison: wb1_filepath and wb2_filepath
     - For XML string comparison: wb1_xml_string and wb2_xml_string
+    
+    RESPONSE INSTRUCTIONS FOR AI:
+    - Be VERY CONCISE - use bullet points and short sentences.
+    - Focus only on meaningful differences that affect data or calculations
+    - Use plain language where possible.
+    - Use this format:
+      • Added: [brief description]
+      • Removed: [brief description]  
+      • Modified: [brief description]
+    - When listing what changed, use the following order:
+      • Dashboards
+      • Worksheets
+      • Filters (if applicable)
+      • Rows/Columns (if applicable)
+      • Field
     """
     
     # Validate inputs
