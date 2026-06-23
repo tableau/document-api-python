@@ -1,0 +1,54 @@
+* instructions for building package
+
+** install bazelisk
+
+** make code changes eg. add a feature or fix a bug
+
+** When ready to make a new package
+
+*** update version
+    Find this rule in =//BUILD.bazel=
+    #+begin_src bazel -n 
+      py_wheel(
+	  name = "wheel",
+	  distribution = "tableaudocumentapi_ntnx",
+	  homepage = "https://github.com/nudowding/tableaudocumentapi_ntnx"
+	  requires = [
+	      "lxml",
+	  ],
+	  version = "0.11.2",
+	  deps = ["//tableaudocumentapi"],
+      )      
+    #+end_src
+    Update the version to a higher number. This is needed if using pip to upgrade.
+*** build wheel
+    #+begin_src sh :results drawer :wrap example
+      bazel build //:wheel.dist
+    #+end_src
+
+    #+RESULTS:
+    :results:
+    #+begin_example
+      INFO: Analyzed target //:wheel.dist (102 packages loaded, 4184 targets configured).
+      INFO: Found 1 target...
+      Target //:wheel.dist up-to-date:
+	bazel-bin/wheel_dist
+      INFO: Elapsed time: 10.745s, Critical Path: 3.30s
+      INFO: 21 processes: 19 internal, 2 darwin-sandbox.
+      INFO: Build completed successfully, 21 total actions    
+    #+end_example
+    :end:
+*** Wheel will be in =bazel-bin= dir
+    #+begin_src sh :results drawer :wrap example
+      ls bazel-bin
+    #+end_src
+
+    #+RESULTS:
+    #+begin_example
+    tableaudocumentapi_ntnx-0.11.2-py3-none-any.whl
+    wheel_dist
+    wheel_target_wrapped_inputs.txt
+    wheel.metadata.txt
+    wheel.name
+    #+end_example
+    

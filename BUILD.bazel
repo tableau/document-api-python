@@ -72,7 +72,7 @@ gazelle(
 py_wheel(
     name = "wheel",
     distribution = "tableaudocumentapi_ntnx",
-    homepage = "https://github.com/nutanix-corp/ng-common-utilities/tree/tableaudocumentapi_ntnx/tableaudocumentapi_ntnx",
+    homepage = "https://github.com/nudowding/tableaudocumentapi_ntnx",
     requires = [
         "lxml",
     ],
