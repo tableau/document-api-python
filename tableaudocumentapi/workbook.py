@@ -97,8 +97,15 @@ class Workbook(object):
     def _prepare_datasources(xml_root):
         datasources = []
 
-        # loop through our datasources and append
-        datasource_elements = xml_root.find('datasources')
+        # Use descendant search (`.//`) so we find the <datasources> element
+        # regardless of where it sits in the workbook XML. Newer Tableau
+        # versions sometimes nest it below the top level, and matching only
+        # the direct child here returned [], which in turn caused
+        # _prepare_worksheets() to raise KeyError on ds_index lookups and
+        # silently abort the whole Workbook() constructor. Aligned with the
+        # sibling _prepare_dashboards / _prepare_worksheets methods which
+        # already use `.//`.
+        datasource_elements = xml_root.find('.//datasources')
         if datasource_elements is None:
             return []
 
@@ -137,7 +144,14 @@ class Workbook(object):
 
             for dependency in dependencies:
                 datasource_name = dependency.attrib['datasource']
-                datasource = ds_index[datasource_name]
+                # Defensive: a worksheet may reference a datasource that
+                # isn't in the index (e.g. a parameter-only datasource).
+                # Previously this raised KeyError, aborting the Workbook
+                # constructor and leaving worksheets/dashboards/datasources
+                # all empty.
+                datasource = ds_index.get(datasource_name)
+                if datasource is None:
+                    continue
                 for column in dependency.findall('.//column'):
                     column_name = column.attrib['name']
                     if column_name in datasource.fields:
