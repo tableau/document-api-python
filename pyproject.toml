@@ -1,0 +1,9 @@
+[project]
+name = "document-api-python"
+version = "0.0.0"
+dependencies = [
+             "ipython",
+             "lxml",
+             "twine",
+             "ward",
+]

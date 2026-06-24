@@ -1,5 +1,7 @@
 import weakref
 
+from lxml.etree import Element
+
 from tableaudocumentapi import Datasource, xfile
 from tableaudocumentapi.xfile import xml_open, TableauInvalidFileException
 
@@ -95,8 +97,15 @@ class Workbook(object):
     def _prepare_datasources(xml_root):
         datasources = []
 
-        # loop through our datasources and append
-        datasource_elements = xml_root.find('datasources')
+        # Use descendant search (`.//`) so we find the <datasources> element
+        # regardless of where it sits in the workbook XML. Newer Tableau
+        # versions sometimes nest it below the top level, and matching only
+        # the direct child here returned [], which in turn caused
+        # _prepare_worksheets() to raise KeyError on ds_index lookups and
+        # silently abort the whole Workbook() constructor. Aligned with the
+        # sibling _prepare_dashboards / _prepare_worksheets methods which
+        # already use `.//`.
+        datasource_elements = xml_root.find('.//datasources')
         if datasource_elements is None:
             return []
 
@@ -135,7 +144,14 @@ class Workbook(object):
 
             for dependency in dependencies:
                 datasource_name = dependency.attrib['datasource']
-                datasource = ds_index[datasource_name]
+                # Defensive: a worksheet may reference a datasource that
+                # isn't in the index (e.g. a parameter-only datasource).
+                # Previously this raised KeyError, aborting the Workbook
+                # constructor and leaving worksheets/dashboards/datasources
+                # all empty.
+                datasource = ds_index.get(datasource_name)
+                if datasource is None:
+                    continue
                 for column in dependency.findall('.//column'):
                     column_name = column.attrib['name']
                     if column_name in datasource.fields:
@@ -155,3 +171,93 @@ class Workbook(object):
             shapes.append(shape_name)
 
         return shapes
+
+    def __get_section(self, name):
+        """Get main section from document."""
+        for elt in self._workbookRoot:
+            if elt.tag == name:
+                return elt
+        raise KeyError(name)
+
+    def remove_dashboard_by_name(self, name: str) -> Element:
+        """Remove dashboard identified by 'name',
+
+        Returns: removed dashboard
+
+        Raises: KeyError if dashboard not in document
+        """
+        dashboards = self.__get_section("dashboards")
+        dashboard = None
+        for elt in dashboards:
+            if elt.attrib['name'] == name:
+                dashboard = elt
+                break
+        else:
+            raise KeyError(f"dashboard {name} is not in document")
+        dashboards.remove(dashboard)
+        assert dashboard not in dashboards
+        self._remove_window(name)
+        return dashboard
+
+    def worksheet_names(self, hidden=False):
+        """Get names of worksheets
+
+        By default the names of hidden worksheets are not returned. Use hidden=True to see all worksheets.
+        """
+        windows = {}
+        for elt in self.__get_section("windows"):
+            windows[elt.attrib["name"]] = elt
+        names = []
+        for name in self._worksheets:
+            window = windows[name]
+            hidden = window.attrib.get("hidden")
+            if hidden and hidden == 'true':
+                continue
+            names.append(name)
+        return names
+
+    def remove_worksheet_by_name(self, name: str) -> Element:
+        """Remove worksheet identified by 'name',
+
+        Returns: removed worksheet
+
+        Raises: KeyError if worksheet not in document
+        """
+        worksheets = self.__get_section("worksheets")
+        worksheet = None
+        for elt in worksheets:
+            if elt.attrib['name'] == name:
+                worksheet = elt
+                break
+        else:
+            raise KeyError(f"worksheet {name} is not in document")
+        worksheets.remove(worksheet)
+        assert worksheet not in worksheets
+        # Note: now worksheets property is invalid.
+        self._remove_window(name)
+        self._remove_viewpoint(name)
+        return worksheet
+
+    def _remove_window(self, name: str) -> None:
+        """Remove window if found."""
+        windows = self.__get_section("windows")
+        window = None
+        for elt in windows:
+            if elt.attrib["name"] == name:
+                window = elt
+                break
+        else:
+            return
+        windows.remove(window)
+        return
+
+    def _remove_viewpoint(self, name) -> None:
+        """remove viewpoint from dashboard if found"""
+        windows = self.__get_section("windows")
+        for window in windows:
+            if window.tag == 'window' and window.attrib['class'] == 'dashboard':
+                for viewpoints in window:
+                    if viewpoints.tag == 'viewpoints':
+                        for viewpoint in viewpoints:
+                            if viewpoint.tag == 'viewpoint' and viewpoint.attrib['name'] == name:
+                                viewpoints.remove(viewpoint)

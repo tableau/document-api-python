@@ -1,0 +1,17 @@
+load("@rules_python//python:defs.bzl", "py_library")
+
+py_library(
+    name = "assets",
+    srcs = [
+        "__init__.py",
+        "index.py",
+    ],
+    visibility = ["//:__subpackages__"],
+)
+
+
+filegroup(
+    name="workbooks",
+    srcs = glob(["*.twb", "*.twbx"]),
+    visibility = ["//:__subpackages__"]
+)

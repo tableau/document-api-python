@@ -1,0 +1,81 @@
+load("@bazel_gazelle//:def.bzl", "gazelle")
+load("@pypi//:requirements.bzl", "all_whl_requirements")
+load("@rules_python//python:packaging.bzl", "py_package", "py_wheel")
+load("@rules_python//python:pip.bzl", "compile_pip_requirements")
+load("@rules_python_gazelle_plugin//manifest:defs.bzl", "gazelle_python_manifest")
+load("@rules_python_gazelle_plugin//modules_mapping:def.bzl", "modules_mapping")
+
+compile_pip_requirements(
+    name = "requirements",
+    srcs = ["pyproject.toml"],
+    requirements_darwin = "requirements_darwin.txt",
+    requirements_linux = "requirements_linux.txt",
+    requirements_txt = "requirements.txt",
+)
+
+# This rule fetches the metadata for python packages we depend on. That data is
+# required for the gazelle_python_manifest rule to update our manifest file.
+modules_mapping(
+    name = "modules_map",
+    wheels = all_whl_requirements,
+)
+
+# Gazelle python extension needs a manifest file mapping from
+# an import to the installed package that provides it.
+# This macro produces two targets:
+# - //:gazelle_python_manifest.update can be used with `bazel run`
+#   to recalculate the manifest
+# - //:gazelle_python_manifest.test is a test target ensuring that
+#   the manifest doesn't need to be updated
+gazelle_python_manifest(
+    name = "gazelle_python_manifest",
+    modules_mapping = ":modules_map",
+    # This is what we called our `pip_parse` rule, where third-party
+    # python libraries are loaded in BUILD files.
+    pip_repository_name = "pypi",
+    # This should point to wherever we declare our python dependencies
+    # (the same as what we passed to the modules_mapping rule in WORKSPACE)
+    # This argument is optional. If provided, the `.test` target is very
+    # fast because it just has to check an integrity field. If not provided,
+    # the integrity field is not added to the manifest which can help avoid
+    # merge conflicts in large repos.
+    requirements = "//:requirements.txt",
+    # include_stub_packages: bool (default: False)
+    # If set to True, this flag automatically includes any corresponding type stub packages
+    # for the third-party libraries that are present and used. For example, if you have
+    # `boto3` as a dependency, and this flag is enabled, the corresponding `boto3-stubs`
+    # package will be automatically included in the BUILD file.
+    #
+    # Enabling this feature helps ensure that type hints and stubs are readily available
+    # for tools like type checkers and IDEs, improving the development experience and
+    # reducing manual overhead in managing separate stub packages.
+    # include_stub_packages = True
+)
+
+# Our gazelle target points to the python gazelle binary.
+# This is the simple case where we only need one language supported.
+# If you also had proto, go, or other gazelle-supported languages,
+# you would also need a gazelle_binary rule.
+# See https://github.com/bazelbuild/bazel-gazelle/blob/master/extend.rst#example
+gazelle(
+    name = "gazelle",
+    gazelle = "@rules_python_gazelle_plugin//python:gazelle_binary",
+)
+
+# gazelle:exclude samples
+# gazelle:python_ignore_files setup.py
+# gazelle:python_binary_naming_convention $package_name$
+# gazelle:python_library_naming_convention $package_name$
+
+# Publishing
+
+py_wheel(
+    name = "wheel",
+    distribution = "tableaudocumentapi_ntnx",
+    homepage = "https://github.com/nudowding/tableaudocumentapi_ntnx",
+    requires = [
+        "lxml",
+    ],
+    version = "0.11.3",
+    deps = ["//tableaudocumentapi"],
+)
