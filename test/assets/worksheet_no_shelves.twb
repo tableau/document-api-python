@@ -1,0 +1,21 @@
+<?xml version='1.0' encoding='utf-8' ?>
+<workbook source-build='9.3.3 (9300.16.0603.2240)' source-platform='win' version='9.3' xmlns:user='http://www.tableausoftware.com/xml/user'>
+  <datasources>
+    <datasource caption='TestData' inline='true' name='federated.abc123' version='9.3'>
+      <connection class='federated'>
+        <named-connections />
+      </connection>
+    </datasource>
+  </datasources>
+  <worksheets>
+    <worksheet name='Sheet 1'>
+      <table>
+        <view>
+          <datasources>
+            <datasource caption='TestData' name='federated.abc123' />
+          </datasources>
+        </view>
+      </table>
+    </worksheet>
+  </worksheets>
+</workbook>
