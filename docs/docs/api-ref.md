@@ -34,13 +34,13 @@ Saves any changes to the workbook to a new file specified by the `new_file` para
 
 `self.worksheets:` Returns a list of worksheets found in the workbook.
 
-`self.datasources:` Returns a list of Datasource objects found in the workbook.
+`self.datasources:` Returns a list of datasource objects found in the workbook.
 
 `self.filename:` Returns the filename of the workbook.
 
 `self.shapes` Returns a list of strings with the names of shapes found in the workbook.
 
-`self.dashboards:` Returns a list of strings with the names of the dashboards found in the workbook  
+`self.dashboards:` Returns a list of strings with the names of the dashboards found in the workbook
 
 ## Datasources
 ```python
@@ -149,7 +149,7 @@ Represents a field in a datasource
 
 `self.calculation` Returns a string with the formula if this field is a calculated field.
 
-`self.default_aggregation` Returns a string with he default type of aggregation on the field (e.g Sum, Avg).
+`self.default_aggregation` Returns a string with the default type of aggregation on the field (e.g, Sum, Avg).
 
 `self.description` Returns a string with contents of the <desc> tag on a field.
 
