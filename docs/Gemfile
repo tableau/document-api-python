@@ -1,3 +1,9 @@
 source 'https://rubygems.org'
-gem 'github-pages', group: :jekyll_plugins
 
+# Standalone Jekyll 4 runs on modern Ruby (4.0+). We don't use the
+# github-pages gem because it pins an old Jekyll/Liquid that is
+# incompatible with Ruby 3.2+ (String#untaint was removed).
+gem 'jekyll', '~> 4.3'
+
+# webrick was removed from Ruby's default gems in 3.0; needed by `jekyll serve`.
+gem 'webrick'
