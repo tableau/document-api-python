@@ -1,3 +1,7 @@
+## 012 (December 2023)
+* Add new worksheet class
+* Add worksheet items attribute to workbook class
+
 ## 011 (November 2022)
 * Remove extraneous debug print statements
 

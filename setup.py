@@ -2,7 +2,7 @@ from setuptools import setup
     
 setup(
     name='tableaudocumentapi',
-    version='0.11',
+    version='0.12',
     author='Tableau',
     author_email='github@tableau.com',
     url='https://github.com/tableau/document-api-python',
