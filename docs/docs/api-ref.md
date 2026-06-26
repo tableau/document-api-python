@@ -56,13 +56,13 @@ A class representing Tableau Data Sources, embedded in workbook files or in TDS 
 
 `Datasource.save(self)` Saves any changes to the datasource to the existing file.
 
-`Datasource.save_as(self)` Saves any changes to the datasource to a new file specified by the `new_file` parameter.
+`Datasource.save_as(self, new_filename)` Saves any changes to the datasource to a new file specified by the `new_filename` parameter.
 
-`Datasource.add_field(self, name, datatype, role, field_type, caption)` Adds a base field object with the given values.
+`Datasource.add_field(self, name, datatype, role, field_type, caption, hidden)` Adds a base field object with the given values.
 
 `Datasource.remove_field(self, field)` Remove a given field.
 
-`Datasource.add_calculation(self, caption, formula, datatype, role, type)` Adds a calculated field with the given values.
+`Datasource.add_calculation(self, caption, formula, datatype, role, type, hidden)` Adds a calculated field with the given values.
 
 **Properties:**
 

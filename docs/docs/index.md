@@ -3,7 +3,7 @@ title: Get Started
 layout: docs
 ---
 
-To use this SDK, you must have Python installed. You can use either 2.7.X or 3.3 and later.
+To use this SDK, you must have Python 3 installed. The SDK is tested against Python 3.10 and later. (As of 2021, Python 2 is no longer supported.)
 
 * TOC
 {:toc}
@@ -76,7 +76,7 @@ sourceWB.save()
 - Import the `Workbook` object from the `tableaudocumentapi` module.
 - To open a workbook, instantiate a `Workbook` object and pass the file name as the first argument.
 - The `Workbook` object exposes a list of `datasources` in the workbook
-- Each data source object has a `connection` object that supports a `server`, `dbname`, and `username` property.
+- Each data source object exposes a `connections` list; each connection supports `server`, `dbname`, and `username` properties.
 - Save changes to the workbook by calling the `save` or `save_as` method.
 
 <div class="alert alert-info">
