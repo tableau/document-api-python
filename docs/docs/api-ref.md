@@ -34,13 +34,13 @@ Saves any changes to the workbook to a new file specified by the `new_file` para
 
 `self.worksheets:` Returns a list of worksheets found in the workbook.
 
-`self.datasources:` Returns a list of Datasource objects found in the workbook.
+`self.datasources:` Returns a list of datasource objects found in the workbook.
 
 `self.filename:` Returns the filename of the workbook.
 
 `self.shapes` Returns a list of strings with the names of shapes found in the workbook.
 
-`self.dashboards:` Returns a list of strings with the names of the dashboards found in the workbook  
+`self.dashboards:` Returns a list of strings with the names of the dashboards found in the workbook
 
 ## Datasources
 ```python
@@ -56,13 +56,13 @@ A class representing Tableau Data Sources, embedded in workbook files or in TDS 
 
 `Datasource.save(self)` Saves any changes to the datasource to the existing file.
 
-`Datasource.save_as(self)` Saves any changes to the datasource to a new file specified by the `new_file` parameter.
+`Datasource.save_as(self, new_filename)` Saves any changes to the datasource to a new file specified by the `new_filename` parameter.
 
-`Datasource.add_field(self, name, datatype, role, field_type, caption)` Adds a base field object with the given values.
+`Datasource.add_field(self, name, datatype, role, field_type, caption, hidden)` Adds a base field object with the given values.
 
 `Datasource.remove_field(self, field)` Remove a given field.
 
-`Datasource.add_calculation(self, caption, formula, datatype, role, type)` Adds a calculated field with the given values.
+`Datasource.add_calculation(self, caption, formula, datatype, role, type, hidden)` Adds a calculated field with the given values.
 
 **Properties:**
 
@@ -149,7 +149,7 @@ Represents a field in a datasource
 
 `self.calculation` Returns a string with the formula if this field is a calculated field.
 
-`self.default_aggregation` Returns a string with he default type of aggregation on the field (e.g Sum, Avg).
+`self.default_aggregation` Returns a string with the default type of aggregation on the field (e.g, Sum, Avg).
 
 `self.description` Returns a string with contents of the <desc> tag on a field.
 

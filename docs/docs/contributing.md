@@ -60,8 +60,8 @@ somewhere.
 
 ## Release process
 
-We expect that everything merged into the development branch is ready to release on master. Releases can be made at any time - ideally it would be on a regular cadence but currently it is basically on request.
+We expect that everything merged into the development branch is ready to release on master.
 - bump the version in setup.py
 - update the changelog: all commits to development should contain a meaningful message, the changelog can be built from these
-- merge to master. 
-This kicks off an automated release in github and then publish to pypi. 
+- merge to master.
+This kicks off an automated release in GitHub and then publish to PyPI.

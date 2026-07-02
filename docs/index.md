@@ -28,10 +28,10 @@ Features include:
     - Server Name
     - Username
     - Database Name
-- Getting Field information from data sources and workbooks
+- Getting field information from data sources and workbooks
     - Get all fields in a data source
     - Get all fields in use by certain sheets in a workbook
 
-For Hyper files, take a look a the [Tableau Hyper API](https://tableau.github.io/hyper-db/docs/).
+For Hyper files, take a look at the [Tableau Hyper API](https://tableau.github.io/hyper-db/docs/).
 
 We don't yet support creating files from scratch, adding extracts into workbooks or data sources, or updating field information.

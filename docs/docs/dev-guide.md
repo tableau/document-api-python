@@ -26,7 +26,7 @@ layout: docs
 1. Run the tests to make sure everything is peachy:
 
    ```shell
-   python setup.py test
+   python -m unittest discover -v
    ```
 
 1. Set up the feature, fix, or documentation branch. 
@@ -49,8 +49,8 @@ layout: docs
 
 1. Add tests.
 
-   All of our tests live under the `test/` folder in the repository.  
-   We use `unittest` and the built-in test runner `python setup.py test`.  
+   All of our tests live under the `test/` folder in the repository.
+   We use `unittest` and run them with `python -m unittest discover -v`.
    If a test needs a static file, like a twb/twbx, it should live under `test/assets/`
 
 1. Update the documentation.
