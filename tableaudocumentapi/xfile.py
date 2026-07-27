@@ -5,9 +5,20 @@ import tempfile
 import zipfile
 from lxml import etree as ET
 
-from distutils.version import LooseVersion as Version
 
-MIN_SUPPORTED_VERSION = Version("9.0")
+def _parse_version(version_string):
+    """Parse a dotted Tableau file version (e.g. '9.0', '18.1') into a
+    comparable tuple, treating any non-numeric segment as 0."""
+    parts = []
+    for part in version_string.split('.'):
+        try:
+            parts.append(int(part))
+        except ValueError:
+            parts.append(0)
+    return tuple(parts)
+
+
+MIN_SUPPORTED_VERSION = _parse_version("9.0")
 
 
 class TableauVersionNotSupportedException(Exception):
@@ -31,9 +42,9 @@ def xml_open(filename, expected_root=None):
 
     # Is the file a supported version
     tree_root = tree.getroot()
-    file_version = Version(tree_root.attrib.get('version', '0.0'))
+    file_version = tree_root.attrib.get('version', '0.0')
 
-    if file_version < MIN_SUPPORTED_VERSION:
+    if _parse_version(file_version) < MIN_SUPPORTED_VERSION:
         raise TableauVersionNotSupportedException(file_version)
 
     # Does the root tag match the object type (workbook or data source)

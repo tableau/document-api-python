@@ -8,7 +8,7 @@ This repo contains Python source and example files for the Tableau Document API.
 The Document API provides a useful but *unsupported* way to programmatically make updates to Tableau workbook and data source files. If you've been making changes to these file types by directly updating the XML--that is, by XML hacking--this SDK is for you :) Get help from other users on the [Tableau Community Forums](https://community.tableau.com/s/topic/0TO4T000000SF3sWAG/document-api).
 
 Features include:
-- Support for TWB, TWBX, TDE and TDSX files starting roughly back to Tableau 9.x
+- Support for TWB, TWBX, TDS and TDSX files starting roughly back to Tableau 9.x
 - Getting connection information from data sources and workbooks
   - Server Name
   - Username
