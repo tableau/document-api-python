@@ -17,7 +17,7 @@ The Document API provides an *unsupported* way to programmatically make updates 
 
 Features include:
 
-- Support for TWB, TWBX, TDE and TDSX files starting roughly back to Tableau 9.x
+- Support for TWB, TWBX, TDS and TDSX files starting roughly back to Tableau 9.x
 - Getting connection information from data sources and workbooks
     - Server Name
     - Username

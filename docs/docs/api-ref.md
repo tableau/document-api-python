@@ -28,7 +28,7 @@ The Workbook class represents a tableau workbook. It may be either a TWB or TWBX
 Saves any changes to the workbook to the existing file.
 
 `Workbook.save_as(self, new_filename):`
-Saves any changes to the workbook to a new file specified by the `new_file` parameter.
+Saves any changes to the workbook to a new file specified by the `new_filename` parameter.
 
 **Properties:**
 
@@ -117,7 +117,7 @@ Represents a field in a datasource
 **Raises:**
 
 **Methods:**
-`Field.create_field_xml()` Create field from scratch.
+`Field.create_field_xml(caption, datatype, hidden, role, field_type, name)` Create field from scratch.
 
 `Field.add_alias(self, key, value)` Add an alias for a given display value.
 
